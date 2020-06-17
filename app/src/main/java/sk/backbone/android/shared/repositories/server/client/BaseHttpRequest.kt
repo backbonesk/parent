@@ -12,6 +12,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.android.shared.repositories.server.client.exceptions.BaseHttpException
 import sk.backbone.android.shared.repositories.server.client.exceptions.IExceptionDescriptionProvider
+import sk.backbone.android.shared.utils.notNullValuesOnly
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
@@ -20,9 +21,9 @@ import kotlin.coroutines.resumeWithException
 
 abstract class BaseHttpRequest<T>(
     continuation: Continuation<T?>,
-    requestMethod: Int,
-    uri: Uri,
-    body: String,
+    protected val requestMethod: Int,
+    protected val uri: Uri,
+    protected val body: String,
     parseSuccessResponse: (JSONObject?) -> T?,
     errorParser: IExceptionDescriptionProvider
 ): JsonRequest<JSONObject>(requestMethod, uri.toString(), body, onSuccess(continuation, parseSuccessResponse), onError(errorParser, continuation)){
@@ -53,6 +54,16 @@ abstract class BaseHttpRequest<T>(
     }
 
     companion object {
+        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: MutableMap<String, String?>?){
+            val urlBuilder = Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
+                queryParameters?.let {
+                    for (key in it.notNullValuesOnly().keys){
+                        this.appendQueryParameter(key, queryParameters[key])
+                    }
+                }
+            }
+        }
+
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
             return Response.Listener {
                 Log.i("HttpResponseBody", it.toString())
