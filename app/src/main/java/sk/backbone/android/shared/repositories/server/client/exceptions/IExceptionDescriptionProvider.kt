@@ -3,12 +3,12 @@ package sk.backbone.android.shared.repositories.server.client.exceptions
 import android.content.Context
 
 interface IExceptionDescriptionProvider {
-    fun parseAuthorizationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
-    fun parseCommunicationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
-    fun parseForbiddenException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
-    fun parsePaymentException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
-    fun parseServerException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
-    fun parseValidationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
+    fun parseAuthorizationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parseCommunicationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parseForbiddenException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parsePaymentException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parseServerException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parseValidationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun getDefaultErrorMessage(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
 
     fun getDescription(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String {
@@ -34,6 +34,6 @@ interface IExceptionDescriptionProvider {
             else -> {
                 getDefaultErrorMessage(context, baseHttpException, responseBody, statusCode)
             }
-        }
+        } ?: getDefaultErrorMessage(context, baseHttpException, responseBody, statusCode)
     }
 }
