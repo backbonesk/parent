@@ -8,11 +8,13 @@ import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonRequest
+import com.google.gson.ExclusionStrategy
 import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.android.shared.repositories.server.client.exceptions.BaseHttpException
 import sk.backbone.android.shared.repositories.server.client.exceptions.IExceptionDescriptionProvider
 import sk.backbone.android.shared.utils.notNullValuesOnly
+import sk.backbone.android.shared.utils.toJsonString
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
@@ -27,13 +29,14 @@ abstract class BaseHttpRequest<T>(
     val apiVersion: String,
     val endpoint: String,
     val queryParameters: MutableMap<String, String?>?,
-    val body: String,
+    val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> T?,
-    val errorParser: IExceptionDescriptionProvider
+    val errorParser: IExceptionDescriptionProvider,
+    val bodyExclusionStrategy: ExclusionStrategy? = null
 ): JsonRequest<JSONObject>(
     requestMethod,
     getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
-    body,
+    body?.toJsonString(bodyExclusionStrategy),
     onSuccess(continuation, parseSuccessResponse),
     onError(errorParser, continuation)){
 
@@ -42,6 +45,7 @@ abstract class BaseHttpRequest<T>(
     }
 
     init {
+        //TODO: Add console logging
         retryPolicy = DefaultRetryPolicy(
             60000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
