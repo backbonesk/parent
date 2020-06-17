@@ -20,13 +20,27 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 abstract class BaseHttpRequest<T>(
-    continuation: Continuation<T?>,
-    protected val requestMethod: Int,
-    protected val uri: Uri,
-    protected val body: String,
-    parseSuccessResponse: (JSONObject?) -> T?,
-    errorParser: IExceptionDescriptionProvider
-): JsonRequest<JSONObject>(requestMethod, uri.toString(), body, onSuccess(continuation, parseSuccessResponse), onError(errorParser, continuation)){
+    val continuation: Continuation<T?>,
+    val requestMethod: Int,
+    val schema: String,
+    val serverAddress: String,
+    val apiVersion: String,
+    val endpoint: String,
+    val queryParameters: MutableMap<String, String?>?,
+    val body: String,
+    val parseSuccessResponse: (JSONObject?) -> T?,
+    val errorParser: IExceptionDescriptionProvider
+): JsonRequest<JSONObject>(
+    requestMethod,
+    getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
+    body,
+    onSuccess(continuation, parseSuccessResponse),
+    onError(errorParser, continuation)){
+
+    val uri by lazy {
+        return@lazy getUri(schema, serverAddress, apiVersion, endpoint, queryParameters)
+    }
+
     init {
         retryPolicy = DefaultRetryPolicy(
             60000,
@@ -54,14 +68,14 @@ abstract class BaseHttpRequest<T>(
     }
 
     companion object {
-        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: MutableMap<String, String?>?){
-            val urlBuilder = Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
+        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: MutableMap<String, String?>?): Uri{
+            return Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
                 queryParameters?.let {
                     for (key in it.notNullValuesOnly().keys){
                         this.appendQueryParameter(key, queryParameters[key])
                     }
                 }
-            }
+            }.build()
         }
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
