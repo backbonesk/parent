@@ -28,7 +28,7 @@ abstract class BaseHttpRequest<T>(
     val serverAddress: String,
     val apiVersion: String,
     val endpoint: String,
-    val queryParameters: MutableMap<String, String?>?,
+    val queryParameters: Map<String, String?>?,
     val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> T?,
     val errorParser: IExceptionDescriptionProvider,
@@ -72,7 +72,7 @@ abstract class BaseHttpRequest<T>(
     }
 
     companion object {
-        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: MutableMap<String, String?>?): Uri{
+        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: Map<String, String?>?): Uri{
             return Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
                 queryParameters?.let {
                     for (key in it.notNullValuesOnly().keys){
