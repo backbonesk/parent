@@ -11,7 +11,7 @@ import com.android.volley.toolbox.JsonRequest
 import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.android.shared.repositories.server.client.exceptions.BaseHttpException
-import sk.backbone.android.shared.repositories.server.client.exceptions.IExceptionsErrorParser
+import sk.backbone.android.shared.repositories.server.client.exceptions.IExceptionDescriptionProvider
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
@@ -24,7 +24,7 @@ abstract class BaseHttpRequest<T>(
     uri: Uri,
     body: String,
     parseSuccessResponse: (JSONObject?) -> T?,
-    errorParser: IExceptionsErrorParser
+    errorParser: IExceptionDescriptionProvider
 ): JsonRequest<JSONObject>(requestMethod, uri.toString(), body, onSuccess(continuation, parseSuccessResponse), onError(errorParser, continuation)){
     init {
         retryPolicy = DefaultRetryPolicy(
@@ -61,7 +61,7 @@ abstract class BaseHttpRequest<T>(
             }
         }
 
-        private fun onError(errorParser: IExceptionsErrorParser, continuation: Continuation<*>): Response.ErrorListener{
+        private fun onError(errorParser: IExceptionDescriptionProvider, continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
                 Log.i("HttpResponseBody", BaseHttpException.getResponseBody(it).toString())
                 val exception = BaseHttpException.parseException(it, errorParser)

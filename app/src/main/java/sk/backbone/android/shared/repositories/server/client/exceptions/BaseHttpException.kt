@@ -4,7 +4,7 @@ import android.content.Context
 import com.android.volley.VolleyError
 import java.nio.charset.Charset
 
-abstract class BaseHttpException(private val volleyError: VolleyError, private val errorParser: IExceptionsErrorParser) : Exception(volleyError) {
+abstract class BaseHttpException(private val volleyError: VolleyError, private val errorParser: IExceptionDescriptionProvider) : Exception(volleyError) {
     private val responseBody by lazy {
         return@lazy getResponseBody(volleyError)
     }
@@ -14,7 +14,7 @@ abstract class BaseHttpException(private val volleyError: VolleyError, private v
     }
 
     open fun getDescription(context: Context): String {
-        return errorParser.getResponse(this, responseBody, statusCode)
+        return errorParser.getDescription(context, this, responseBody, statusCode)
     }
 
     companion object {
@@ -22,7 +22,7 @@ abstract class BaseHttpException(private val volleyError: VolleyError, private v
             return volleyError.networkResponse?.data?.let { return@let String(it, Charset.forName("utf-8")) }
         }
 
-        fun parseException(volleyError: VolleyError, parser: IExceptionsErrorParser): Throwable {
+        fun parseException(volleyError: VolleyError, parser: IExceptionDescriptionProvider): Throwable {
             return when(volleyError.networkResponse?.statusCode){
                 401 -> AuthorizationException(volleyError, parser)
                 402 -> PaymentException(volleyError, parser)
