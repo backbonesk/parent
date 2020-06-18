@@ -8,7 +8,6 @@ import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonRequest
-import com.google.gson.ExclusionStrategy
 import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.android.shared.repositories.server.client.exceptions.BaseHttpException
@@ -21,28 +20,15 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-abstract class BaseHttpRequest<T>(
-    val continuation: Continuation<T?>,
-    val requestMethod: Int,
-    val schema: String,
-    val serverAddress: String,
-    val apiVersion: String,
-    val endpoint: String,
-    val queryParameters: Map<String, String?>?,
-    val body: Any?,
-    val parseSuccessResponse: (JSONObject?) -> T?,
-    val errorParser: IExceptionDescriptionProvider,
-    val bodyExclusionStrategy: ExclusionStrategy? = null,
-    val additionalHeaders: Map<String, String?> = mapOf()
-): JsonRequest<JSONObject>(
-    requestMethod,
-    getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
-    body?.toJsonString(bodyExclusionStrategy),
-    onSuccess(continuation, parseSuccessResponse),
-    onError(errorParser, continuation)){
+abstract class BaseHttpRequest<Type>(val requestParameters: RequestParameters<Type>): JsonRequest<JSONObject>(
+    requestParameters.requestMethod,
+    getUri(requestParameters.schema, requestParameters.serverAddress, requestParameters.apiVersion, requestParameters.endpoint, requestParameters.queryParameters).toString(),
+    requestParameters.body?.toJsonString(requestParameters.bodyExclusionStrategy),
+    onSuccess(requestParameters.continuation, requestParameters.parseSuccessResponse),
+    onError(requestParameters.errorParser, requestParameters.continuation)){
 
     val uri by lazy {
-        return@lazy getUri(schema, serverAddress, apiVersion, endpoint, queryParameters)
+        return@lazy getUri(requestParameters.schema, requestParameters.serverAddress, requestParameters.apiVersion, requestParameters.endpoint, requestParameters.queryParameters)
     }
 
     init {
@@ -57,7 +43,7 @@ abstract class BaseHttpRequest<T>(
     override fun getHeaders(): MutableMap<String, String> {
         return mutableMapOf<String, String>().apply {
             putAll(super.getHeaders())
-            putAll(additionalHeaders.notNullValuesOnly())
+            putAll(requestParameters.additionalHeaders.notNullValuesOnly())
         }
     }
 
