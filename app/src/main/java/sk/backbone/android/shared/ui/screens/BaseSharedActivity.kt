@@ -20,7 +20,7 @@ abstract class BaseSharedActivity : AppCompatActivity() {
         overridePendingTransition(0, 0);
     }
 
-    protected fun getExecutorParams(): ExecutorParams? {
+    fun getExecutorParams(): ExecutorParams? {
         return getRootView()?.let {
             ExecutorParams(it, scopes, this)
         }

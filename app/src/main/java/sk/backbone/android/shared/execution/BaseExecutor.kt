@@ -32,7 +32,6 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
 
     abstract val dialogProvider: IExecutorDialogProvider
-    abstract fun getLoadingDialog(): AlertDialog?
 
     fun isExecuting(): Boolean {
         return (!wasSuccessful && ((repeatUntilSuccess && repeatInfinitely) || (repeatUntilSuccess && (currentRepeatIndex < maxRepeats)) || firstRun)) && !isFinished
