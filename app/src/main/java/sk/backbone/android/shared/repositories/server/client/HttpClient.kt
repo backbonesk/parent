@@ -5,7 +5,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
 class HttpClient(private val context: Context) {
-    suspend fun <Type>executeRequest(requestFactory: (Continuation<Type>) -> BaseHttpRequest<Type>): Type? {
+    suspend fun <Type>executeRequest(requestFactory: (Continuation<Type>) -> HttpRequest<Type>): Type? {
         return suspendCoroutine { continuation ->
             ClientRequestQueue.getInstance(context).addToRequestQueue(requestFactory(continuation))
         }

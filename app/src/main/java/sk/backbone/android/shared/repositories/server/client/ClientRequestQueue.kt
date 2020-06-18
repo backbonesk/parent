@@ -9,7 +9,7 @@ class ClientRequestQueue(private val context: Context) {
         Volley.newRequestQueue(context.applicationContext)
     }
 
-    fun addToRequestQueue(request: BaseHttpRequest<*>) {
+    fun addToRequestQueue(request: HttpRequest<*>) {
         requestQueue.add(request)
     }
 
