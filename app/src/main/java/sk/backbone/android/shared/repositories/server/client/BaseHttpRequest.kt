@@ -32,7 +32,8 @@ abstract class BaseHttpRequest<T>(
     val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> T?,
     val errorParser: IExceptionDescriptionProvider,
-    val bodyExclusionStrategy: ExclusionStrategy? = null
+    val bodyExclusionStrategy: ExclusionStrategy? = null,
+    val additionalHeaders: Map<String, String?> = mapOf()
 ): JsonRequest<JSONObject>(
     requestMethod,
     getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
@@ -51,6 +52,12 @@ abstract class BaseHttpRequest<T>(
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
+    }
+
+    override fun getHeaders(): MutableMap<String, String> {
+        val headers = super.getHeaders()
+        headers.putAll(additionalHeaders)
+        return headers
     }
 
     override fun parseNetworkResponse(response: NetworkResponse): Response<JSONObject>? {
