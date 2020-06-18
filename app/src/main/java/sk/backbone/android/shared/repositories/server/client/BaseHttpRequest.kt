@@ -20,12 +20,16 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-abstract class BaseHttpRequest<Type>(val requestParameters: RequestParameters<Type>): JsonRequest<JSONObject>(
+abstract class BaseHttpRequest<Type>(
+    val continuation: Continuation<Type?>,
+    val parseSuccessResponse: (JSONObject?) -> Type?,
+    val requestParameters: RequestParameters<Type>
+) : JsonRequest<JSONObject>(
     requestParameters.requestMethod,
     getUri(requestParameters.schema, requestParameters.serverAddress, requestParameters.apiVersion, requestParameters.endpoint, requestParameters.queryParameters).toString(),
     requestParameters.body?.toJsonString(requestParameters.bodyExclusionStrategy),
-    onSuccess(requestParameters.continuation, requestParameters.parseSuccessResponse),
-    onError(requestParameters.errorParser, requestParameters.continuation)){
+    onSuccess(continuation, parseSuccessResponse),
+    onError(requestParameters.errorParser, continuation)){
 
     val uri by lazy {
         return@lazy getUri(requestParameters.schema, requestParameters.serverAddress, requestParameters.apiVersion, requestParameters.endpoint, requestParameters.queryParameters)
