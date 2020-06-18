@@ -119,7 +119,7 @@ fun TextView?.setTextAndUpdateVisibility(input: CharSequence?){
     this?.text = input
 }
 
-fun ImageView.loadResource(url: String?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
+fun ImageView.loadResource2(url: String?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
     Glide.with(this).clear(this)
     Glide.with(this).load(url).apply(options).apply {
         if (defaultImage != null) {
