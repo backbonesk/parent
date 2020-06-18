@@ -11,17 +11,17 @@ import kotlinx.coroutines.withContext
 import sk.backbone.android.shared.repositories.server.client.exceptions.*
 
 abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
-    protected val rootView: ViewGroup = executorParams.rootView
-    protected val scopes: Scopes = executorParams.scopes
-    protected val context: Context = executorParams.context
+    abstract val logToFirebase: Boolean
+    abstract val dialogProvider: IExecutorDialogProvider
+
+    open var repeatUntilSuccess: Boolean = true
+    open var repeatInfinitely = false
 
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
     var uiOperationOnFailure: (() -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
-    open var repeatUntilSuccess: Boolean = true
-    open var repeatInfinitely = false
     var retryIntervalMillisecond: Long = 5000
     var maxRepeats: Int = 5
     var wasSuccessful = false
@@ -29,9 +29,10 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     var firstRun = true
     var isFinished = false
     var uiNotificationOnError: (() -> Unit)? = null
-    abstract val logToFirebase: Boolean
 
-    abstract val dialogProvider: IExecutorDialogProvider
+    protected val rootView: ViewGroup = executorParams.rootView
+    protected val scopes: Scopes = executorParams.scopes
+    protected val context: Context = executorParams.context
 
     fun isExecuting(): Boolean {
         return (!wasSuccessful && ((repeatUntilSuccess && repeatInfinitely) || (repeatUntilSuccess && (currentRepeatIndex < maxRepeats)) || firstRun)) && !isFinished

@@ -27,12 +27,8 @@ abstract class BaseSharedFragment: Fragment() {
         return inflater.inflate(getFragmentLayout(), container, false)
     }
 
-    fun getExecutorParams(): ExecutorParams? {
-        return getRootView()?.let { rootView ->
-            context?.let { context ->
-                ExecutorParams(rootView, scopes, context)
-            }
-        }
+    fun withExecutorParams(execute: (ExecutorParams) -> Unit) {
+        getRootView()?.let { rootView -> context?.let { context -> ExecutorParams(rootView, scopes, context) } }?.let(execute)
     }
 
     fun getRootView(): ViewGroup? {
