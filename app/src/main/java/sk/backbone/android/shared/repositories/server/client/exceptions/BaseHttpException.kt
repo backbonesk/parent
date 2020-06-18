@@ -2,15 +2,20 @@ package sk.backbone.android.shared.repositories.server.client.exceptions
 
 import android.content.Context
 import com.android.volley.VolleyError
+import sk.backbone.android.shared.utils.jsonToObject
 import java.nio.charset.Charset
 
 abstract class BaseHttpException(private val volleyError: VolleyError, private val errorParser: IExceptionDescriptionProvider) : Exception(volleyError) {
-    private val responseBody by lazy {
+    val responseBody by lazy {
         return@lazy getResponseBody(volleyError)
     }
 
-    private val statusCode by lazy {
+    val statusCode by lazy {
         return@lazy volleyError.networkResponse?.statusCode
+    }
+
+    inline fun <reified Type>getErrors(): Type? {
+        return responseBody?.jsonToObject()
     }
 
     open fun getDescription(context: Context): String {
