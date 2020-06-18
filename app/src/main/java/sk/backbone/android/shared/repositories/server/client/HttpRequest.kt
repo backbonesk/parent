@@ -21,7 +21,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class HttpRequest<Type>(
+open class HttpRequest<Type>(
     val continuation: Continuation<Type?>,
     val requestMethod: Int,
     val schema: String,
