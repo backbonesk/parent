@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import sk.backbone.android.shared.ui.SafeClickListener
+import sk.backbone.android.shared.ui.components.SafeClickListener
 
 
 fun View.setSafeOnClickListener(action: (View) -> Unit) {

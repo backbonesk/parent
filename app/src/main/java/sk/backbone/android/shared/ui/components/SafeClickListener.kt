@@ -1,4 +1,4 @@
-package sk.backbone.android.shared.ui
+package sk.backbone.android.shared.ui.components
 
 import android.os.SystemClock
 import android.view.View
