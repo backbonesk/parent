@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.android.shared.ui.components.SafeClickListener
+import java.math.BigDecimal
 
 
 fun View.setSafeOnClickListener(action: (View) -> Unit) {
@@ -118,7 +119,23 @@ fun TextView?.setTextAndUpdateVisibility(input: CharSequence?){
     this?.text = input
 }
 
-fun ImageView.loadResource(url: String?, options: RequestOptions = RequestOptions().apply{ centerCrop() }, defaultImage: Int){
+fun ImageView.loadResource(url: String?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
     Glide.with(this).clear(this)
-    Glide.with(this).load(url).apply(options).placeholder(defaultImage).fallback(defaultImage).into(this)
+    Glide.with(this).load(url).apply(options).apply {
+        if (defaultImage != null) {
+            placeholder(defaultImage).fallback(defaultImage).into(this@loadResource)
+        }
+        else {
+            into(this@loadResource)
+        }
+    }
+}
+
+fun Int.getResourceStringValue(context: Context) : String{
+    return context.resources.getString(this)
+}
+
+fun BigDecimal.getAsEuros(context: Context): String{
+    val euroSign = "€"
+    return String.format("$this $euroSign")
 }
