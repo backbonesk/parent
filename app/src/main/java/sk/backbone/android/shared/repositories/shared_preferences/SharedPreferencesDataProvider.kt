@@ -1,4 +1,4 @@
-package sk.tyzden.android.repositories.shared_preferences
+package sk.backbone.android.shared.repositories.shared_preferences
 
 import android.content.Context
 import android.content.SharedPreferences
