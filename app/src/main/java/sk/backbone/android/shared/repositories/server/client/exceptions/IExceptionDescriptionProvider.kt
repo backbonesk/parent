@@ -9,31 +9,31 @@ interface IExceptionDescriptionProvider {
     fun parsePaymentException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parseServerException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parseValidationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
-    fun getDefaultErrorMessage(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String
+    fun getDefaultErrorMessage(context: Context, throwable: Throwable): String
 
-    fun getDescription(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String {
-        return when(baseHttpException){
+    fun getDescription(context: Context, throwable: Throwable): String {
+        return when(throwable){
             is AuthorizationException -> {
-                parseAuthorizationException(context, baseHttpException, responseBody, statusCode)
+                parseAuthorizationException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is CommunicationException -> {
-                parseCommunicationException(context, baseHttpException, responseBody, statusCode)
+                parseCommunicationException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ForbiddenException -> {
-                parseForbiddenException(context, baseHttpException, responseBody, statusCode)
+                parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is PaymentException -> {
-                parsePaymentException(context, baseHttpException, responseBody, statusCode)
+                parsePaymentException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ServerException -> {
-                parseServerException(context, baseHttpException, responseBody, statusCode)
+                parseServerException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ValidationException -> {
-                parseValidationException(context, baseHttpException, responseBody, statusCode)
+                parseValidationException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             else -> {
-                getDefaultErrorMessage(context, baseHttpException, responseBody, statusCode)
+                getDefaultErrorMessage(context, throwable)
             }
-        } ?: getDefaultErrorMessage(context, baseHttpException, responseBody, statusCode)
+        } ?: getDefaultErrorMessage(context, throwable)
     }
 }

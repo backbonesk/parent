@@ -101,7 +101,7 @@ open class HttpRequest<Type>(
         private fun onError(errorParser: IExceptionDescriptionProvider, continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
                 Log.i("HttpResponseBody", BaseHttpException.getResponseBody(it).toString())
-                val exception = BaseHttpException.parseException(it, errorParser)
+                val exception = BaseHttpException.parseException(it)
                 continuation.resumeWithException(exception)
             }
         }

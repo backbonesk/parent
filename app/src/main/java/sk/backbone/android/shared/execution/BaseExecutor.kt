@@ -13,6 +13,7 @@ import sk.backbone.android.shared.repositories.server.client.exceptions.*
 abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
     abstract val dialogProvider: IExecutorDialogProvider
+    abstract val exceptionDescriptionProvider: IExceptionDescriptionProvider
 
     open var repeatUntilSuccess: Boolean = true
     open var repeatInfinitely = false
@@ -94,11 +95,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                             handleValidationException(throwable)
                         }
                         else -> {
-                            if(!handleUnknownException(throwable)){
-                                withContext<Unit>(scopes.ui.coroutineContext){
-                                    throw throwable
-                                }
-                            }
+                            handleUnknownException(throwable)
                         }
                     }
 
@@ -122,46 +119,48 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     protected open fun handleAuthorizationException(exception: AuthorizationException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleCommunicationException(exception: CommunicationException){
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleForbiddenException(exception: ForbiddenException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handlePaymentException(exception: PaymentException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleServerException(exception: ServerException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleValidationException(exception: ValidationException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exception.getDescription(context))
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
-    open fun handleUnknownException(throwable: Throwable): Boolean {
+    open fun handleUnknownException(throwable: Throwable) {
         repeatUntilSuccess = false
-        return false
+        uiNotificationOnError = {
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
+        }
     }
 }
