@@ -12,7 +12,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.12"
+        versionName "1.0.13"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,7 +42,9 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation ('com.github.bumptech.glide:glide:4.11.0') {
+        transitive=true
+    }
 
     implementation 'com.android.volley:volley:1.1.1'
 }
