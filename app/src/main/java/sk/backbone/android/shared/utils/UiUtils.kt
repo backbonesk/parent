@@ -123,10 +123,10 @@ fun ImageView.loadResource2(url: String?, defaultImage: Int? = null, options: Re
     Glide.with(this).clear(this)
     Glide.with(this).load(url).apply(options).apply {
         if (defaultImage != null) {
-            placeholder(defaultImage).fallback(defaultImage).into(this@loadResource)
+            placeholder(defaultImage).fallback(defaultImage).into(this@loadResource2)
         }
         else {
-            into(this@loadResource)
+            into(this@loadResource2)
         }
     }
 }
