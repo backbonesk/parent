@@ -55,9 +55,10 @@ abstract class BaseHttpRequest<T>(
     }
 
     override fun getHeaders(): MutableMap<String, String> {
-        val headers = super.getHeaders()
-        headers.putAll(additionalHeaders)
-        return headers
+        return mutableMapOf<String, String>().apply {
+            putAll(super.getHeaders())
+            putAll(additionalHeaders.notNullValuesOnly())
+        }
     }
 
     override fun parseNetworkResponse(response: NetworkResponse): Response<JSONObject>? {
