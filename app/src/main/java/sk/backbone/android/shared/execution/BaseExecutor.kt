@@ -95,7 +95,9 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                         }
                         else -> {
                             if(!handleUnknownException(throwable)){
-                                throw throwable
+                                withContext<Unit>(scopes.ui.coroutineContext){
+                                    throw throwable
+                                }
                             }
                         }
                     }
