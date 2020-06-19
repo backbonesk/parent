@@ -31,7 +31,7 @@ open class HttpRequest<Type>(
     val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> Type?,
     val bodyExclusionStrategy: ExclusionStrategy? = null,
-    val additionalHeaders: Map<String, String?> = mapOf()
+    val additionalHeadersProvider: ((HttpRequest<*>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,
     getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
@@ -55,7 +55,7 @@ open class HttpRequest<Type>(
     override fun getHeaders(): MutableMap<String, String> {
         return mutableMapOf<String, String>().apply {
             putAll(super.getHeaders())
-            putAll(additionalHeaders.notNullValuesOnly())
+            additionalHeadersProvider(this@HttpRequest)?.let { putAll(it) }
         }
     }
 
