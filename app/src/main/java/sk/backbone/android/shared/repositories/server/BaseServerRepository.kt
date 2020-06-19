@@ -1,8 +1,8 @@
 package sk.backbone.android.shared.repositories.server
 
 import android.content.Context
-import sk.backbone.android.shared.repositories.server.client.HttpRequest
 import sk.backbone.android.shared.repositories.server.client.HttpClient
+import sk.backbone.android.shared.repositories.server.client.HttpRequest
 import sk.backbone.android.shared.repositories.server.client.ITokensProvider
 import kotlin.coroutines.Continuation
 
