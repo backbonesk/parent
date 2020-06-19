@@ -12,7 +12,6 @@ import com.google.gson.ExclusionStrategy
 import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.android.shared.repositories.server.client.exceptions.BaseHttpException
-import sk.backbone.android.shared.repositories.server.client.exceptions.IExceptionDescriptionProvider
 import sk.backbone.android.shared.utils.notNullValuesOnly
 import sk.backbone.android.shared.utils.toJsonString
 import java.io.UnsupportedEncodingException
@@ -31,7 +30,6 @@ open class HttpRequest<Type>(
     val queryParameters: Map<String, String?>?,
     val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> Type?,
-    val errorParser: IExceptionDescriptionProvider,
     val bodyExclusionStrategy: ExclusionStrategy? = null,
     val additionalHeaders: Map<String, String?> = mapOf()
 ) : JsonRequest<JSONObject>(
@@ -39,7 +37,7 @@ open class HttpRequest<Type>(
     getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
     body?.toJsonString(bodyExclusionStrategy),
     onSuccess(continuation, parseSuccessResponse),
-    onError(errorParser, continuation)){
+    onError(continuation)){
 
     val uri by lazy {
         return@lazy getUri(schema, serverAddress, apiVersion, endpoint, queryParameters)
@@ -98,7 +96,7 @@ open class HttpRequest<Type>(
             }
         }
 
-        private fun onError(errorParser: IExceptionDescriptionProvider, continuation: Continuation<*>): Response.ErrorListener{
+        private fun onError(continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
                 Log.i("HttpResponseBody", BaseHttpException.getResponseBody(it).toString())
                 val exception = BaseHttpException.parseException(it)

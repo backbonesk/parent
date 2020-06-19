@@ -84,30 +84,6 @@ fun Context.sendActionToOtherApp(message: String, title: String, subject: String
     ContextCompat.startActivity(this, Intent.createChooser(shareIntent, title), null)
 }
 
-fun Bitmap.getCircularBitmap(config: Bitmap.Config = Bitmap.Config.ARGB_8888): Bitmap {
-    // circle configuration
-    val circlePaint = Paint().apply { isAntiAlias = true }
-    val circleRadius = Math.max(width, height) / 2f
-
-    // output bitmap
-    val outputBitmapPaint = Paint(circlePaint).apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) }
-    val outputBounds = Rect(0, 0, width, height)
-    val output = Bitmap.createBitmap(width, height, config)
-
-    return Canvas(output).run {
-        drawCircle(circleRadius, circleRadius, circleRadius, circlePaint)
-        drawBitmap(this@getCircularBitmap, outputBounds, outputBounds, outputBitmapPaint)
-        output
-    }
-}
-
-fun String.startWithDotAndLowerCase(): String {
-    val parts = this.split(" ").toMutableList()
-    parts[0] = parts[0].toLowerCase()
-    val result = parts.joinToString(" ")
-    return ".${result}"
-}
-
 fun TextView?.setTextAndUpdateVisibility(input: CharSequence?){
     if(input.isNullOrEmpty()){
         this?.visibility = GONE
