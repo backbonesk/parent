@@ -9,7 +9,7 @@ import sk.backbone.android.shared.repositories.server.client.ITokensProvider
 import sk.backbone.android.shared.utils.jsonToObject
 import kotlin.coroutines.Continuation
 
-abstract class BaseServerRepository<TokensWrapper>(val context: Context, val tokensProvider: ITokensProvider<TokensWrapper>){
+abstract class BaseServerRepository<TokensWrapperType>(val context: Context, val tokensProvider: ITokensProvider<TokensWrapperType>){
     val client = HttpClient(context)
 
     abstract val additionalHeadersProvider: (HttpRequest<*>) -> Map<String, String>
@@ -22,8 +22,8 @@ abstract class BaseServerRepository<TokensWrapper>(val context: Context, val tok
         }
     }
 
-    protected inline fun <reified HttpResponseWrapper, reified Type>parseResponseFromWrapper(value: JSONObject?): Type? where HttpResponseWrapper : IHttpResponseWrapper<Type> {
-        val response: HttpResponseWrapper? = value?.toString()?.jsonToObject()
+    protected inline fun <reified HttpResponseWrapperType, reified Type>parseResponseFromWrapper(value: JSONObject?): Type? where HttpResponseWrapperType : IHttpResponseWrapper<Type> {
+        val response: HttpResponseWrapperType? = value?.toString()?.jsonToObject()
         return response?.getResult()
     }
 
