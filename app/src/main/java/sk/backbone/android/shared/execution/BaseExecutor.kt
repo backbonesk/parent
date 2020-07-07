@@ -71,15 +71,14 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                 catch (throwable: Throwable) {
                     Log.e("ExecutionFailed", this.javaClass.name, throwable)
 
-                    if(currentRepeatCount == 3){
-                        uiNotificationOnError?.invoke()
-                    }
-
                     if(logToFirebase){
                         FirebaseCrashlytics.getInstance().recordException(throwable)
                     }
 
                     withContext(scopes.ui.coroutineContext){
+                        if(currentRepeatCount == 3){
+                            uiNotificationOnError?.invoke()
+                        }
                         uiOperationOnUnsuccessfulAttempt?.invoke()
                     }
 
