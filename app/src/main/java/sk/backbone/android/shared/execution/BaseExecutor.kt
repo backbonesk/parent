@@ -21,12 +21,13 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
+    var uiOperationOnUnsuccessfulAttempt: (() -> Unit)? = null
     var uiOperationOnFailure: (() -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
     var retryIntervalMillisecond: Long = 5000
     var maxRepeats: Int = 5
     var wasSuccessful = false
-    var currentRepeatIndex = 0
+    var currentRepeatCount = 0
     var firstRun = true
     var isFinished = false
     var uiNotificationOnError: (() -> Unit)? = null
@@ -36,7 +37,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     protected val context: Context = executorParams.context
 
     fun isExecuting(): Boolean {
-        return (!wasSuccessful && ((repeatUntilSuccess && repeatInfinitely) || (repeatUntilSuccess && (currentRepeatIndex < maxRepeats)) || firstRun)) && !isFinished
+        return (!wasSuccessful && ((repeatUntilSuccess && repeatInfinitely) || (repeatUntilSuccess && (currentRepeatCount < maxRepeats)) || firstRun)) && !isFinished
     }
 
     final fun execute() {
@@ -49,7 +50,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
         scopes.default.launch {
             while (isExecuting()) {
                 firstRun = false
-                currentRepeatIndex++
+                currentRepeatCount++
 
                 try {
                     val ioOperationResult = withContext(scopes.io.coroutineContext){
@@ -70,12 +71,16 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                 catch (throwable: Throwable) {
                     Log.e("ExecutionFailed", this.javaClass.name, throwable)
 
+                    if(currentRepeatCount == 3){
+                        uiNotificationOnError?.invoke()
+                    }
+
                     if(logToFirebase){
                         FirebaseCrashlytics.getInstance().recordException(throwable)
                     }
 
                     withContext(scopes.ui.coroutineContext){
-                        uiOperationOnFailure?.invoke()
+                        uiOperationOnUnsuccessfulAttempt?.invoke()
                     }
 
                     when(throwable) {
@@ -108,6 +113,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                 withContext(scopes.ui.coroutineContext){
                     loadingDialog?.dismiss()
                     uiNotificationOnError?.invoke()
+                    uiOperationOnFailure?.invoke()
                     uiOperationOnFinished?.invoke()
                 }
             }
