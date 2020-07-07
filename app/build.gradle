@@ -31,9 +31,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
-    api 'com.google.firebase:firebase-messaging:20.2.0'
+    api 'com.google.firebase:firebase-messaging:20.2.1'
     api 'com.google.firebase:firebase-analytics-ktx:17.4.3'
-    api 'com.google.firebase:firebase-crashlytics:17.0.1'
+    api 'com.google.firebase:firebase-crashlytics:17.1.0'
 
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
