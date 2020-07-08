@@ -1,6 +1,5 @@
 package sk.backbone.android.shared.repositories.server.client.exceptions
 
-import android.content.Context
 import com.android.volley.VolleyError
 import sk.backbone.android.shared.utils.jsonToObject
 import java.nio.charset.Charset
@@ -25,9 +24,11 @@ abstract class BaseHttpException(private val volleyError: VolleyError) : Excepti
 
         fun parseException(volleyError: VolleyError): Throwable {
             return when(volleyError.networkResponse?.statusCode){
+                400 -> BadRequestException(volleyError)
                 401 -> AuthorizationException(volleyError)
                 402 -> PaymentException(volleyError)
                 403 -> ForbiddenException(volleyError)
+                409 -> ConflictException(volleyError)
                 422 -> ValidationException(volleyError)
                 500 -> ServerException(volleyError)
                 else -> CommunicationException(volleyError)

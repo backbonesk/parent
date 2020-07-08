@@ -19,6 +19,7 @@ import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.math.log
 
 open class HttpRequest<Type>(
     val continuation: Continuation<Type?>,
@@ -44,7 +45,8 @@ open class HttpRequest<Type>(
     }
 
     init {
-        //TODO: Add console logging
+        Log.i(LOGS_TAG, "Request Url: $uri")
+        Log.i(LOGS_TAG, "Request body:\n${body.toJsonString(bodyExclusionStrategy)}")
         retryPolicy = DefaultRetryPolicy(
             60000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -78,6 +80,8 @@ open class HttpRequest<Type>(
     }
 
     companion object {
+        private const val LOGS_TAG = "SharedHttpRequest"
+
         private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: Map<String, String?>?): Uri{
             return Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
                 queryParameters?.let {
@@ -90,7 +94,7 @@ open class HttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
             return Response.Listener {
-                Log.i("HttpResponseBody", it.toString())
+                Log.i(LOGS_TAG, it.toString())
                 val response = parseSuccessResponse(it)
                 continuation.resume(response)
             }
@@ -98,7 +102,9 @@ open class HttpRequest<Type>(
 
         private fun onError(continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
-                Log.i("HttpResponseBody", BaseHttpException.getResponseBody(it).toString())
+                Log.e(LOGS_TAG, "Status:${it.networkResponse?.statusCode}")
+                Log.e(LOGS_TAG, "Response body:\n${BaseHttpException.getResponseBody(it).toString()}")
+                Log.e(LOGS_TAG, "Exception was thrown", it)
                 val exception = BaseHttpException.parseException(it)
                 continuation.resumeWithException(exception)
             }

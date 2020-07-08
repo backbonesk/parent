@@ -86,17 +86,23 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                         is AuthorizationException -> {
                             handleAuthorizationException(throwable)
                         }
-                        is CommunicationException -> {
-                            handleCommunicationException(throwable)
+                        is PaymentException -> {
+                            handlePaymentException(throwable)
                         }
                         is ForbiddenException -> {
                             handleForbiddenException(throwable)
                         }
-                        is ServerException -> {
-                            handleServerException(throwable)
+                        is ConflictException -> {
+                            handleConflictException(throwable)
                         }
                         is ValidationException -> {
                             handleValidationException(throwable)
+                        }
+                        is ServerException -> {
+                            handleServerException(throwable)
+                        }
+                        is CommunicationException -> {
+                            handleCommunicationException(throwable)
                         }
                         else -> {
                             handleUnknownException(throwable)
@@ -128,7 +134,8 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
         }
     }
 
-    protected open fun handleCommunicationException(exception: CommunicationException){
+    protected open fun handlePaymentException(exception: PaymentException){
+        repeatUntilSuccess = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
@@ -141,14 +148,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
         }
     }
 
-    protected open fun handlePaymentException(exception: PaymentException){
-        repeatUntilSuccess = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleServerException(exception: ServerException){
+    private fun handleConflictException(exception: ConflictException) {
         repeatUntilSuccess = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
@@ -156,6 +156,19 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     }
 
     protected open fun handleValidationException(exception: ValidationException){
+        repeatUntilSuccess = false
+        uiNotificationOnError = {
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
+        }
+    }
+
+    protected open fun handleCommunicationException(exception: CommunicationException){
+        uiNotificationOnError = {
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
+        }
+    }
+
+    protected open fun handleServerException(exception: ServerException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
