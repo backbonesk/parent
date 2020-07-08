@@ -45,6 +45,7 @@ open class HttpRequest<Type>(
     }
 
     init {
+        Log.i(LOGS_TAG, "Request Method: $method")
         Log.i(LOGS_TAG, "Request Url: $uri")
         Log.i(LOGS_TAG, "Request body:\n${body.toJsonString(bodyExclusionStrategy)}")
         retryPolicy = DefaultRetryPolicy(
