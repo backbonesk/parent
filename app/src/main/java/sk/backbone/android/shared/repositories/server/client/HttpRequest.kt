@@ -103,7 +103,7 @@ open class HttpRequest<Type>(
         private fun onError(continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
                 Log.e(LOGS_TAG, "Status:${it.networkResponse?.statusCode}")
-                Log.e(LOGS_TAG, "Response body:\n${BaseHttpException.getResponseBody(it).toString()}")
+                Log.e(LOGS_TAG, "Response body:${BaseHttpException.getResponseBody(it).toString()}")
                 Log.e(LOGS_TAG, "Exception was thrown", it)
                 val exception = BaseHttpException.parseException(it)
                 continuation.resumeWithException(exception)
