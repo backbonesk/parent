@@ -11,7 +11,7 @@ fun Any?.toJsonString(exclusionStrategy: ExclusionStrategy? = null): String {
         builder.setExclusionStrategies(exclusionStrategy)
     }
 
-    return builder.setDateFormat(iso8061Format).create().toJson(this)
+    return builder.serializeNulls().setDateFormat(iso8061Format).create().toJson(this)
 }
 
 inline fun <reified T>String.jsonToObject(exclusionStrategy: ExclusionStrategy? = null) : T {
@@ -21,5 +21,5 @@ inline fun <reified T>String.jsonToObject(exclusionStrategy: ExclusionStrategy? 
         builder.setExclusionStrategies(exclusionStrategy)
     }
 
-    return builder.setDateFormat(iso8061Format).create().fromJson(this, object: TypeToken<T>() {}.type)
+    return builder.serializeNulls().setDateFormat(iso8061Format).create().fromJson(this, object: TypeToken<T>() {}.type)
 }
