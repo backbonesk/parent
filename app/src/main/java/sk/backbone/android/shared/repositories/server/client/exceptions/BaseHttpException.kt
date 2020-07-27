@@ -28,6 +28,7 @@ abstract class BaseHttpException(private val volleyError: VolleyError) : Excepti
                 401 -> AuthorizationException(volleyError)
                 402 -> PaymentException(volleyError)
                 403 -> ForbiddenException(volleyError)
+                404 -> NotFoundException(volleyError)
                 409 -> ConflictException(volleyError)
                 422 -> ValidationException(volleyError)
                 500 -> ServerException(volleyError)

@@ -7,6 +7,7 @@ interface IExceptionDescriptionProvider {
     fun parseAuthorizationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parsePaymentException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parseForbiddenException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
+    fun parseNotFoundException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parseConflictException(context: Context, throwable: ConflictException, responseBody: String?, statusCode: Int?): String?
     fun parseValidationException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
     fun parseServerException(context: Context, baseHttpException: BaseHttpException, responseBody: String?, statusCode: Int?): String?
@@ -25,6 +26,9 @@ interface IExceptionDescriptionProvider {
                 parsePaymentException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ForbiddenException -> {
+                parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
+            }
+            is NotFoundException -> {
                 parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ConflictException -> {

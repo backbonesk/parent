@@ -14,6 +14,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
     abstract val dialogProvider: IExecutorDialogProvider
     abstract val exceptionDescriptionProvider: IExceptionDescriptionProvider
+    private var uiNotificationOnError: (() -> Unit)? = null
 
     open var repeatUntilSuccess: Boolean = true
     open var repeatInfinitely = false
@@ -30,7 +31,6 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     var currentRepeatCount = 0
     var firstRun = true
     var isFinished = false
-    var uiNotificationOnError: (() -> Unit)? = null
 
     protected val rootView: ViewGroup = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
@@ -75,13 +75,6 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                         FirebaseCrashlytics.getInstance().recordException(throwable)
                     }
 
-                    withContext(scopes.ui.coroutineContext){
-                        if(currentRepeatCount == 3){
-                            uiNotificationOnError?.invoke()
-                        }
-                        uiOperationOnUnsuccessfulAttempt?.invoke()
-                    }
-
                     when(throwable) {
                         is AuthorizationException -> {
                             handleAuthorizationException(throwable)
@@ -91,6 +84,9 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                         }
                         is ForbiddenException -> {
                             handleForbiddenException(throwable)
+                        }
+                        is NotFoundException -> {
+                            handleNotFoundException(throwable)
                         }
                         is ConflictException -> {
                             handleConflictException(throwable)
@@ -109,6 +105,13 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                         }
                     }
 
+                    withContext(scopes.ui.coroutineContext){
+                        if(currentRepeatCount == 1){
+                            uiNotificationOnError?.invoke()
+                        }
+                        uiOperationOnUnsuccessfulAttempt?.invoke()
+                    }
+
                     if(repeatUntilSuccess) {
                         delay(retryIntervalMillisecond)
                     }
@@ -117,7 +120,6 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
             if(!wasSuccessful){
                 withContext(scopes.ui.coroutineContext){
                     loadingDialog?.dismiss()
-                    uiNotificationOnError?.invoke()
                     uiOperationOnFailure?.invoke()
                     uiOperationOnFinished?.invoke()
                 }
@@ -142,6 +144,13 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     }
 
     protected open fun handleForbiddenException(exception: ForbiddenException){
+        repeatUntilSuccess = false
+        uiNotificationOnError = {
+            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
+        }
+    }
+
+    protected open fun handleNotFoundException(exception: NotFoundException){
         repeatUntilSuccess = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
