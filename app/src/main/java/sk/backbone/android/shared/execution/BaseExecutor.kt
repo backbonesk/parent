@@ -19,6 +19,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
     open var repeatUntilSuccess: Boolean = true
     open var repeatInfinitely = false
 
+    var notifyUi = true
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
@@ -106,7 +107,7 @@ abstract class BaseExecutor<T>(executorParams: ExecutorParams) {
                     }
 
                     withContext(scopes.ui.coroutineContext){
-                        if(currentRepeatCount == 1){
+                        if(currentRepeatCount == 1 && notifyUi){
                             uiNotificationOnError?.invoke()
                         }
                         uiOperationOnUnsuccessfulAttempt?.invoke()
