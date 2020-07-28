@@ -7,6 +7,8 @@ import sk.backbone.android.shared.execution.ExecutorParams
 import sk.backbone.android.shared.execution.Scopes
 
 abstract class BaseSharedActivity : AppCompatActivity() {
+    abstract fun getActivityLayoutId(): Int?
+
     val scopes = Scopes()
 
     override fun onDestroy() {
