@@ -4,7 +4,7 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 
 interface IToolbarActivity {
-    abstract fun setupToolbar(activity: BaseSharedActivity)
+    abstract fun setupToolbar()
     abstract fun getToolbarLayoutId(): Int
     abstract fun getToolbarViewId(): Int
 
@@ -15,7 +15,7 @@ interface IToolbarActivity {
                 getRootView()?.addView(toolbar, 0)
             }
 
-            setupToolbar(activity)
+            setupToolbar()
         }
     }
 }
