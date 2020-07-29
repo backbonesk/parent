@@ -16,6 +16,10 @@ abstract class BaseSharedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         getActivityLayoutId()?.let { setContentView(it) }
+
+        if(this is IToolbarActivity){
+            createToolbar(this)
+        }
     }
 
     override fun onDestroy() {
@@ -26,7 +30,7 @@ abstract class BaseSharedActivity : AppCompatActivity() {
     override fun recreate() {
         this.finish()
         this.startActivity(intent)
-        overridePendingTransition(0, 0);
+        overridePendingTransition(0, 0)
     }
 
     fun withExecutorParams(execute: (ExecutorParams) -> Unit){
