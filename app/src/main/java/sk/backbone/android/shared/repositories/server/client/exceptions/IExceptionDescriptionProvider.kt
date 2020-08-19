@@ -29,7 +29,7 @@ interface IExceptionDescriptionProvider {
                 parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is NotFoundException -> {
-                parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
+                parseNotFoundException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is ConflictException -> {
                 parseConflictException(context, throwable, throwable.responseBody, throwable.statusCode)
