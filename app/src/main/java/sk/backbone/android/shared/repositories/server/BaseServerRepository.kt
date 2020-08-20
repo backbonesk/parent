@@ -3,10 +3,7 @@ package sk.backbone.android.shared.repositories.server
 import android.content.Context
 import com.android.volley.Request
 import org.json.JSONObject
-import sk.backbone.android.shared.repositories.server.client.HttpClient
-import sk.backbone.android.shared.repositories.server.client.JsonHttpRequest
-import sk.backbone.android.shared.repositories.server.client.IHttpResponseWrapper
-import sk.backbone.android.shared.repositories.server.client.ITokensProvider
+import sk.backbone.android.shared.repositories.server.client.*
 import sk.backbone.android.shared.utils.jsonToObject
 import kotlin.coroutines.Continuation
 
@@ -17,7 +14,7 @@ abstract class BaseServerRepository<TokensWrapperType>(val context: Context, val
 
     fun getTokens() = tokensProvider.getLocalTokens()
 
-    suspend inline fun <reified Type>executeRequest(crossinline requestFactoryMethod: (Continuation<Type?>) -> Request<Type?>): Type? {
+    suspend inline fun <reified Type>executeRequest(crossinline requestFactoryMethod: (Continuation<Type?>) -> Request<*>): Type? {
         return client.executeRequest {
             requestFactoryMethod(it)
         }
