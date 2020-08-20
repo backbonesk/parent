@@ -1,6 +1,7 @@
 package sk.backbone.android.shared.repositories.server.client
 
 import android.content.Context
+import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 
@@ -9,7 +10,7 @@ class ClientRequestQueue(private val context: Context) {
         Volley.newRequestQueue(context.applicationContext)
     }
 
-    fun addToRequestQueue(request: HttpRequest<*>) {
+    fun addToRequestQueue(request: Request<*>) {
         requestQueue.add(request)
     }
 
