@@ -59,7 +59,7 @@ open class UrlHttpRequest<Type>(
 
     override fun getParams(): MutableMap<String, String> {
         val params = mutableMapOf<String, String>()
-        params.putAll(super.getParams())
+        super.getParams()?.let { params.putAll(it) }
         data?.notNullValuesOnly()?.let { params.putAll(it) }
         return params
     }
