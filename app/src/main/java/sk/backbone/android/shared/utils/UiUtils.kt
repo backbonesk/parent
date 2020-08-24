@@ -115,3 +115,23 @@ fun BigDecimal.getAsEuros(context: Context): String{
     val euroSign = "€"
     return String.format("$this $euroSign")
 }
+
+fun <T>ViewGroup.getViewsByType(tClass: Class<T>): ArrayList<T> {
+    val result: ArrayList<T> = ArrayList()
+
+    val childCount = childCount
+
+    for (index in 0 until childCount) {
+        val child = getChildAt(index)
+
+        if (child is ViewGroup) {
+            result.addAll(child.getViewsByType(tClass))
+        }
+
+        if (tClass.isInstance(child)) {
+            val instance = tClass.cast(child)
+            instance?.let { result.add(it) }
+        }
+    }
+    return result
+}
