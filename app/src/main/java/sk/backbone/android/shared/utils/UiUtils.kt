@@ -111,7 +111,7 @@ fun Int.getResourceStringValue(context: Context) : String{
     return context.resources.getString(this)
 }
 
-fun BigDecimal.getAsEuros(context: Context): String{
+fun BigDecimal.getAsEuros(): String{
     val euroSign = "€"
     return String.format("$this $euroSign")
 }
