@@ -5,5 +5,6 @@ enum class ValidationError() {
     CAN_NOT_BE_EMPTY,
     MUST_BE_NUMERIC,
     MUST_BE_GREATER_THAN_ONE,
-    MUST_BE_CHECKED
+    MUST_BE_CHECKED,
+    INVALID_EMAIL_FORMAT
 }
