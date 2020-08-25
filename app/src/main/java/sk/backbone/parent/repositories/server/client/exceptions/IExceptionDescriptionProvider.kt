@@ -12,7 +12,7 @@ interface IExceptionDescriptionProvider {
     fun parseValidationException(context: Context, exception: ValidationException, responseBody: String?, statusCode: Int?): String?
     fun parseServerException(context: Context, exception: ServerException, responseBody: String?, statusCode: Int?): String?
     fun parseCommunicationException(context: Context, exception: CommunicationException, responseBody: String?, statusCode: Int?): String?
-    fun getDefaultErrorMessage(context: Context, exception: Throwable): String
+    fun getDefaultErrorMessage(context: Context, throwable: Throwable): String
 
     fun getDescription(context: Context, throwable: Throwable): String {
         return when(throwable){
