@@ -3,21 +3,21 @@ package sk.backbone.parent.repositories.server.client.exceptions
 import android.content.Context
 
 interface IExceptionDescriptionProvider {
-    fun parseBadRequestException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseAuthorizationException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parsePaymentException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseForbiddenException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseNotFoundException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseConflictException(context: Context, throwable: ConflictException, responseBody: String?, statusCode: Int?): String?
-    fun parseValidationException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseServerException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun parseCommunicationException(context: Context, parentHttpException: ParentHttpException, responseBody: String?, statusCode: Int?): String?
-    fun getDefaultErrorMessage(context: Context, throwable: Throwable): String
+    fun parseBadRequestException(context: Context, exception: BadRequestException, responseBody: String?, statusCode: Int?): String?
+    fun parseAuthorizationException(context: Context, exception: AuthorizationException, responseBody: String?, statusCode: Int?): String?
+    fun parsePaymentException(context: Context, exception: PaymentException, responseBody: String?, statusCode: Int?): String?
+    fun parseForbiddenException(context: Context, exception: ForbiddenException, responseBody: String?, statusCode: Int?): String?
+    fun parseNotFoundException(context: Context, exception: NotFoundException, responseBody: String?, statusCode: Int?): String?
+    fun parseConflictException(context: Context, exception: ConflictException, responseBody: String?, statusCode: Int?): String?
+    fun parseValidationException(context: Context, exception: ValidationException, responseBody: String?, statusCode: Int?): String?
+    fun parseServerException(context: Context, exception: ServerException, responseBody: String?, statusCode: Int?): String?
+    fun parseCommunicationException(context: Context, exception: CommunicationException, responseBody: String?, statusCode: Int?): String?
+    fun getDefaultErrorMessage(context: Context, exception: Throwable): String
 
     fun getDescription(context: Context, throwable: Throwable): String {
         return when(throwable){
             is BadRequestException -> {
-                parseAuthorizationException(context, throwable, throwable.responseBody, throwable.statusCode)
+                parseBadRequestException(context, throwable, throwable.responseBody, throwable.statusCode)
             }
             is AuthorizationException -> {
                 parseAuthorizationException(context, throwable, throwable.responseBody, throwable.statusCode)
