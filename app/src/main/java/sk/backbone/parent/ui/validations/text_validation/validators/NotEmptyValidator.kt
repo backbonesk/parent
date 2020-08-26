@@ -8,7 +8,7 @@ class NotEmptyValidator : IValidator<String> {
         val messagesList = mutableListOf<ValidationError>()
 
         if(value.isNullOrEmpty()){
-            messagesList.add(ValidationError.CAN_NOT_BE_EMPTY)
+            messagesList.add(ValidationError.EMPTY)
         }
 
         return messagesList

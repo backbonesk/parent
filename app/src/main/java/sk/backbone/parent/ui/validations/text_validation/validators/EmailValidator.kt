@@ -8,7 +8,7 @@ class EmailValidator : IValidator<String> {
     override fun validate(value: String?): List<ValidationError>? {
 
         return if(value.isNullOrEmpty()){
-            listOf(ValidationError.CAN_NOT_BE_EMPTY)
+            listOf(ValidationError.EMPTY)
         }
         else {
             val matches = Patterns.EMAIL_ADDRESS.matcher(value).matches()

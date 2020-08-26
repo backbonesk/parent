@@ -16,13 +16,13 @@ class CurrencyValidator : IValidator<String> {
         val isNumber = regex.matches(value.toString())
 
         if(!isNumber){
-            errors.add(ValidationError.MUST_BE_NUMERIC)
+            errors.add(ValidationError.NOT_NUMERIC)
         }
         else {
             val numericValue = BigDecimal(value)
 
             if(numericValue < BigDecimal.ONE){
-                errors.add(ValidationError.MUST_BE_GREATER_THAN_ONE)
+                errors.add(ValidationError.LESS_THAN_ONE)
             }
         }
 

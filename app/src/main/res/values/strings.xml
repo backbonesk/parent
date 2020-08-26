@@ -1,0 +1,8 @@
+<resources>
+    <string name="validation_error_field_empty">This field is required</string>
+    <string name="validation_less_than_one">Enter value equal or greater 1.00€</string>
+    <string name="validation_not_numeric">Entered value must be numeric</string>
+    <string name="validation_passwords_do_not_match">Passwords do not match</string>
+    <string name="validation_not_checked">This must be checked</string>
+    <string name="validation_invalid_email_format">Invalid email format</string>
+</resources>

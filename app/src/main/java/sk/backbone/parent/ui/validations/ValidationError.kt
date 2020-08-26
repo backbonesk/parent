@@ -1,10 +1,33 @@
 package sk.backbone.parent.ui.validations
 
+import android.content.Context
+import sk.backbone.parent.R
 
-enum class ValidationError() {
-    CAN_NOT_BE_EMPTY,
-    MUST_BE_NUMERIC,
-    MUST_BE_GREATER_THAN_ONE,
-    MUST_BE_CHECKED,
-    INVALID_EMAIL_FORMAT
+
+enum class ValidationError(): IValidationError {
+    EMPTY {
+        override fun getDescription(context: Context): String {
+            return context.getString(R.string.validation_error_field_empty)
+        }
+    },
+    NOT_NUMERIC {
+        override fun getDescription(context: Context): String {
+            return context.getString(R.string.validation_not_numeric)
+        }
+    },
+    LESS_THAN_ONE {
+        override fun getDescription(context: Context): String {
+            return context.getString(R.string.validation_less_than_one)
+        }
+    },
+    NOT_CHECKED {
+        override fun getDescription(context: Context): String {
+            return context.getString(R.string.validation_not_checked)
+        }
+    },
+    INVALID_EMAIL_FORMAT {
+        override fun getDescription(context: Context): String {
+            return context.getString(R.string.validation_invalid_email_format)
+        }
+    }
 }
