@@ -1,9 +1,9 @@
 package sk.backbone.parent.ui.validations
 
 class CheckBoxValidator: IValidator<Boolean> {
-    override fun validate(value: Boolean?): List<ValidationError>? {
+    override fun validate(value: Boolean?): List<ValidationErrors>? {
         return when(value){
-            false -> listOf(ValidationError.NOT_CHECKED)
+            false -> listOf(ValidationErrors.NOT_CHECKED)
             else -> null
         }
     }

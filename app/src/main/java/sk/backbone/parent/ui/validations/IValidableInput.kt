@@ -3,7 +3,7 @@ package sk.backbone.parent.ui.validations
 import android.content.Context
 
 interface IValidableInput<ValueType> {
-    fun onInvalid(errors: List<ValidationError>)
+    fun onInvalid(errors: List<IValidationError>)
     fun onValid()
     fun getValidator() : IValidator<ValueType>?
     fun getInputValue() : ValueType?

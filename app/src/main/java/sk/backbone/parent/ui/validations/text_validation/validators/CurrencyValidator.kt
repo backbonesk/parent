@@ -1,13 +1,13 @@
 package sk.backbone.parent.ui.validations.text_validation.validators
 
 import sk.backbone.parent.ui.validations.IValidator
-import sk.backbone.parent.ui.validations.ValidationError
+import sk.backbone.parent.ui.validations.ValidationErrors
 import java.math.BigDecimal
 
 class CurrencyValidator : IValidator<String> {
-    override fun validate(value: String?): List<ValidationError>? {
+    override fun validate(value: String?): List<ValidationErrors>? {
 
-        val errors = mutableListOf<ValidationError>()
+        val errors = mutableListOf<ValidationErrors>()
 
         NotEmptyValidator().validate(value)?.let { errors.addAll(it) }
 
@@ -16,13 +16,13 @@ class CurrencyValidator : IValidator<String> {
         val isNumber = regex.matches(value.toString())
 
         if(!isNumber){
-            errors.add(ValidationError.NOT_NUMERIC)
+            errors.add(ValidationErrors.NOT_NUMERIC)
         }
         else {
             val numericValue = BigDecimal(value)
 
             if(numericValue < BigDecimal.ONE){
-                errors.add(ValidationError.LESS_THAN_ONE)
+                errors.add(ValidationErrors.LESS_THAN_ONE)
             }
         }
 
