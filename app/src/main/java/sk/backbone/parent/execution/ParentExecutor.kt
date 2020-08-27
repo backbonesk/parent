@@ -23,8 +23,8 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
-    var uiOperationOnUnsuccessfulAttempt: ((Throwable?) -> Unit)? = null
-    var uiOperationOnFailure: ((Throwable?) -> Unit)? = null
+    var uiOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
+    var uiOperationOnFailure: ((Throwable) -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
     var retryIntervalMillisecond: Long = 5000
     var maxRepeats: Int = 5
@@ -124,7 +124,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
             if(!wasSuccessful){
                 withContext(scopes.ui.coroutineContext){
                     loadingDialog?.dismiss()
-                    uiOperationOnFailure?.invoke(lastError)
+                    lastError?.let { uiOperationOnFailure?.invoke(it) }
                     uiOperationOnFinished?.invoke()
                 }
             }
