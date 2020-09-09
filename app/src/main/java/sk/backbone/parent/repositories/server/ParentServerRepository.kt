@@ -2,13 +2,21 @@ package sk.backbone.parent.repositories.server
 
 import android.content.Context
 import com.android.volley.Request
+import com.android.volley.toolbox.BaseHttpStack
 import org.json.JSONObject
-import sk.backbone.parent.repositories.server.client.*
+import sk.backbone.parent.repositories.server.client.HttpClient
+import sk.backbone.parent.repositories.server.client.IHttpResponseWrapper
+import sk.backbone.parent.repositories.server.client.ITokensProvider
+import sk.backbone.parent.repositories.server.client.JsonHttpRequest
 import sk.backbone.parent.utils.jsonToObject
 import kotlin.coroutines.Continuation
 
 abstract class ParentServerRepository<TokensWrapperType>(val context: Context, val tokensProvider: ITokensProvider<TokensWrapperType>){
-    val client = HttpClient(context)
+    val client get() = HttpClient(context, getBaseHttpStack())
+
+    open fun getBaseHttpStack(): BaseHttpStack? {
+        return null
+    }
 
     abstract val additionalHeadersProvider: (JsonHttpRequest<*>) -> Map<String, String>
 

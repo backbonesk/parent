@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest
 import org.json.JSONException
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
+import sk.backbone.parent.utils.getUri
 import sk.backbone.parent.utils.notNullValuesOnly
 import sk.backbone.parent.utils.toJsonString
 import java.io.UnsupportedEncodingException
@@ -91,16 +92,6 @@ open class UrlHttpRequest<Type>(
 
     companion object {
         private const val LOGS_TAG = "UriHttpRequest"
-
-        private fun getUri(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: Map<String, String?>?): Uri{
-            return Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).apply {
-                queryParameters?.let {
-                    for (key in it.notNullValuesOnly().keys){
-                        this.appendQueryParameter(key, queryParameters[key])
-                    }
-                }
-            }.build()
-        }
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (String?) -> T?): Response.Listener<String?>{
             return Response.Listener {
