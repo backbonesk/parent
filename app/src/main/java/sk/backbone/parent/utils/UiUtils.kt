@@ -2,7 +2,7 @@ package sk.backbone.parent.utils
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Rect
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +15,6 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener

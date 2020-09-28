@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,10 +15,12 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
     abstract val dialogProvider: IExecutorDialogProvider
     abstract val exceptionDescriptionProvider: IExceptionDescriptionProvider
-    private var uiNotificationOnError: (() -> Unit)? = null
 
-    open var repeatUntilSuccess: Boolean = true
-    open var repeatInfinitely = false
+    private var uiNotificationOnError: (() -> Unit)? = null
+    private var recentJob: Job? = null
+
+    open var retryUsingRetriesLimit = true
+    open var retryInfinitely = false
 
     var notifyUiOnError = true
     var showProgressDialog: Boolean = false
@@ -27,7 +30,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var uiOperationOnFailure: ((Throwable) -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
     var retryIntervalMillisecond: Long = 5000
-    var maxRepeats: Int = 5
+    var maxRetries: Int = 5
     var wasSuccessful = false
     var currentRepeatCount = 0
     var firstRun = true
@@ -39,7 +42,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     protected val context: Context = executorParams.context
 
     fun isExecuting(): Boolean {
-        return (!wasSuccessful && ((repeatUntilSuccess && repeatInfinitely) || (repeatUntilSuccess && (currentRepeatCount < maxRepeats)) || firstRun)) && !isFinished
+        return (!wasSuccessful && ((retryUsingRetriesLimit && retryInfinitely) || (retryUsingRetriesLimit && (currentRepeatCount < maxRetries)) || firstRun)) && !isFinished
     }
 
     final fun execute() {
@@ -49,7 +52,9 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
             loadingDialog = dialogProvider.showLoadingDialog(context)
         }
 
-        scopes.default.launch {
+        cancel()
+
+        recentJob = scopes.default.launch {
             while (isExecuting()) {
                 firstRun = false
                 currentRepeatCount++
@@ -65,7 +70,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         uiOperationOnFinished?.invoke()
                     }
 
-                    repeatUntilSuccess = false
+                    retryUsingRetriesLimit = false
                     wasSuccessful = true
 
                     return@launch
@@ -116,7 +121,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         uiOperationOnUnsuccessfulAttempt?.invoke(throwable)
                     }
 
-                    if(repeatUntilSuccess) {
+                    if(retryUsingRetriesLimit) {
                         delay(retryIntervalMillisecond)
                     }
                 }
@@ -133,43 +138,47 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         }
     }
 
+    fun cancel(){
+        recentJob?.cancel()
+    }
+
     protected open fun handleAuthorizationException(exception: AuthorizationException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handlePaymentException(exception: PaymentException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleForbiddenException(exception: ForbiddenException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleNotFoundException(exception: NotFoundException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     private fun handleConflictException(exception: ConflictException) {
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleValidationException(exception: ValidationException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
@@ -182,14 +191,14 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     protected open fun handleServerException(exception: ServerException){
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     open fun handleUnknownException(throwable: Throwable) {
-        repeatUntilSuccess = false
+        retryUsingRetriesLimit = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
         }
