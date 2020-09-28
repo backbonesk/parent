@@ -3,6 +3,7 @@ package sk.backbone.parent.utils
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -14,6 +15,7 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener
@@ -162,4 +164,15 @@ fun validateInputs(inputs: List<IValidableInput<*>>): Boolean {
     }
 
     return areInputsValid
+}
+
+fun Context.openInBrowser(link: String, onErrorAction: (() -> Unit)? = null){
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+    val packageManager = packageManager
+    if (browserIntent.resolveActivity(packageManager) != null) {
+        startActivity(browserIntent)
+    }
+    else {
+        onErrorAction?.invoke()
+    }
 }
