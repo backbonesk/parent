@@ -166,7 +166,7 @@ fun validateInputs(inputs: List<IValidableInput<*>>): Boolean {
     return areInputsValid
 }
 
-fun Context.openInBrowser(link: String, onErrorAction: (() -> Unit)? = null){
+fun Context.openInBrowser(link: String, onErrorAction: (() -> Unit)?){
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
     val packageManager = packageManager
     if (browserIntent.resolveActivity(packageManager) != null) {
