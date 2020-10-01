@@ -19,7 +19,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     private var uiNotificationOnError: (() -> Unit)? = null
     private var recentJob: Job? = null
 
-    open var retryUsingRetriesLimit = true
+    open var retryEnabled = true
     open var retryInfinitely = false
 
     var notifyUiOnError = true
@@ -42,7 +42,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     protected val context: Context = executorParams.context
 
     fun isExecuting(): Boolean {
-        return (!wasSuccessful && ((retryUsingRetriesLimit && retryInfinitely) || (retryUsingRetriesLimit && (currentRepeatCount < maxRetries)) || firstRun)) && !isFinished
+        return (!wasSuccessful && ((retryEnabled && retryInfinitely) || (retryEnabled && (currentRepeatCount < maxRetries)) || firstRun)) && !isFinished
     }
 
     final fun execute() {
@@ -70,7 +70,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         uiOperationOnFinished?.invoke()
                     }
 
-                    retryUsingRetriesLimit = false
+                    retryEnabled = false
                     wasSuccessful = true
 
                     return@launch
@@ -121,7 +121,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         uiOperationOnUnsuccessfulAttempt?.invoke(throwable)
                     }
 
-                    if(retryUsingRetriesLimit) {
+                    if(retryEnabled) {
                         delay(retryIntervalMillisecond)
                     }
                 }
@@ -143,42 +143,42 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     protected open fun handleAuthorizationException(exception: AuthorizationException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handlePaymentException(exception: PaymentException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleForbiddenException(exception: ForbiddenException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleNotFoundException(exception: NotFoundException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     private fun handleConflictException(exception: ConflictException) {
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     protected open fun handleValidationException(exception: ValidationException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
@@ -191,14 +191,14 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     protected open fun handleServerException(exception: ServerException){
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
         }
     }
 
     open fun handleUnknownException(throwable: Throwable) {
-        retryUsingRetriesLimit = false
+        retryEnabled = false
         uiNotificationOnError = {
             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
         }
