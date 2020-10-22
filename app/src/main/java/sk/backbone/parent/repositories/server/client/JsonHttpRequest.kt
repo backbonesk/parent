@@ -65,7 +65,7 @@ open class JsonHttpRequest<Type>(
         return try {
             val jsonString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(PROTOCOL_CHARSET))))
 
-            if (jsonString.isEmpty() && response.statusCode == 204) {
+            if (jsonString.isEmpty()) {
                 return Response.success(null, HttpHeaderParser.parseCacheHeaders(response))
             }
 
