@@ -65,7 +65,13 @@ fun toSlovakDate(value: String): Date? {
 
 fun fromUtcString(value: String?): Date? {
     return value?.let { SimpleDateFormat(iso8061Format, Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("Europe/Bratislava")
+        timeZone = TimeZone.getTimeZone("UTC")
+    }.parse(it) }
+}
+
+fun fromUtcStringDateOnly(value: String?): Date? {
+    return value?.let { SimpleDateFormat(iso8061DateOnlyFormat, Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
     }.parse(it) }
 }
 
