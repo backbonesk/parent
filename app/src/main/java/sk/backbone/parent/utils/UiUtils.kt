@@ -14,10 +14,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener
+import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.validations.IValidableInput
 import java.math.BigDecimal
 
@@ -174,4 +176,16 @@ fun Context.openInBrowser(link: String, onErrorAction: (() -> Unit)?){
     else {
         onErrorAction?.invoke()
     }
+}
+
+inline fun <reified T> AppCompatActivity.returnNewOrReturnExisting(defaultFragment: T): T {
+    var result: T = defaultFragment
+    for (existingFragment in supportFragmentManager.fragments){
+        if(existingFragment is T){
+            result = existingFragment
+            break
+        }
+    }
+
+    return result
 }
