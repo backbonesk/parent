@@ -1,6 +1,7 @@
 package sk.backbone.parent.ui.screens
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -11,14 +12,14 @@ import sk.backbone.parent.execution.Scopes
 abstract class ParentActivity : AppCompatActivity() {
     val scopes = Scopes()
 
-    abstract fun getRootContentViewBinding(): ViewBinding?
+    protected abstract val rootViewBindingFactory: (LayoutInflater) -> ViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        getRootContentViewBinding()?.root?.let {
-            setupViewBindings(it)
-            setContentView(it)
+        rootViewBindingFactory(layoutInflater).apply {
+            referenceViewBindings(root)
+            setContentView(root)
         }
 
         if(this is IToolbarActivity){
@@ -37,7 +38,7 @@ abstract class ParentActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
     }
 
-    open fun setupViewBindings(rootView: View){
+    open fun referenceViewBindings(rootView: View){
 
     }
 

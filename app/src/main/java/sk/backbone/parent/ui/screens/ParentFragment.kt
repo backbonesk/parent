@@ -23,15 +23,15 @@ abstract class ParentFragment: Fragment() {
 
     abstract var identifier: String?
 
-    abstract fun getRootContentViewBinding(inflater: LayoutInflater, parent: ViewGroup?, attachToParent: Boolean): ViewBinding?
+    protected abstract val rootViewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> ViewBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return getRootContentViewBinding(inflater, container, false)?.apply {
-            setupViewBindings(root)
-        }?.root
+        return rootViewBindingFactory(inflater, container, false).apply {
+            referenceViewBindings(root)
+        }.root
     }
 
-    open fun setupViewBindings(rootView: View){
+    open fun referenceViewBindings(rootView: View){
 
     }
 
