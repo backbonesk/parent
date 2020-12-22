@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.ExecutorParams
 
 abstract class ParentFragment: Fragment() {
@@ -21,10 +22,17 @@ abstract class ParentFragment: Fragment() {
     }
 
     abstract var identifier: String?
-    abstract fun getFragmentLayout(): Int
+
+    abstract fun getRootContentViewBinding(inflater: LayoutInflater, parent: ViewGroup?, attachToParent: Boolean): ViewBinding?
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(getFragmentLayout(), container, false)
+        return getRootContentViewBinding(inflater, container, false)?.apply {
+            setupViewBindings(root)
+        }?.root
+    }
+
+    open fun setupViewBindings(rootView: View){
+
     }
 
     fun withExecutorParams(execute: (ExecutorParams) -> Unit) {

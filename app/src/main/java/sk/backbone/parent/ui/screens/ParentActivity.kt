@@ -9,16 +9,15 @@ import sk.backbone.parent.execution.ExecutorParams
 import sk.backbone.parent.execution.Scopes
 
 abstract class ParentActivity : AppCompatActivity() {
-    abstract fun getRootContentView(): ViewBinding?
-    abstract fun setupBindings(rootView: View)
-
     val scopes = Scopes()
+
+    abstract fun getRootContentViewBinding(): ViewBinding?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        getRootContentView()?.root?.let {
-            setupBindings(it)
+        getRootContentViewBinding()?.root?.let {
+            setupViewBindings(it)
             setContentView(it)
         }
 
@@ -36,6 +35,10 @@ abstract class ParentActivity : AppCompatActivity() {
         this.finish()
         this.startActivity(intent)
         overridePendingTransition(0, 0)
+    }
+
+    open fun setupViewBindings(rootView: View){
+
     }
 
     fun withExecutorParams(execute: (ExecutorParams) -> Unit){
