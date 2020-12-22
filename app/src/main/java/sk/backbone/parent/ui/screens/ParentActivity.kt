@@ -4,21 +4,23 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.ExecutorParams
 import sk.backbone.parent.execution.Scopes
-import sk.backbone.parent.ui.validations.IValidableInput
-import sk.backbone.parent.utils.getViewsByType
-import sk.backbone.parent.utils.scrollToFirstView
 
 abstract class ParentActivity : AppCompatActivity() {
-    abstract fun getActivityLayoutId(): Int?
+    abstract fun getRootContentView(): ViewBinding?
+    abstract fun setupBindings(rootView: View)
 
     val scopes = Scopes()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        getActivityLayoutId()?.let { setContentView(it) }
+        getRootContentView()?.root?.let {
+            setupBindings(it)
+            setContentView(it)
+        }
 
         if(this is IToolbarActivity){
             createToolbar(this)
