@@ -7,39 +7,39 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.ExecutorParams
+import sk.backbone.parent.execution.ParentExecutor
+import sk.backbone.parent.execution.Scopes
 
-abstract class ParentFragment: Fragment() {
-    val scopes by lazy {
-        (this.activity as ParentActivity).scopes
-    }
-
-    val uiScope by lazy {
-        (this.activity as ParentActivity).scopes.ui
-    }
-
-    val ioScope by lazy {
-        (this.activity as ParentActivity).scopes.io
-    }
+abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment() {
+    val scopes = Scopes()
 
     abstract var identifier: String?
 
-    protected abstract val rootViewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> ViewBinding
+    private var _viewBinding: TViewBinding? = null
+    val viewBinding: TViewBinding get() = _viewBinding!!
+    abstract val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return rootViewBindingFactory(inflater, container, false).apply {
-            referenceViewBindings(root)
-        }.root
+        _viewBinding = viewBindingFactory(inflater, container, false)
+        return viewBinding.root
     }
 
-    open fun referenceViewBindings(rootView: View){
+    override fun onDestroyView() {
+        scopes.cancelJobs()
+        _viewBinding = null
 
+        super.onDestroyView()
     }
 
     fun withExecutorParams(execute: (ExecutorParams) -> Unit) {
-        getRootView()?.let { rootView -> context?.let { context -> ExecutorParams(rootView, scopes, context) } }?.let(execute)
+        context?.let { context -> ExecutorParams(getRootView(), scopes, context) }?.let(execute)
     }
 
-    fun getRootView(): ViewGroup? {
-        return this.view as ViewGroup
+    fun withExecutorParamsExecute(executorFactoryMethod: (ExecutorParams) -> ParentExecutor<*>) {
+        context?.let { context -> ExecutorParams(getRootView(), scopes, context) }?.let(executorFactoryMethod)?.execute()
+    }
+
+    fun getRootView(): ViewGroup {
+        return this.requireView() as ViewGroup
     }
 }
