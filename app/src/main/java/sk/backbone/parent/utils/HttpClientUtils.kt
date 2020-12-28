@@ -11,16 +11,20 @@ fun NetworkResponse.getContentTypeCharset(default: String = "utf-8"): String {
     split("=")?.getOrNull(1)?.toLowerCase() ?: default
 }
 
-fun List<Pair<String, String?>>?.asString(): String? {
+fun List<Pair<String, String?>>?.asEncodedQueryParameters(): String? {
     return this?.joinToString("&") { parameter ->
         "${parameter.first}=${URLEncoder.encode(parameter.second, "utf-8")}"
     }
 }
 
 fun getUrl(schema: String, serverAddress: String, apiVersion: String, endpoint: String, queryParameters: List<Pair<String, String?>>?): String {
-    return Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).build().toString().apply {
+    var url = Uri.Builder().scheme(schema).encodedAuthority(serverAddress).appendEncodedPath(apiVersion).appendEncodedPath(endpoint).build().toString()
 
+    queryParameters.asEncodedQueryParameters()?.let {
+       url = "$url?$it"
     }
+
+    return url
 }
 
 
