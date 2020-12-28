@@ -1,6 +1,5 @@
 package sk.backbone.parent.repositories.server.client
 
-import android.net.Uri
 import android.util.Log
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.NetworkResponse
@@ -11,7 +10,7 @@ import com.android.volley.toolbox.StringRequest
 import org.json.JSONException
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
-import sk.backbone.parent.utils.getUri
+import sk.backbone.parent.utils.getUrl
 import sk.backbone.parent.utils.notNullValuesOnly
 import sk.backbone.parent.utils.toJsonString
 import java.io.UnsupportedEncodingException
@@ -32,17 +31,13 @@ open class UrlHttpRequest<Type>(
     val additionalHeadersProvider: ((UrlHttpRequest<*>) -> Map<String, String>?)
 ) : StringRequest(
     requestMethod,
-    getUri(schema, serverAddress, apiVersion, endpoint, null).toString(),
+    getUrl(schema, serverAddress, apiVersion, endpoint, null),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)){
 
-    val uri by lazy {
-        return@lazy getUri(schema, serverAddress, apiVersion, endpoint, null)
-    }
-
     init {
         Log.i(LOGS_TAG, "Request Method: $method")
-        Log.i(LOGS_TAG, "Request Url: $uri")
+        Log.i(LOGS_TAG, "Request Url: $url")
         Log.i(LOGS_TAG, "Request Data:\n${data.toJsonString()}")
         retryPolicy = DefaultRetryPolicy(
             60000,

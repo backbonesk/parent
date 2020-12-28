@@ -12,9 +12,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
-import sk.backbone.parent.utils.getUri
+import sk.backbone.parent.utils.getUrl
 import sk.backbone.parent.utils.toJsonString
 import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -27,25 +28,27 @@ open class JsonHttpRequest<Type>(
     val serverAddress: String,
     val apiVersion: String,
     val endpoint: String,
-    val queryParameters: Map<String, String?>?,
+    val queryParameters: List<Pair<String, String?>>?,
     val body: Any?,
     val parseSuccessResponse: (JSONObject?) -> Type?,
     val bodyExclusionStrategy: ExclusionStrategy? = null,
     val additionalHeadersProvider: ((JsonHttpRequest<*>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,
-    getUri(schema, serverAddress, apiVersion, endpoint, queryParameters).toString(),
+    getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters),
     body?.toJsonString(bodyExclusionStrategy),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)){
 
-    val uri by lazy {
-        return@lazy getUri(schema, serverAddress, apiVersion, endpoint, queryParameters)
+    val requestQueryParametersEncoded: String? by lazy {
+        queryParameters?.joinToString("&") { parameter ->
+            "${parameter.first}=${URLEncoder.encode(parameter.second, "utf-8")}"
+        }
     }
 
     init {
         Log.i(LOGS_TAG, "Request Method: $method")
-        Log.i(LOGS_TAG, "Request Url: $uri")
+        Log.i(LOGS_TAG, "Request Url: $url")
         Log.i(LOGS_TAG, "Request body:\n${body.toJsonString(bodyExclusionStrategy)}")
         retryPolicy = DefaultRetryPolicy(
             60000,
