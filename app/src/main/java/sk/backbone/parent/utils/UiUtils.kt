@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener
 import sk.backbone.parent.ui.screens.ParentActivity
@@ -100,6 +101,10 @@ fun TextView?.setTextAndUpdateVisibility(input: CharSequence?){
 }
 
 fun ImageView.loadResource(url: String?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
+    loadResource(url?.let { GlideUrl(it) }, defaultImage, options)
+}
+
+fun ImageView.loadResource(url: GlideUrl?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
     Glide.with(this).clear(this)
     Glide.with(this).load(url).apply(options).apply {
         if (defaultImage != null) {
