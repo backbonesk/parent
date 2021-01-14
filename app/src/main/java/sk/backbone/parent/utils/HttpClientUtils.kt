@@ -12,7 +12,7 @@ fun NetworkResponse.getContentTypeCharset(default: String = "utf-8"): String {
 }
 
 fun List<Pair<String, String?>>?.asEncodedQueryParameters(): String? {
-    return this?.joinToString("&") { parameter ->
+    return this?.filter { pair -> pair.second != null }?.joinToString("&") { parameter ->
         "${parameter.first}=${URLEncoder.encode(parameter.second, "utf-8")}"
     }
 }
