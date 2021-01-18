@@ -61,12 +61,17 @@ open class JsonHttpRequest<Type>(
         return mutableMapOf<String, String>().apply {
             putAll(super.getHeaders())
             additionalHeadersProvider(this@JsonHttpRequest)?.let { putAll(it) }
+        }.also {
+            Log.i(LOGS_TAG, it.toString())
         }
     }
 
     override fun parseNetworkResponse(response: NetworkResponse): Response<JSONObject>? {
         return try {
             val jsonString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(PROTOCOL_CHARSET))))
+
+            Log.e(LOGS_TAG, "Status:${response.statusCode}")
+            Log.e(LOGS_TAG, "Response body:${jsonString}")
 
             if (jsonString.isEmpty()) {
                 return Response.success(null, HttpHeaderParser.parseCacheHeaders(response))
@@ -87,7 +92,6 @@ open class JsonHttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
             return Response.Listener {
-                Log.i(LOGS_TAG, it.toString())
                 val response = parseSuccessResponse(it)
                 continuation.resume(response)
             }

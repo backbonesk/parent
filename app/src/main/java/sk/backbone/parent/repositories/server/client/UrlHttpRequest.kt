@@ -50,6 +50,8 @@ open class UrlHttpRequest<Type>(
         return mutableMapOf<String, String>().apply {
             putAll(super.getHeaders())
             additionalHeadersProvider(this@UrlHttpRequest)?.let { putAll(it) }
+        }.also {
+            Log.i(LOGS_TAG, it.toString())
         }
     }
 
@@ -62,14 +64,10 @@ open class UrlHttpRequest<Type>(
 
     override fun parseNetworkResponse(response: NetworkResponse): Response<String>? {
         return try {
-            val responseString =
-                String(
-                    response.data,
-                    Charset.forName(HttpHeaderParser.parseCharset(
-                        response.headers,
-                        response.getContentTypeCharset(paramsEncoding))
-                    )
-                )
+            val responseString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(paramsEncoding))))
+
+            Log.e(LOGS_TAG, "Status:${response.statusCode}")
+            Log.e(LOGS_TAG, "Response body:${responseString}")
 
             if (responseString.isEmpty() && response.statusCode == 204) {
                 return Response.success(null, HttpHeaderParser.parseCacheHeaders(response))
@@ -90,7 +88,6 @@ open class UrlHttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (String?) -> T?): Response.Listener<String?>{
             return Response.Listener {
-                Log.i(LOGS_TAG, it.toString())
                 val response = parseSuccessResponse(it)
                 continuation.resume(response)
             }
