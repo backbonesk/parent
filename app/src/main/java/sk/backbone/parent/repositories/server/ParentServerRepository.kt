@@ -3,11 +3,12 @@ package sk.backbone.parent.repositories.server
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.toolbox.BaseHttpStack
+import org.json.JSONArray
 import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.HttpClient
 import sk.backbone.parent.repositories.server.client.IHttpResponseWrapper
 import sk.backbone.parent.repositories.server.client.ITokensProvider
-import sk.backbone.parent.repositories.server.client.JsonHttpRequest
+import sk.backbone.parent.repositories.server.client.requests.JsonObjectHttpRequest
 import sk.backbone.parent.utils.jsonToObject
 import kotlin.coroutines.Continuation
 
@@ -18,7 +19,7 @@ abstract class ParentServerRepository<TokensWrapperType>(val context: Context, v
         return null
     }
 
-    abstract val additionalHeadersProvider: (JsonHttpRequest<*>) -> Map<String, String>
+    abstract val additionalHeadersProvider: (JsonObjectHttpRequest<*>) -> Map<String, String>
 
     fun getTokens() = tokensProvider.getLocalTokens()
 
@@ -34,6 +35,15 @@ abstract class ParentServerRepository<TokensWrapperType>(val context: Context, v
     }
 
     protected inline fun <reified Type>parseResponse(value: JSONObject?): Type? {
+        return value?.toString()?.jsonToObject()
+    }
+
+    protected inline fun <reified HttpResponseWrapperType, reified Type>parseResponseFromWrapper(value: JSONArray?): Type? where HttpResponseWrapperType : IHttpResponseWrapper<Type> {
+        val response: HttpResponseWrapperType? = value?.toString()?.jsonToObject()
+        return response?.getResult()
+    }
+
+    protected inline fun <reified Type>parseResponse(value: JSONArray?): Type? {
         return value?.toString()?.jsonToObject()
     }
 

@@ -1,4 +1,4 @@
-package sk.backbone.parent.repositories.server.client
+package sk.backbone.parent.repositories.server.client.requests
 
 import android.util.Log
 import com.android.volley.DefaultRetryPolicy
@@ -6,50 +6,40 @@ import com.android.volley.NetworkResponse
 import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
-import com.android.volley.toolbox.JsonRequest
-import com.google.gson.ExclusionStrategy
+import com.android.volley.toolbox.StringRequest
 import org.json.JSONException
-import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
 import sk.backbone.parent.utils.getUrl
+import sk.backbone.parent.utils.notNullValuesOnly
 import sk.backbone.parent.utils.toJsonString
 import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-open class JsonHttpRequest<Type>(
+open class UrlHttpRequest<Type>(
     val continuation: Continuation<Type?>,
     val requestMethod: Int,
     val schema: String,
     val serverAddress: String,
     val apiVersion: String,
     val endpoint: String,
-    val queryParameters: List<Pair<String, String?>>?,
-    val body: Any?,
-    val parseSuccessResponse: (JSONObject?) -> Type?,
-    val bodyExclusionStrategy: ExclusionStrategy? = null,
-    val additionalHeadersProvider: ((JsonHttpRequest<*>) -> Map<String, String>?)
-) : JsonRequest<JSONObject>(
+    val data: Map<String, String?>?,
+    val parseSuccessResponse: (String?) -> Type?,
+    val additionalHeadersProvider: ((UrlHttpRequest<*>) -> Map<String, String>?)
+) : StringRequest(
     requestMethod,
-    getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters),
-    body?.toJsonString(bodyExclusionStrategy),
+    getUrl(schema, serverAddress, apiVersion, endpoint, null),
     onSuccess(continuation, parseSuccessResponse),
-    onError(continuation)){
-
-    val requestQueryParametersEncoded: String? by lazy {
-        queryParameters?.joinToString("&") { parameter ->
-            "${parameter.first}=${URLEncoder.encode(parameter.second, "utf-8")}"
-        }
-    }
+    onError(continuation)
+){
 
     init {
         Log.i(LOGS_TAG, "Request Method: $method")
         Log.i(LOGS_TAG, "Request Url: $url")
-        Log.i(LOGS_TAG, "Request body:\n${body.toJsonString(bodyExclusionStrategy)}")
+        Log.i(LOGS_TAG, "Request Data:\n${data.toJsonString()}")
         retryPolicy = DefaultRetryPolicy(
             60000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -60,24 +50,31 @@ open class JsonHttpRequest<Type>(
     override fun getHeaders(): MutableMap<String, String> {
         return mutableMapOf<String, String>().apply {
             putAll(super.getHeaders())
-            additionalHeadersProvider(this@JsonHttpRequest)?.let { putAll(it) }
+            additionalHeadersProvider(this@UrlHttpRequest)?.let { putAll(it) }
         }.also {
             Log.i(LOGS_TAG, it.toString())
         }
     }
 
-    override fun parseNetworkResponse(response: NetworkResponse): Response<JSONObject>? {
+    override fun getParams(): MutableMap<String, String> {
+        val params = mutableMapOf<String, String>()
+        super.getParams()?.let { params.putAll(it) }
+        data?.notNullValuesOnly()?.let { params.putAll(it) }
+        return params
+    }
+
+    override fun parseNetworkResponse(response: NetworkResponse): Response<String>? {
         return try {
-            val jsonString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(PROTOCOL_CHARSET))))
+            val responseString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(paramsEncoding))))
 
             Log.e(LOGS_TAG, "Status:${response.statusCode}")
-            Log.e(LOGS_TAG, "Response body:${jsonString}")
+            Log.e(LOGS_TAG, "Response body:${responseString}")
 
-            if (jsonString.isEmpty()) {
+            if (responseString.isEmpty() && response.statusCode == 204) {
                 return Response.success(null, HttpHeaderParser.parseCacheHeaders(response))
             }
 
-            Response.success(JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response))
+            Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response))
         }
         catch (e: UnsupportedEncodingException) {
             Response.error(ParseError(e))
@@ -88,9 +85,9 @@ open class JsonHttpRequest<Type>(
     }
 
     companion object {
-        private const val LOGS_TAG = "JsonHttpRequest"
+        private const val LOGS_TAG = "UriHttpRequest"
 
-        private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
+        private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (String?) -> T?): Response.Listener<String?>{
             return Response.Listener {
                 val response = parseSuccessResponse(it)
                 continuation.resume(response)
