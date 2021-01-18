@@ -7,6 +7,7 @@ import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.StringRequest
+import com.google.gson.ExclusionStrategy
 import org.json.JSONException
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
@@ -20,26 +21,26 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 open class UrlHttpRequest<Type>(
-    val continuation: Continuation<Type?>,
-    val requestMethod: Int,
-    val schema: String,
-    val serverAddress: String,
-    val apiVersion: String,
-    val endpoint: String,
-    val data: Map<String, String?>?,
-    val parseSuccessResponse: (String?) -> Type?,
-    val additionalHeadersProvider: ((UrlHttpRequest<*>) -> Map<String, String>?)
+    override val continuation: Continuation<Type?>,
+    override val requestMethod: Int,
+    override val schema: String,
+    override val serverAddress: String,
+    override val apiVersion: String,
+    override val endpoint: String,
+    override val formData: Map<String, String?>?,
+    override val parseSuccessResponse: (String?) -> Type?,
+    override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
 ) : StringRequest(
     requestMethod,
     getUrl(schema, serverAddress, apiVersion, endpoint, null),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)
-){
+), IRequest<Type, String>{
 
     init {
         Log.i(LOGS_TAG, "Request Method: $method")
         Log.i(LOGS_TAG, "Request Url: $url")
-        Log.i(LOGS_TAG, "Request Data:\n${data.toJsonString()}")
+        Log.i(LOGS_TAG, "Request Data:\n${formData.toJsonString()}")
         retryPolicy = DefaultRetryPolicy(
             60000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -59,7 +60,7 @@ open class UrlHttpRequest<Type>(
     override fun getParams(): MutableMap<String, String> {
         val params = mutableMapOf<String, String>()
         super.getParams()?.let { params.putAll(it) }
-        data?.notNullValuesOnly()?.let { params.putAll(it) }
+        formData?.notNullValuesOnly()?.let { params.putAll(it) }
         return params
     }
 

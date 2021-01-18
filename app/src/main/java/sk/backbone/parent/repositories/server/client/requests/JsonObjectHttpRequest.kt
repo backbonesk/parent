@@ -22,24 +22,24 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 open class JsonObjectHttpRequest<Type>(
-    val continuation: Continuation<Type?>,
-    val requestMethod: Int,
-    val schema: String,
-    val serverAddress: String,
-    val apiVersion: String,
-    val endpoint: String,
-    val queryParameters: List<Pair<String, String?>>?,
-    val body: Any?,
-    val parseSuccessResponse: (JSONObject?) -> Type?,
-    val bodyExclusionStrategy: ExclusionStrategy? = null,
-    val additionalHeadersProvider: ((JsonObjectHttpRequest<*>) -> Map<String, String>?)
+    override val continuation: Continuation<Type?>,
+    override val requestMethod: Int,
+    override val schema: String,
+    override val serverAddress: String,
+    override val apiVersion: String,
+    override val endpoint: String,
+    override val queryParameters: List<Pair<String, String?>>?,
+    override val body: Any?,
+    override val parseSuccessResponse: (JSONObject?) -> Type?,
+    override val bodyExclusionStrategy: ExclusionStrategy? = null,
+    override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,
     getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters),
     body?.toJsonString(bodyExclusionStrategy),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)
-){
+),  IRequest<Type, JSONObject>{
 
     val requestQueryParametersEncoded: String? by lazy {
         queryParameters?.joinToString("&") { parameter ->
