@@ -25,12 +25,18 @@ fun getDateWithLastMonthDay() = Calendar.getInstance().apply {
     this.set(Calendar.MILLISECOND, getActualMaximum(Calendar.MILLISECOND))
 }.time
 
-fun getStartOfCurrentDay() = Calendar.getInstance().apply {
+fun getStartOfCurrentDay(): Date = Calendar.getInstance().apply {
     this.set(Calendar.HOUR_OF_DAY, 0)
     this.set(Calendar.MINUTE, 0)
     this.set(Calendar.SECOND, 0)
     this.set(Calendar.MILLISECOND, 0)
 }.time
+
+fun Date.getEndOfDay(): Date {
+    return Calendar.getInstance().also {
+        it.time.time = getStartOfCurrentDay().getTomorrow().time - 1
+    }.time
+}
 
 fun Date.getTomorrow(): Date {
     return Calendar.getInstance().also {
