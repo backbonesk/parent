@@ -43,14 +43,14 @@ fun Date.getStartOfDay(): Date {
 }
 
 fun Date.getEndOfDay(): Date {
-    return Calendar.getInstance().also {
-        it.time.time = getStartOfDay().getTomorrow().time - 1
+    return Calendar.getInstance().also { calendar ->
+        calendar.time = Date().apply { time = this@getEndOfDay.getStartOfDay().getTomorrow().time - 1 }
     }.time
 }
 
 fun Date.getTomorrow(): Date {
     return Calendar.getInstance().apply {
-        time.time = this@getTomorrow.time + (3600 * 60 * 24)
+        time = Date().apply { time = this@getTomorrow.time + (3600 * 24 * 1000) }
     }.time
 }
 
