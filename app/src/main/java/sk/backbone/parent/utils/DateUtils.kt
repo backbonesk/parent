@@ -32,9 +32,19 @@ fun getStartOfCurrentDay(): Date = Calendar.getInstance().apply {
     this.set(Calendar.MILLISECOND, 0)
 }.time
 
+fun Date.getStartOfDay(): Date {
+    return Calendar.getInstance().also {
+        it.time = this
+        it.set(Calendar.HOUR_OF_DAY, 0)
+        it.set(Calendar.MINUTE, 0)
+        it.set(Calendar.SECOND, 0)
+        it.set(Calendar.MILLISECOND, 0)
+    }.time
+}
+
 fun Date.getEndOfDay(): Date {
     return Calendar.getInstance().also {
-        it.time.time = getStartOfCurrentDay().getTomorrow().time - 1
+        it.time.time = getStartOfDay().getTomorrow().time - 1
     }.time
 }
 
