@@ -3,6 +3,7 @@ package sk.backbone.parent.utils
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 const val iso8061Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8061DateOnlyFormat = "yyyy-MM-dd"
@@ -51,6 +52,12 @@ fun isDifferentDay(date1: Date, date2: Date): Boolean {
     val cal2 = Calendar.getInstance().also { it.time = date2 }
 
     return cal1.get(Calendar.DAY_OF_YEAR) != cal2.get(Calendar.DAY_OF_YEAR) || cal1.get(Calendar.YEAR) != cal2.get(Calendar.YEAR)
+}
+
+fun Date.getDaysBetween(dest: Date): Int {
+    val diff = abs(this.time - dest.time)
+    val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
+    return dayCount.toInt()
 }
 
 fun isSameDay(date1: Date, date2: Date): Boolean {
