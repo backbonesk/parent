@@ -50,7 +50,7 @@ fun Date.getEndOfDay(): Date {
 
 fun Date.getTomorrow(): Date {
     return Calendar.getInstance().also {
-        it.time = getStartOfCurrentDay()
+        it.time = this
         it.set(Calendar.DAY_OF_YEAR, it.get(Calendar.DAY_OF_YEAR) + 1)
     }.time
 }
