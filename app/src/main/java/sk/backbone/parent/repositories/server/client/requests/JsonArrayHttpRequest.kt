@@ -8,10 +8,8 @@ import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonRequest
 import com.google.gson.ExclusionStrategy
-import com.google.gson.JsonArray
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
 import sk.backbone.parent.utils.getUrl
@@ -31,9 +29,9 @@ open class JsonArrayHttpRequest<Type>(
     override val apiVersion: String,
     override val endpoint: String,
     override val queryParameters: List<Pair<String, String?>>?,
-    override val body: Any?,
+    final override val body: Any?,
     override val parseSuccessResponse: (JSONArray?) -> Type?,
-    override val bodyExclusionStrategy: ExclusionStrategy? = null,
+    final override val bodyExclusionStrategy: ExclusionStrategy? = null,
     override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONArray>(
     requestMethod,

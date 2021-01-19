@@ -29,9 +29,9 @@ open class JsonObjectHttpRequest<Type>(
     override val apiVersion: String,
     override val endpoint: String,
     override val queryParameters: List<Pair<String, String?>>?,
-    override val body: Any?,
+    final override val body: Any?,
     override val parseSuccessResponse: (JSONObject?) -> Type?,
-    override val bodyExclusionStrategy: ExclusionStrategy? = null,
+    final override val bodyExclusionStrategy: ExclusionStrategy? = null,
     override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,

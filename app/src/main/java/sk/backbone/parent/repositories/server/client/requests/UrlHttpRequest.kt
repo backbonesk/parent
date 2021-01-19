@@ -7,7 +7,6 @@ import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.StringRequest
-import com.google.gson.ExclusionStrategy
 import org.json.JSONException
 import sk.backbone.parent.repositories.server.client.exceptions.ParentHttpException
 import sk.backbone.parent.utils.getContentTypeCharset
@@ -27,7 +26,7 @@ open class UrlHttpRequest<Type>(
     override val serverAddress: String,
     override val apiVersion: String,
     override val endpoint: String,
-    override val formData: Map<String, String?>?,
+    final override val formData: Map<String, String?>?,
     override val parseSuccessResponse: (String?) -> Type?,
     override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
 ) : StringRequest(
