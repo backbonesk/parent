@@ -9,7 +9,7 @@ const val iso8061Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8061DateOnlyFormat = "yyyy-MM-dd"
 const val iso8061FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmXXX"
 
-fun getDateWithFirstMonthDay() = Calendar.getInstance().apply {
+fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
     this.set(Calendar.HOUR_OF_DAY, getActualMinimum(Calendar.HOUR_OF_DAY))
     this.set(Calendar.MINUTE, getActualMinimum(Calendar.MINUTE))
@@ -17,7 +17,7 @@ fun getDateWithFirstMonthDay() = Calendar.getInstance().apply {
     this.set(Calendar.MILLISECOND, getActualMinimum(Calendar.MILLISECOND))
 }.time
 
-fun getDateWithLastMonthDay() = Calendar.getInstance().apply {
+fun getDateWithLastMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
     this.set(Calendar.HOUR_OF_DAY, getActualMaximum(Calendar.HOUR_OF_DAY))
     this.set(Calendar.MINUTE, getActualMaximum(Calendar.MINUTE))
@@ -25,16 +25,22 @@ fun getDateWithLastMonthDay() = Calendar.getInstance().apply {
     this.set(Calendar.MILLISECOND, getActualMaximum(Calendar.MILLISECOND))
 }.time
 
-fun getStartOfCurrentDay(): Date = Calendar.getInstance().apply {
+fun getStartOfCurrentDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.HOUR_OF_DAY, 0)
     this.set(Calendar.MINUTE, 0)
     this.set(Calendar.SECOND, 0)
     this.set(Calendar.MILLISECOND, 0)
 }.time
 
-fun Date.getStartOfDay(): Date {
-    return Calendar.getInstance().also {
-        it.time = this
+fun Date.getStartOfDay(timezone: TimeZone = TimeZone.getDefault()): Date {
+    val current = Calendar.getInstance().apply {
+        time = this@getStartOfDay
+    }
+
+    return Calendar.getInstance(timezone).also {
+        it.set(Calendar.YEAR, current.get(Calendar.YEAR))
+        it.set(Calendar.MONTH, current.get(Calendar.MONTH))
+        it.set(Calendar.DAY_OF_YEAR, current.get(Calendar.DAY_OF_YEAR))
         it.set(Calendar.HOUR_OF_DAY, 0)
         it.set(Calendar.MINUTE, 0)
         it.set(Calendar.SECOND, 0)
@@ -42,9 +48,13 @@ fun Date.getStartOfDay(): Date {
     }.time
 }
 
-fun Date.getEndOfDay(): Date {
-    return Calendar.getInstance().also { calendar ->
-        calendar.time = Date().apply { time = this@getEndOfDay.getStartOfDay().getTomorrow().time - 1 }
+fun Date.getEndOfDay(timezone: TimeZone = TimeZone.getDefault()): Date {
+    return getStartOfDay(timezone).getEndOfDayFromStartOfDay(timezone)
+}
+
+fun Date.getEndOfDayFromStartOfDay(timezone: TimeZone = TimeZone.getDefault()): Date {
+    return Calendar.getInstance(timezone).also { calendar ->
+        calendar.time = Date().apply { time = this@getEndOfDayFromStartOfDay.getTomorrow().time - 1 }
     }.time
 }
 
