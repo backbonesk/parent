@@ -71,7 +71,7 @@ fun isDifferentDay(date1: Date, date2: Date): Boolean {
 
 fun Date.getDaysBetween(dest: Date): Int {
     val diff = abs(this.time - dest.time)
-    val dayCount = diff.toFloat() / (24 * 60 * 60 * 1000)
+    val dayCount = diff.toDouble() / (24 * 60 * 60 * 1000)
     return dayCount.toInt()
 }
 
