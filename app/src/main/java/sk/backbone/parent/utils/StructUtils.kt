@@ -34,7 +34,7 @@ fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     return result
 }
 
-fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): String? {
+fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): String {
     val byteArrayOutputStream = ByteArrayOutputStream()
     compress(compressFormat, quality, byteArrayOutputStream)
     val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
