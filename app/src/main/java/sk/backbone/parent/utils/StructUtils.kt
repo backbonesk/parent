@@ -1,5 +1,9 @@
 package sk.backbone.parent.utils
 
+import android.graphics.Bitmap
+import android.util.Base64
+import java.io.ByteArrayOutputStream
+
 fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     val notNullKeys = this.filterKeys { key -> this[key] != null}
 
@@ -28,4 +32,11 @@ fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     }
 
     return result
+}
+
+fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): String? {
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    compress(compressFormat, quality, byteArrayOutputStream)
+    val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
 }
