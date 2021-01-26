@@ -8,10 +8,11 @@ interface IToolbarActivity {
     abstract fun getToolbarLayoutId(): Int
     abstract fun getToolbarViewId(): Int
 
+    val ParentActivity<*>.toolbar: Toolbar get() = (findViewById(getToolbarViewId()) ?: View.inflate(this, getToolbarLayoutId(), null).findViewById(getToolbarViewId()))
+
     fun createToolbar(activity: ParentActivity<*>) {
         activity.apply {
             if(findViewById<Toolbar>(getToolbarViewId()) == null){
-                val toolbar =  View.inflate(this, getToolbarLayoutId(), null)
                 getRootView()?.addView(toolbar, 0)
             }
 
