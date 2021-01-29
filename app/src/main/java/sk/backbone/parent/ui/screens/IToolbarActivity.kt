@@ -13,7 +13,7 @@ interface IToolbarActivity {
     fun createToolbar(activity: ParentActivity<*>) {
         activity.apply {
             if(toolbar == null){
-                getRootView()?.addView(LayoutInflater.from(this).inflate(getToolbarLayoutId(), getRootView(), false).findViewById<Toolbar>(getToolbarViewId()), 0)
+                getRootView()?.addView(LayoutInflater.from(this).inflate(getToolbarLayoutId(), getRootView(), false), 0)
             }
 
             setupToolbar()
