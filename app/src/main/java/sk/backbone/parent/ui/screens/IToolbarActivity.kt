@@ -1,6 +1,6 @@
 package sk.backbone.parent.ui.screens
 
-import android.view.View
+import android.view.LayoutInflater
 import androidx.appcompat.widget.Toolbar
 
 interface IToolbarActivity {
@@ -8,7 +8,7 @@ interface IToolbarActivity {
     abstract fun getToolbarLayoutId(): Int
     abstract fun getToolbarViewId(): Int
 
-    val ParentActivity<*>.toolbar: Toolbar get() = (findViewById(getToolbarViewId()) ?: View.inflate(this, getToolbarLayoutId(), null).findViewById(getToolbarViewId()))
+    val ParentActivity<*>.toolbar: Toolbar get() = (findViewById(getToolbarViewId()) ?: LayoutInflater.from(this).inflate(getToolbarLayoutId(), getRootView(), false).findViewById(getToolbarViewId()))
 
     fun createToolbar(activity: ParentActivity<*>) {
         activity.apply {
