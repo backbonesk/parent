@@ -1,1 +1,14 @@
-<manifest package="sk.backbone.parent" />
+<manifest package="sk.backbone.parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="sk.backbone.parent"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
