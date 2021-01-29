@@ -1,8 +1,43 @@
 package sk.backbone.parent.utils
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Base64
 import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
+private const val NEXT_ACTIVITY_IMAGE_EXTRAS = "_NEXT_ACTIVITY_IMAGE_EXTRAS_"
+
+fun Intent.addImageIntent(context: Context, bitmap: Bitmap){
+    try {
+        val filename = NEXT_ACTIVITY_IMAGE_EXTRAS
+        val stream: FileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+
+        stream.close()
+
+        this.putExtra(NEXT_ACTIVITY_IMAGE_EXTRAS, NEXT_ACTIVITY_IMAGE_EXTRAS)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun Context.getImageExtras(): Bitmap? {
+    var bmp: Bitmap? = null
+    val filename = NEXT_ACTIVITY_IMAGE_EXTRAS
+    try {
+        val inputStream: FileInputStream = openFileInput(filename)
+        bmp = BitmapFactory.decodeStream(inputStream)
+        inputStream.close()
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
+
+    return bmp
+}
 
 fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     val notNullKeys = this.filterKeys { key -> this[key] != null}
