@@ -15,18 +15,18 @@ class Scopes {
     val default: CoroutineScope get() = CoroutineScope(Dispatchers.Default + defaultJob)
 
     fun quitJobs(){
+        defaultJob.cancel()
         uiJob.cancel()
         ioJob.cancel()
-        defaultJob.cancel()
     }
 
     fun stopJobs(){
+        defaultJob.cancel()
         uiJob.cancel()
         ioJob.cancel()
-        defaultJob.cancel()
 
+        defaultJob  = SupervisorJob()
         uiJob = SupervisorJob()
         ioJob = SupervisorJob()
-        defaultJob  = SupervisorJob()
     }
 }
