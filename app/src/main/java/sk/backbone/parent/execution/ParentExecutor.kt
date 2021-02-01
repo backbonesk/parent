@@ -59,7 +59,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
             loadingDialog = dialogProvider.showLoadingDialog(context)
         }
 
-        stop()
+        cancel()
 
         recentJob = scopes.default.launch {
             while (isExecuting()) {
@@ -149,7 +149,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         }
     }
 
-    fun stop(){
+    fun cancel(){
         recentJob?.cancel(ParentCancellationException())
     }
 

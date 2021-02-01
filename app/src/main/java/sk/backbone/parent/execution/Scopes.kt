@@ -19,14 +19,4 @@ class Scopes {
         uiJob.cancel()
         ioJob.cancel()
     }
-
-    fun cancelAndRecreate(){
-        defaultJob.cancel()
-        uiJob.cancel()
-        ioJob.cancel()
-
-        defaultJob  = SupervisorJob()
-        uiJob = SupervisorJob()
-        ioJob = SupervisorJob()
-    }
 }
