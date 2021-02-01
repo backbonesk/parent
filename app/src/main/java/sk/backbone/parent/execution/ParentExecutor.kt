@@ -52,7 +52,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
             loadingDialog = dialogProvider.showLoadingDialog(context)
         }
 
-        cancel()
+        stop()
 
         recentJob = scopes.default.launch {
             while (isExecuting()) {
@@ -138,8 +138,8 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         }
     }
 
-    fun cancel(){
-        recentJob?.cancel()
+    fun stop(){
+        scopes.stopJobs()
     }
 
     protected open fun handleAuthorizationException(exception: AuthorizationException){

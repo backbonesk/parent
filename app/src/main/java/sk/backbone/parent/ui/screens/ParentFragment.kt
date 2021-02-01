@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import sk.backbone.parent.execution.ExecutorParams
 import sk.backbone.parent.execution.IExecutioner
-import sk.backbone.parent.execution.ParentExecutor
 import sk.backbone.parent.execution.Scopes
 
 abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment(), IExecutioner {
@@ -26,7 +24,7 @@ abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment(), IExecution
     }
 
     override fun onDestroyView() {
-        scopes.cancelJobs()
+        scopes.quitJobs()
         _viewBinding = null
 
         super.onDestroyView()

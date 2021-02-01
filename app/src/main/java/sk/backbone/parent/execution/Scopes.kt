@@ -3,21 +3,30 @@ package sk.backbone.parent.execution
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 
 class Scopes {
-    private val uiJob = SupervisorJob()
+    private var uiJob = SupervisorJob()
     val ui: CoroutineScope get() = CoroutineScope(Dispatchers.Main + uiJob)
 
-    private val ioJob = SupervisorJob()
+    private var ioJob = SupervisorJob()
     val io: CoroutineScope get() = CoroutineScope(Dispatchers.IO + ioJob)
 
-    private val defaultJob = SupervisorJob()
+    private var defaultJob = SupervisorJob()
     val default: CoroutineScope get() = CoroutineScope(Dispatchers.Default + defaultJob)
 
-    fun cancelJobs(){
-        uiJob.cancelChildren()
-        ioJob.cancelChildren()
-        defaultJob.cancelChildren()
+    fun quitJobs(){
+        uiJob.cancel()
+        ioJob.cancel()
+        defaultJob.cancel()
+    }
+
+    fun stopJobs(){
+        uiJob.cancel()
+        ioJob.cancel()
+        defaultJob.cancel()
+
+        uiJob = SupervisorJob()
+        ioJob = SupervisorJob()
+        defaultJob  = SupervisorJob()
     }
 }

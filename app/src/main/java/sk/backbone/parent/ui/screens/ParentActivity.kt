@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import sk.backbone.parent.execution.ExecutorParams
 import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.Scopes
 
@@ -30,7 +29,7 @@ abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), 
     }
 
     override fun onDestroy() {
-        scopes.cancelJobs()
+        scopes.quitJobs()
         _viewBinding = null
         super.onDestroy()
     }
