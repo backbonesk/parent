@@ -139,7 +139,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     fun stop(){
-        scopes.stopJobs()
+        recentJob?.cancel()
     }
 
     protected open fun handleAuthorizationException(exception: AuthorizationException){
