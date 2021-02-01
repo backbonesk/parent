@@ -64,7 +64,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         ioOperation?.invoke()
                     }
 
-                    scopes.ui.launch{
+                    withContext(scopes.ui.coroutineContext){
                         loadingDialog?.dismiss()
                         uiOperationOnSuccess?.invoke(ioOperationResult)
                         uiOperationOnFinished?.invoke()
