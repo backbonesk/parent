@@ -24,7 +24,7 @@ abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment(), IExecution
     }
 
     override fun onDestroyView() {
-        scopes.quitJobs()
+        scopes.cancel()
         _viewBinding = null
 
         super.onDestroyView()

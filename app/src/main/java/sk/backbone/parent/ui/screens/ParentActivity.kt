@@ -29,7 +29,7 @@ abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), 
     }
 
     override fun onDestroy() {
-        scopes.quitJobs()
+        scopes.cancel()
         _viewBinding = null
         super.onDestroy()
     }

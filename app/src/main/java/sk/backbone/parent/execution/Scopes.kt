@@ -14,13 +14,13 @@ class Scopes {
     private var defaultJob = SupervisorJob()
     val default: CoroutineScope get() = CoroutineScope(Dispatchers.Default + defaultJob)
 
-    fun quitJobs(){
+    fun cancel(){
         defaultJob.cancel()
         uiJob.cancel()
         ioJob.cancel()
     }
 
-    fun stopJobs(){
+    fun cancelAndRecreate(){
         defaultJob.cancel()
         uiJob.cancel()
         ioJob.cancel()

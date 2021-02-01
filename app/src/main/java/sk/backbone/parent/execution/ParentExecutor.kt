@@ -5,19 +5,13 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import sk.backbone.parent.repositories.server.client.exceptions.*
 
 abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
     abstract val dialogProvider: IExecutorDialogProvider
     abstract val exceptionDescriptionProvider: IExceptionDescriptionProvider
-
-    private var uiNotificationOnError: (() -> Unit)? = null
-    private var recentJob: Job? = null
 
     open var retryEnabled = true
     open var retryInfinitely = false
@@ -31,11 +25,15 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var uiOperationOnFinished: (() -> Unit)? = null
     var retryIntervalMillisecond: Long = 5000
     var maxRetries: Int = 5
+
+    private var uiNotificationOnError: (() -> Unit)? = null
+    private var recentJob: Job? = null
     var wasSuccessful = false
     var currentRepeatCount = 0
     var firstRun = true
     var isFinished = false
     var lastError: Throwable? = null
+    var wasCanceled: Boolean = false
 
     protected val rootView: ViewGroup = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
@@ -46,6 +44,15 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     final fun execute() {
+        uiNotificationOnError = null
+        recentJob = null
+        wasSuccessful = false
+        currentRepeatCount = 0
+        firstRun = true
+        isFinished = false
+        lastError = null
+        wasCanceled = false
+
         var loadingDialog: AlertDialog? = null
 
         if(showProgressDialog){
@@ -74,6 +81,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     wasSuccessful = true
 
                     return@launch
+                }
+                catch (canceled: ParentCancellationException){
+                    Log.e("ExecutionFailed", this.javaClass.name, canceled)
+                    wasCanceled = true
                 }
                 catch (throwable: Throwable) {
                     Log.e("ExecutionFailed", this.javaClass.name, throwable)
@@ -126,7 +137,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     }
                 }
             }
-            if(!wasSuccessful){
+            if(!wasSuccessful && !wasCanceled){
                 withContext(scopes.ui.coroutineContext){
                     loadingDialog?.dismiss()
                     lastError?.let { uiOperationOnFailure?.invoke(it) }
@@ -139,7 +150,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     fun stop(){
-        recentJob?.cancel()
+        recentJob?.cancel(ParentCancellationException())
     }
 
     protected open fun handleAuthorizationException(exception: AuthorizationException){
