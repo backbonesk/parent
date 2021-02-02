@@ -34,12 +34,38 @@ fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     return result
 }
 
-fun Bitmap.toBase64(
-    compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 100
-): String {
+fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): String {
     val byteArrayOutputStream = ByteArrayOutputStream()
     compress(compressFormat, quality, byteArrayOutputStream)
     val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(byteArray, Base64.DEFAULT)
+}
+
+fun String?.toHexadecimalString(): String? {
+    return this?.toByteArray()?.toHexadecimalString()
+}
+
+fun String.hexadecimalStringToBytes(): ByteArray? {
+    if (isEmpty()) return null
+    val result = ByteArray(length / 2)
+    for (i in 0 until length / 2) {
+        val high = substring(i * 2, i * 2 + 1).toInt(16)
+        val low = substring(i * 2 + 1, i * 2 + 2).toInt(16)
+        result[i] = (high * 16 + low).toByte()
+    }
+    return result
+}
+
+fun ByteArray?.toHexadecimalString(): String? {
+    if (this == null || isEmpty()) {
+        return null
+    }
+    val buf = StringBuffer()
+    for (i in indices) {
+        if (this[i].toInt() and 0xff < 0x10) {
+            buf.append("0")
+        }
+        buf.append(java.lang.Long.toHexString((this[i].toInt() and 0xff).toLong())) /* 转换16进制,下方法同 */
+    }
+    return buf.toString()
 }
