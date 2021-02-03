@@ -1,23 +1,23 @@
 package sk.backbone.parent.ui.components
 
 abstract class ISpinnerItemsProvider<T> {
-    private val stringValues: Lazy<List<String>> = lazy {
-        enumValues.value.map { getString(it) }
+    abstract val elements: List<T>
+
+    val stringValues: List<String> by lazy{
+        elements.map { getString(it) }
     }
 
-    private val enumValues: Lazy<Array<T>> = lazy {
-        getEnumValues()
+    fun getValuesAsStrings(): List<String> {
+        return stringValues
     }
 
-    fun getAllValuesAsStrings(): List<String> {
-        return stringValues.value
+    operator fun get(string: String) : T {
+        return elements.find { getString(it) == string }!!
     }
 
-    fun getValue(string: String) : T {
-        return enumValues.value.find { getString(it) == string }!!
+    operator fun get(position: Int): T {
+        return elements[position]
     }
 
     abstract fun getString(value: T): String
-
-    abstract fun getEnumValues(): Array<T>
 }
