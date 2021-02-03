@@ -8,6 +8,8 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
+import com.bumptech.glide.load.resource.bitmap.TransformationUtils
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -52,15 +54,22 @@ fun Context.storeNewImage(bitmap: Bitmap){
 }
 
 fun Context.getLastStoredImage(): Bitmap? {
-    var bitmap: Bitmap? = null
-
-    try {
+    return try {
         val inputStream = FileInputStream(lastStoredImageFile)
-        bitmap = BitmapFactory.decodeStream(inputStream)
+        val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
         inputStream.close()
+
+        val exifInterface = lastStoredImageFile?.absolutePath?.let { ExifInterface(it) }
+
+        return when (exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap!!, 90)
+            ExifInterface.ORIENTATION_ROTATE_180 -> TransformationUtils.rotateImage(bitmap!!, 180)
+            ExifInterface.ORIENTATION_ROTATE_270 -> TransformationUtils.rotateImage(bitmap!!, 270)
+            ExifInterface.ORIENTATION_NORMAL -> bitmap
+            else -> bitmap
+        }
     } catch (e: java.lang.Exception) {
         e.printStackTrace()
+        null
     }
-
-    return bitmap
 }
