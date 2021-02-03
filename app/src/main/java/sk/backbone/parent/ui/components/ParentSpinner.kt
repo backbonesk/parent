@@ -2,8 +2,6 @@ package sk.backbone.parent.ui.components
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import sk.backbone.parent.ui.validations.text_validation.TextInputValidation
@@ -40,16 +38,6 @@ abstract class ParentSpinner @JvmOverloads constructor(context: Context, attrs: 
 
         if(!isEnabled){
             spinner.isEnabled = false
-        }
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                provider?.stringValues?.get(position)?.let { onValueChanged?.let { it1 -> it1(it) } }
-            }
         }
 
         spinner.adapter = this.context?.let { ArrayAdapter(it, spinnerItemResource, arrayOf("")) }
