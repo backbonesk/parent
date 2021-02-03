@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -24,7 +25,7 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(context: Co
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!
-    abstract val viewBindingFactory: (LayoutInflater, View?, Boolean) -> TViewBinding
+    abstract val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding
 
     private var inputValidation = TextInputValidation.NOT_EMPTY
     protected open val spinnerItemResource: Int = android.R.layout.simple_spinner_item
