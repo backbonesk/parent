@@ -61,9 +61,6 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(context: Co
     }
 
     inline fun <reified T>getSelectedItem(): T? {
-        return when(val item = this.provider?.get(spinner.selectedItemPosition)){
-            item is T -> item as T
-            else -> null
-        }
+        return this.provider?.get(spinner.selectedItemPosition) as T
     }
 }
