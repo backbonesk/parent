@@ -7,28 +7,22 @@ import sk.backbone.parent.ui.validations.text_validation.validators.EmailValidat
 import sk.backbone.parent.ui.validations.text_validation.validators.PasswordValidator
 
 //INT VALUES MUST MATCH WITH validation ATTRIBUTES IN attrs.xml
-enum class TextInputValidation (val intValue: Int) {
-    NONE(0) {
+enum class TextInputValidation () {
+    NONE {
         override val validator: Nothing? = null
     },
-    PASSWORD(1) {
+    PASSWORD {
         override val validator = PasswordValidator()
     },
-    EMAIL(2) {
+    EMAIL {
         override val validator = EmailValidator()
     },
-    NOT_EMPTY(3) {
+    NOT_EMPTY {
         override val validator = NotEmptyValidator()
     },
-    CURRENCY(4){
+    CURRENCY {
         override val validator = CurrencyValidator()
     };
 
     abstract val validator : IValidator<String>?
-
-    companion object {
-        fun getEnumValueFromString(value: Int): TextInputValidation? {
-            return values().find { validation -> validation.intValue ==  value}
-        }
-    }
 }
