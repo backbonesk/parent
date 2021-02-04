@@ -39,9 +39,14 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(context: Co
     private fun init() {
         _viewBinding = viewBindingFactory(LayoutInflater.from(context), this, true)
 
+        spinner.isFocusable = true
+        spinner.isClickable = true
+        spinner.isFocusableInTouchMode = true
+
         spinner.setOnFocusChangeListener { view, focused ->
             if(focused){
                 view.hideKeyboard()
+                spinner.performClick()
             }
         }
 
