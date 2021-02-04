@@ -11,6 +11,8 @@ import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.Scopes
 
 abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), IExecutioner {
+    open fun getActivityTransitions() : ActivityTransitions = ActivityTransitions.NONE
+
     override val scopes = Scopes()
 
     private var _viewBinding: TViewBinding? = null
@@ -18,6 +20,7 @@ abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), 
     abstract val viewBindingFactory: (LayoutInflater) -> TViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        getActivityTransitions().setStartActivityTransition(this)
         super.onCreate(savedInstanceState)
 
         _viewBinding = viewBindingFactory(layoutInflater)
@@ -26,6 +29,11 @@ abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), 
         if(this is IToolbarActivity){
             createToolbar(this)
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        getActivityTransitions().setFinishActivityTransition(this)
     }
 
     override fun onDestroy() {
