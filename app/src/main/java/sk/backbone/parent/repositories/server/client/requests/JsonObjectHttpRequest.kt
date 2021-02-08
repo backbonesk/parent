@@ -15,7 +15,6 @@ import sk.backbone.parent.utils.getContentTypeCharset
 import sk.backbone.parent.utils.getUrl
 import sk.backbone.parent.utils.toJsonString
 import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
 import java.nio.charset.Charset
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -32,20 +31,14 @@ open class JsonObjectHttpRequest<Type>(
     final override val body: Any?,
     override val parseSuccessResponse: (JSONObject?) -> Type?,
     final override val bodyExclusionStrategy: ExclusionStrategy? = null,
-    override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
+    override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,
     getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters),
     body?.toJsonString(bodyExclusionStrategy),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)
-),  IRequest<Type, JSONObject>{
-
-    val requestQueryParametersEncoded: String? by lazy {
-        queryParameters?.joinToString("&") { parameter ->
-            "${parameter.first}=${URLEncoder.encode(parameter.second, "utf-8")}"
-        }
-    }
+),  IParentRequest<Type, JSONObject>{
 
     init {
         Log.i(LOGS_TAG, "Request Method: $method")

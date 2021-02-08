@@ -28,13 +28,13 @@ open class UrlHttpRequest<Type>(
     override val endpoint: String,
     final override val formData: Map<String, String?>?,
     override val parseSuccessResponse: (String?) -> Type?,
-    override val additionalHeadersProvider: ((IRequest<*, *>) -> Map<String, String>?)
+    override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : StringRequest(
     requestMethod,
     getUrl(schema, serverAddress, apiVersion, endpoint, null),
     onSuccess(continuation, parseSuccessResponse),
     onError(continuation)
-), IRequest<Type, String>{
+), IParentRequest<Type, String>{
 
     init {
         Log.i(LOGS_TAG, "Request Method: $method")
