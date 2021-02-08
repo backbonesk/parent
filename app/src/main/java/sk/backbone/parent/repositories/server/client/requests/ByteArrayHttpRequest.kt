@@ -17,7 +17,6 @@ open class ByteArrayHttpRequest(
     override val apiVersion: String,
     override val endpoint: String,
     override val queryParameters: List<Pair<String, String?>>?,
-    override val parseSuccessResponse: (ByteArray?) -> ByteArray?,
     override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : Request<ByteArray>(REQUEST_METHOD, getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters), onError(continuation)),  IParentRequest<ByteArray, ByteArray>{
 

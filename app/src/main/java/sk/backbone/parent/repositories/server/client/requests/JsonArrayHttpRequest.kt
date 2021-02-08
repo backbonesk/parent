@@ -29,7 +29,7 @@ open class JsonArrayHttpRequest<Type>(
     override val endpoint: String,
     override val queryParameters: List<Pair<String, String?>>?,
     final override val body: Any?,
-    override val parseSuccessResponse: (JSONArray?) -> Type?,
+    parseSuccessResponse: (JSONArray?) -> Type?,
     final override val bodyExclusionStrategy: ExclusionStrategy? = null,
     override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONArray>(

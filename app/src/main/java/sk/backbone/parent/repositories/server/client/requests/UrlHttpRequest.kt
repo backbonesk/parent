@@ -27,7 +27,7 @@ open class UrlHttpRequest<Type>(
     override val apiVersion: String,
     override val endpoint: String,
     final override val formData: Map<String, String?>?,
-    override val parseSuccessResponse: (String?) -> Type?,
+    parseSuccessResponse: (String?) -> Type?,
     override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : StringRequest(
     requestMethod,
