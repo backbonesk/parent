@@ -30,11 +30,7 @@ fun Context.createCameraIntentForStoringImage(): Intent? {
         pictureFile.delete()
 
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-            val photoURI: Uri = FileProvider.getUriForFile(
-                    this,
-                    "sk.backbone.parent",
-                    pictureFile
-            )
+            val photoURI: Uri = FileProvider.getUriForFile(this, applicationContext.packageName.toString() + ".provider", pictureFile)
             it.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
         }
     }
