@@ -1,5 +1,6 @@
 package sk.backbone.parent.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -23,6 +24,9 @@ import sk.backbone.parent.ui.components.SafeClickListener
 import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.validations.IValidableInput
 import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun View.setSafeOnClickListener(action: (View) -> Unit) {
@@ -172,6 +176,7 @@ fun validateInputs(inputs: List<IValidableInput<*>>): Boolean {
     return areInputsValid
 }
 
+@SuppressLint("QueryPermissionsNeeded")
 fun Context.openInBrowser(link: String, onErrorAction: (() -> Unit)?){
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
     val packageManager = packageManager
@@ -193,4 +198,12 @@ inline fun <reified T> AppCompatActivity.returnNewOrReturnExisting(defaultFragme
     }
 
     return result
+}
+
+fun BigDecimal.formatAsCurrency(currencyCode: String, minimumFractionDigits: Int = 2, maximumFractionDigits: Int = 2): String{
+    return NumberFormat.getCurrencyInstance().apply {
+        this.minimumFractionDigits = minimumFractionDigits
+        this.maximumFractionDigits = maximumFractionDigits
+        this.currency = Currency.getInstance(currencyCode)
+    }.format(this)
 }
