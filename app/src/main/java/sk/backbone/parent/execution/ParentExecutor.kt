@@ -95,7 +95,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
 
                     lastError = throwable
 
-                    if(!handleExceptionMiddleware()){
+                    if(!handleExceptionMiddleware(throwable)){
                         retryEnabled = retryEnabled && throwable is CommunicationException
                         uiNotificationOnError = {
                             dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
@@ -133,7 +133,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     /***
      * Override this and return true to change default behavior.
      ***/
-    protected open fun handleExceptionMiddleware(): Boolean {
+    protected open fun handleExceptionMiddleware(throwable: Throwable): Boolean {
         return false
     }
 }
