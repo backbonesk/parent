@@ -2,50 +2,102 @@ package sk.backbone.parent.repositories.server.client.exceptions
 
 import android.content.Context
 
+
 interface IExceptionDescriptionProvider {
-    fun parseBadRequestException(context: Context, exception: BadRequestException, responseBody: String?, statusCode: Int?): String?
-    fun parseAuthorizationException(context: Context, exception: AuthorizationException, responseBody: String?, statusCode: Int?): String?
-    fun parsePaymentException(context: Context, exception: PaymentException, responseBody: String?, statusCode: Int?): String?
-    fun parseForbiddenException(context: Context, exception: ForbiddenException, responseBody: String?, statusCode: Int?): String?
-    fun parseNotFoundException(context: Context, exception: NotFoundException, responseBody: String?, statusCode: Int?): String?
-    fun parseConflictException(context: Context, exception: ConflictException, responseBody: String?, statusCode: Int?): String?
-    fun parseValidationException(context: Context, exception: ValidationException, responseBody: String?, statusCode: Int?): String?
-    fun parseServerException(context: Context, exception: ServerException, responseBody: String?, statusCode: Int?): String?
-    fun parseCommunicationException(context: Context, exception: CommunicationException, responseBody: String?, statusCode: Int?): String?
     fun getDefaultErrorMessage(context: Context, throwable: Throwable): String
+
+    open fun parseBadRequestException(context: Context, exception: BadRequestException): String = getDefaultErrorMessage(context, exception)
+    open fun parseAuthorizationException(context: Context, exception: AuthorizationException): String = getDefaultErrorMessage(context, exception)
+    open fun parsePaymentException(context: Context, exception: PaymentException): String = getDefaultErrorMessage(context, exception)
+    open fun parseForbiddenException(context: Context, exception: ForbiddenException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNotFoundException(context: Context, exception: NotFoundException): String = getDefaultErrorMessage(context, exception)
+    open fun parseMethodNotAllowedException(context: Context, exception: MethodNotAllowedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNotAcceptableException(context: Context, exception: NotAcceptableException): String = getDefaultErrorMessage(context, exception)
+    open fun parseRequestTimeoutException(context: Context, exception: RequestTimeoutException): String = getDefaultErrorMessage(context, exception)
+    open fun parseConflictException(context: Context, exception: ConflictException): String = getDefaultErrorMessage(context, exception)
+    open fun parseGoneException(context: Context, exception: GoneException): String = getDefaultErrorMessage(context, exception)
+    open fun parseLengthRequiredException(context: Context, exception: LengthRequiredException): String = getDefaultErrorMessage(context, exception)
+    open fun parsePreconditionFailedException(context: Context, exception: PreconditionFailedException): String = getDefaultErrorMessage(context, exception)
+    open fun parsePayloadTooLargeException(context: Context, exception: PayloadTooLargeException): String = getDefaultErrorMessage(context, exception)
+    open fun parseRequestUriTooLongException(context: Context, exception: RequestUriTooLongException): String = getDefaultErrorMessage(context, exception)
+    open fun parseUnsupportedMediaTypeException(context: Context, exception: UnsupportedMediaTypeException): String = getDefaultErrorMessage(context, exception)
+    open fun parseRequestRangeNotSatisfiableException(context: Context, exception: RequestRangeNotSatisfiableException): String = getDefaultErrorMessage(context, exception)
+    open fun parseExpectationFailedException(context: Context, exception: ExpectationFailedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseIamTeapotException(context: Context, exception: IamTeapotException): String = getDefaultErrorMessage(context, exception)
+    open fun parseEnhanceYourCalmException(context: Context, exception: EnhanceYourCalmException): String = getDefaultErrorMessage(context, exception)
+    open fun parseMisdirectedRequestException(context: Context, exception: MisdirectedRequestException): String = getDefaultErrorMessage(context, exception)
+    open fun parseUnprocessableEntityException(context: Context, exception: UnprocessableEntityException): String = getDefaultErrorMessage(context, exception)
+    open fun parseLockedException(context: Context, exception: LockedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseFailedDependencyException(context: Context, exception: FailedDependencyException): String = getDefaultErrorMessage(context, exception)
+    open fun parseTooEarlyException(context: Context, exception: TooEarlyException): String = getDefaultErrorMessage(context, exception)
+    open fun parseUpgradeRequiredException(context: Context, exception: UpgradeRequiredException): String = getDefaultErrorMessage(context, exception)
+    open fun parseTooManyRequestsException(context: Context, exception: TooManyRequestsException): String = getDefaultErrorMessage(context, exception)
+    open fun parseRequestHeaderFieldsTooLargeException(context: Context, exception: RequestHeaderFieldsTooLargeException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNoResponseException(context: Context, exception: NoResponseException): String = getDefaultErrorMessage(context, exception)
+    open fun parseBlockedByWindowsParentalControlsException(context: Context, exception: BlockedByWindowsParentalControlsException): String = getDefaultErrorMessage(context, exception)
+    open fun parseUnavailableForLegalReasonsException(context: Context, exception: UnavailableForLegalReasonsException): String = getDefaultErrorMessage(context, exception)
+    open fun parseClientClosedRequestException(context: Context, exception: ClientClosedRequestException): String = getDefaultErrorMessage(context, exception)
+    open fun parseInternalServerErrorException(context: Context, exception: InternalServerErrorException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNotImplementedException(context: Context, exception: NotImplementedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseBadGatewayException(context: Context, exception: BadGatewayException): String = getDefaultErrorMessage(context, exception)
+    open fun parseServiceUnavailableException(context: Context, exception: ServiceUnavailableException): String = getDefaultErrorMessage(context, exception)
+    open fun parseGatewayTimeoutException(context: Context, exception: GatewayTimeoutException): String = getDefaultErrorMessage(context, exception)
+    open fun parseVariantAlsoNegotiatesException(context: Context, exception: VariantAlsoNegotiatesException): String = getDefaultErrorMessage(context, exception)
+    open fun parseInsufficientStorageException(context: Context, exception: InsufficientStorageException): String = getDefaultErrorMessage(context, exception)
+    open fun parseLoopDetectedException(context: Context, exception: LoopDetectedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseBandwidthLimitExceededException(context: Context, exception: BandwidthLimitExceededException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNotExtendedException(context: Context, exception: NotExtendedException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNetworkAuthenticationRequiredException(context: Context, exception: NetworkAuthenticationRequiredException): String = getDefaultErrorMessage(context, exception)
+    open fun parseNetworkConnectTimeoutErrorException(context: Context, exception: NetworkConnectTimeoutErrorException): String = getDefaultErrorMessage(context, exception)
+    open fun parseCommunicationException(context: Context, exception: CommunicationException): String = getDefaultErrorMessage(context, exception)
 
     fun getDescription(context: Context, throwable: Throwable): String {
         return when(throwable){
-            is BadRequestException -> {
-                parseBadRequestException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is AuthorizationException -> {
-                parseAuthorizationException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is PaymentException -> {
-                parsePaymentException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is ForbiddenException -> {
-                parseForbiddenException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is NotFoundException -> {
-                parseNotFoundException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is ConflictException -> {
-                parseConflictException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is ValidationException -> {
-                parseValidationException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is ServerException -> {
-                parseServerException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            is CommunicationException -> {
-                parseCommunicationException(context, throwable, throwable.responseBody, throwable.statusCode)
-            }
-            else -> {
-                getDefaultErrorMessage(context, throwable)
-            }
-        } ?: getDefaultErrorMessage(context, throwable)
+            is BadRequestException -> parseBadRequestException(context, throwable)
+            is AuthorizationException -> parseAuthorizationException(context, throwable)
+            is PaymentException -> parsePaymentException(context, throwable)
+            is ForbiddenException -> parseForbiddenException(context, throwable)
+            is NotFoundException -> parseNotFoundException(context, throwable)
+            is MethodNotAllowedException -> parseMethodNotAllowedException(context, throwable)
+            is NotAcceptableException -> parseNotAcceptableException(context, throwable)
+            is RequestTimeoutException -> parseRequestTimeoutException(context, throwable)
+            is ConflictException -> parseConflictException(context, throwable)
+            is GoneException -> parseGoneException(context, throwable)
+            is LengthRequiredException -> parseLengthRequiredException(context, throwable)
+            is PreconditionFailedException -> parsePreconditionFailedException(context, throwable)
+            is PayloadTooLargeException -> parsePayloadTooLargeException(context, throwable)
+            is RequestUriTooLongException -> parseRequestUriTooLongException(context, throwable)
+            is UnsupportedMediaTypeException -> parseUnsupportedMediaTypeException(context, throwable)
+            is RequestRangeNotSatisfiableException -> parseRequestRangeNotSatisfiableException(context, throwable)
+            is ExpectationFailedException -> parseExpectationFailedException(context, throwable)
+            is IamTeapotException -> parseIamTeapotException(context, throwable)
+            is EnhanceYourCalmException -> parseEnhanceYourCalmException(context, throwable)
+            is MisdirectedRequestException -> parseMisdirectedRequestException(context, throwable)
+            is UnprocessableEntityException -> parseUnprocessableEntityException(context, throwable)
+            is LockedException -> parseLockedException(context, throwable)
+            is FailedDependencyException -> parseFailedDependencyException(context, throwable)
+            is TooEarlyException -> parseTooEarlyException(context, throwable)
+            is UpgradeRequiredException -> parseUpgradeRequiredException(context, throwable)
+            is TooManyRequestsException -> parseTooManyRequestsException(context, throwable)
+            is RequestHeaderFieldsTooLargeException -> parseRequestHeaderFieldsTooLargeException(context, throwable)
+            is NoResponseException -> parseNoResponseException(context, throwable)
+            is BlockedByWindowsParentalControlsException -> parseBlockedByWindowsParentalControlsException(context, throwable)
+            is UnavailableForLegalReasonsException -> parseUnavailableForLegalReasonsException(context, throwable)
+            is ClientClosedRequestException -> parseClientClosedRequestException(context, throwable)
+            is InternalServerErrorException -> parseInternalServerErrorException(context, throwable)
+            is NotImplementedException -> parseNotImplementedException(context, throwable)
+            is BadGatewayException -> parseBadGatewayException(context, throwable)
+            is ServiceUnavailableException -> parseServiceUnavailableException(context, throwable)
+            is GatewayTimeoutException -> parseGatewayTimeoutException(context, throwable)
+            is VariantAlsoNegotiatesException -> parseVariantAlsoNegotiatesException(context, throwable)
+            is InsufficientStorageException -> parseInsufficientStorageException(context, throwable)
+            is LoopDetectedException -> parseLoopDetectedException(context, throwable)
+            is BandwidthLimitExceededException -> parseBandwidthLimitExceededException(context, throwable)
+            is NotExtendedException -> parseNotExtendedException(context, throwable)
+            is NetworkAuthenticationRequiredException -> parseNetworkAuthenticationRequiredException(context, throwable)
+            is NetworkConnectTimeoutErrorException -> parseNetworkConnectTimeoutErrorException(context, throwable)
+            is CommunicationException -> parseCommunicationException(context, throwable)
+            else -> getDefaultErrorMessage(context, throwable)
+        }
     }
 }

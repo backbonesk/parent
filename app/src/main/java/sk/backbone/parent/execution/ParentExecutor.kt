@@ -95,33 +95,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
 
                     lastError = throwable
 
-                    when(throwable) {
-                        is AuthorizationException -> {
-                            handleAuthorizationException(throwable)
-                        }
-                        is PaymentException -> {
-                            handlePaymentException(throwable)
-                        }
-                        is ForbiddenException -> {
-                            handleForbiddenException(throwable)
-                        }
-                        is NotFoundException -> {
-                            handleNotFoundException(throwable)
-                        }
-                        is ConflictException -> {
-                            handleConflictException(throwable)
-                        }
-                        is ValidationException -> {
-                            handleValidationException(throwable)
-                        }
-                        is ServerException -> {
-                            handleServerException(throwable)
-                        }
-                        is CommunicationException -> {
-                            handleCommunicationException(throwable)
-                        }
-                        else -> {
-                            handleUnknownException(throwable)
+                    if(!handleExceptionMiddleware()){
+                        retryEnabled = retryEnabled && throwable is CommunicationException
+                        uiNotificationOnError = {
+                            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
                         }
                     }
 
@@ -153,65 +130,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         recentJob?.cancel(ParentCancellationException())
     }
 
-    protected open fun handleAuthorizationException(exception: AuthorizationException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handlePaymentException(exception: PaymentException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleForbiddenException(exception: ForbiddenException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleNotFoundException(exception: NotFoundException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    private fun handleConflictException(exception: ConflictException) {
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleValidationException(exception: ValidationException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleCommunicationException(exception: CommunicationException){
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    protected open fun handleServerException(exception: ServerException){
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
-        }
-    }
-
-    open fun handleUnknownException(throwable: Throwable) {
-        retryEnabled = false
-        uiNotificationOnError = {
-            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
-        }
+    /***
+     * Override this and return true to change default behavior.
+     ***/
+    protected open fun handleExceptionMiddleware(): Boolean {
+        return false
     }
 }
