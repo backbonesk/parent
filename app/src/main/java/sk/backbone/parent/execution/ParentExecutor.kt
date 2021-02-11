@@ -26,7 +26,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var retryIntervalMillisecond: Long = 5000
     var maxRetries: Int = 5
 
-    private var uiNotificationOnError: (() -> Unit)? = null
+    protected var uiNotificationOnError: (() -> Unit)? = null
     private var recentJob: Job? = null
     var wasSuccessful = false
     var currentRepeatCount = 0
