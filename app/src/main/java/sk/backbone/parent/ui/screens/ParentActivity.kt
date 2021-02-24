@@ -6,12 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.Scopes
 
 abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), IExecutioner {
     open fun getActivityTransitions() : ActivityTransitions = ActivityTransitions.NONE
+
+    inline fun <reified T: ViewModel>getViewModel() : T {
+        return ViewModelProvider(this)[T::class.java]
+    }
 
     override val scopes = Scopes()
 
