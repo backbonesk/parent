@@ -29,7 +29,7 @@ abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBinding
         super.onCreate(savedInstanceState)
 
         _viewBinding = viewBindingFactory?.invoke(layoutInflater)
-        setContentView(_viewBinding?.root)
+        _viewBinding?.root?.let { setContentView(it) }
 
         if(this is IToolbarActivity){
             createToolbar(this)
