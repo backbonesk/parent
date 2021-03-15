@@ -11,7 +11,7 @@ import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.Scopes
 
-abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment(), IExecutioner {
+abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater, ViewGroup?, Boolean) -> TViewBinding)?): Fragment(), IExecutioner {
     override val scopes = Scopes()
 
     inline fun <reified T: ViewModel>getViewModel() : T {
@@ -22,10 +22,9 @@ abstract class ParentFragment<TViewBinding: ViewBinding>: Fragment(), IExecution
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!
-    abstract val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _viewBinding = viewBindingFactory(inflater, container, false)
+        _viewBinding = viewBindingFactory?.invoke(inflater, container, false)
         return viewBinding.root
     }
 
