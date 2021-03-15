@@ -12,7 +12,7 @@ import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.Scopes
 
-abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), IExecutioner {
+abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater) -> TViewBinding)?) : AppCompatActivity(), IExecutioner {
     open fun getActivityTransitions() : ActivityTransitions = ActivityTransitions.NONE
 
     inline fun <reified T: ViewModel>getViewModel() : T {
@@ -23,14 +23,13 @@ abstract class ParentActivity<TViewBinding: ViewBinding> : AppCompatActivity(), 
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!
-    abstract val viewBindingFactory: (LayoutInflater) -> TViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         getActivityTransitions().setStartActivityTransition(this)
         super.onCreate(savedInstanceState)
 
-        _viewBinding = viewBindingFactory(layoutInflater)
-        setContentView(viewBinding.root)
+        _viewBinding = viewBindingFactory?.invoke(layoutInflater)
+        setContentView(_viewBinding?.root)
 
         if(this is IToolbarActivity){
             createToolbar(this)
