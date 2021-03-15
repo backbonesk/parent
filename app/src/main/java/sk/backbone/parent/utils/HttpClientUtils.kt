@@ -5,7 +5,7 @@ import com.android.volley.NetworkResponse
 import java.net.URLEncoder
 
 fun NetworkResponse.getContentTypeCharset(default: String = "utf-8"): String {
-    return headers["Content-Type"]?.
+    return headers?.get("Content-Type")?.
     split(";")?.
     firstOrNull{ it -> it.contains("charset")}?.
     split("=")?.getOrNull(1)?.toLowerCase() ?: default
