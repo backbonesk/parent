@@ -15,13 +15,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener
 import sk.backbone.parent.ui.screens.ParentActivity
+import sk.backbone.parent.ui.screens.ParentFragment
 import sk.backbone.parent.ui.validations.IValidableInput
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -206,4 +209,34 @@ fun BigDecimal.formatAsCurrency(currencyCode: String, minimumFractionDigits: Int
         this.maximumFractionDigits = maximumFractionDigits
         this.currency = Currency.getInstance(currencyCode)
     }.format(this)
+}
+
+fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragment: TFragment, onFragmentShown: (() -> (Unit))? = null) where TFragment: ParentFragment<*> {
+    val fragmentTransaction = this.beginTransaction()
+    var shouldShow = false
+
+    for (addedFragment in this.fragments) {
+        if (addedFragment.tag == fragment.tag) {
+            if (addedFragment == fragment) {
+                shouldShow = true
+            } else {
+                fragmentTransaction.remove(addedFragment)
+            }
+        } else {
+            fragmentTransaction.hide(addedFragment)
+        }
+    }
+
+    if (shouldShow) {
+        fragmentTransaction.show(fragment)
+    } else {
+        fragmentTransaction.add(fragmentHolder, fragment, fragment.identifier)
+    }
+
+    fragmentTransaction.runOnCommit{
+        fragment.onResume()
+        onFragmentShown?.invoke()
+    }
+
+    fragmentTransaction.commit()
 }
