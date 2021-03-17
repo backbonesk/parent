@@ -65,6 +65,10 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(context: Co
         spinner.adapter = this.context?.let { ArrayAdapter(it, spinnerItemResource, arrayOf("")) }
     }
 
+    inline fun <reified T>setSelection(value: T?){
+        this.provider?.elements?.indexOf(value)?.let { spinner.setSelection(it, true) }
+    }
+
     inline fun <reified T>getSelectedItem(): T? {
         return this.provider?.get(spinner.selectedItemPosition) as T?
     }
