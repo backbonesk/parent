@@ -42,16 +42,7 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val
         spinner.isClickable = true
         spinner.isFocusableInTouchMode = true
 
-        spinner.setOnFocusChangeListener { view, focused ->
-            if(focused){
-                view.hideKeyboard()
-                spinner.performClick()
-            }
-        }
-
-        if(!isEnabled){
-            spinner.isEnabled = false
-        }
+        spinner.adapter = this.context?.let { ArrayAdapter(it, spinnerItemResource, arrayOf("")) }
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -61,7 +52,12 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val
             }
         }
 
-        spinner.adapter = this.context?.let { ArrayAdapter(it, spinnerItemResource, arrayOf("")) }
+        spinner.setOnFocusChangeListener { view, focused ->
+            if(focused){
+                view.hideKeyboard()
+                spinner.performClick()
+            }
+        }
     }
 
     inline fun <reified T>setSelection(value: T?){
