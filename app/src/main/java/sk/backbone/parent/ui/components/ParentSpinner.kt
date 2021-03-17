@@ -61,7 +61,7 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val
     }
 
     inline fun <reified T>setSelection(value: T?){
-        this.provider?.elements?.indexOf(value)?.let { spinner.setSelection(it, true) }
+        this.provider?.getIndexOf(value)?.let { spinner.setSelection(it, true) }
     }
 
     inline fun <reified T>getSelectedItem(): T? {

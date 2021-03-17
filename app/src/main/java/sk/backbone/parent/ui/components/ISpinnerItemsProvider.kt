@@ -7,6 +7,8 @@ abstract class ISpinnerItemsProvider<T> {
         elements.map { getString(it) }
     }
 
+    abstract fun getString(value: T): String
+
     fun getValuesAsStrings(): List<String> {
         return stringValues
     }
@@ -19,5 +21,11 @@ abstract class ISpinnerItemsProvider<T> {
         return elements[position]
     }
 
-    abstract fun getString(value: T): String
+    fun getIndexOf(value: Any?): Int {
+        return if(value is String){
+            stringValues.indexOf(value)
+        } else {
+            elements.indexOf(value)
+        }
+    }
 }
