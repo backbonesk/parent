@@ -22,10 +22,6 @@ abstract class ISpinnerItemsProvider<T> {
     }
 
     fun getIndexOf(value: Any?): Int {
-        return if(value is String){
-            stringValues.indexOf(value)
-        } else {
-            elements.indexOf(value)
-        }
+        return (value as T?)?.let { stringValues.indexOf(getString(it)) } ?: -1
     }
 }
