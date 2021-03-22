@@ -56,7 +56,7 @@ open class ParentEndlessScrollManager<Content, Extras, Adapter>(
         recyclerView.removeOnScrollListener(scrollListener)
     }
 
-    private fun loadContent(fullRefresh: Boolean = false) {
+    fun loadContent(fullRefresh: Boolean = false) {
         currentLoadingExecutor?.uiOperationOnSuccess = null
 
         if (fullRefresh) {
