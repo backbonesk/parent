@@ -57,15 +57,16 @@ open class ParentEndlessScrollManager<Content, Extras, Adapter>(
     }
 
     fun loadContent(fullRefresh: Boolean = false) {
-        currentLoadingExecutor?.uiOperationOnSuccess = null
-
-        if (fullRefresh) {
-            scrollListener.resetState()
-        }
-
-        swipeToRefresh?.isRefreshing = true
-
         if (!isPerformingFullRefresh) {
+            currentLoadingExecutor?.cancel()
+            currentLoadingExecutor?.uiOperationOnSuccess = null
+
+            if (fullRefresh) {
+                scrollListener.resetState()
+            }
+
+            swipeToRefresh?.isRefreshing = true
+
             isPerformingFullRefresh = fullRefresh
 
             val currentCount = if (fullRefresh) 0 else viewModel.content.value?.size ?: 0
