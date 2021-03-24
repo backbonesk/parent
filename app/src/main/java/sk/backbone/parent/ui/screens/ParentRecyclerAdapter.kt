@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class ParentRecyclerAdapter<TType, TViewHolder>(protected val context: Context): RecyclerView.Adapter<TViewHolder>() where TViewHolder: ParentRecyclerAdapter.ParentRecyclerViewHolder<TType> {
     protected val dataSet = mutableListOf<TType>()
-    abstract override fun getItemId(position: Int): Long
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
 
     override fun getItemCount() = dataSet.size
 
