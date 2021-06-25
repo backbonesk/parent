@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--VALUES MUST MATCH WITH TextInputValidation ENUM CLASS-->
-    <attr name="textValidation" format="enum">
-        <enum name="none" value="0" />
-        <enum name="password" value="1" />
-        <enum name="email" value="2" />
-        <enum name="notEmpty" value="3" />
-        <enum name="currency" value="4" />
-    </attr>
-    <attr name="checkBoxValidation" format="enum">
-        <enum name="none" value="0" />
-        <enum name="mustBeChecked" value="1" />
-    </attr>
+    <declare-styleable name="textValidation" >
+        <attr name="textValidation" format="enum">
+            <enum name="none" value="0" />
+            <enum name="password" value="1" />
+            <enum name="email" value="2" />
+            <enum name="notEmpty" value="3" />
+            <enum name="currency" value="4" />
+        </attr>
+    </declare-styleable>
+
+    <!--VALUES MUST MATCH WITH CheckBoxValidation ENUM CLASS-->
+    <declare-styleable name="checkBoxValidation" >
+        <attr name="checkBoxValidation" format="enum">
+            <enum name="none" value="0" />
+            <enum name="mustBeChecked" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>
