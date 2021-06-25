@@ -8,4 +8,8 @@
         <enum name="notEmpty" value="3" />
         <enum name="currency" value="4" />
     </attr>
+    <attr name="checkBoxValidation" format="enum">
+        <enum name="none" value="0" />
+        <enum name="mustBeChecked" value="1" />
+    </attr>
 </resources>

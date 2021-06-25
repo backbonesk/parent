@@ -1,4 +1,7 @@
-package sk.backbone.parent.ui.validations
+package sk.backbone.parent.ui.validations.check_box_validation.validators
+
+import sk.backbone.parent.ui.validations.IValidator
+import sk.backbone.parent.ui.validations.ValidationErrors
 
 class CheckBoxValidator: IValidator<Boolean> {
     override fun validate(value: Boolean?): List<ValidationErrors>? {
