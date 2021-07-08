@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -239,4 +241,32 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
     }
 
     fragmentTransaction.commit()
+}
+
+fun createClickableImageView(context: Context, drawable: Drawable?, action: ((View) -> (Unit))?): ImageView {
+    return ImageView(context).apply {
+        setImageDrawable(drawable)
+
+        adjustViewBounds = true
+        scaleType = ImageView.ScaleType.CENTER_INSIDE
+
+        val padding = 12.convertDensityPointsToPixels(context)
+        setPadding(padding, padding, padding, padding)
+
+        if(action != null){
+
+            setSafeOnClickListener {
+                action(it)
+            }
+
+            with(TypedValue()) {
+                context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, this, true)
+                setBackgroundResource(resourceId)
+            }
+        }
+    }
+}
+
+fun createClickableImageView(context: Context, drawableResId: Int, action: ((View) -> (Unit))?): ImageView {
+    return createClickableImageView(context, ContextCompat.getDrawable(context, drawableResId), action)
 }
