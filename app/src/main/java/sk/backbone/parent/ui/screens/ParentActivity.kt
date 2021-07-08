@@ -31,8 +31,8 @@ abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBinding
         _viewBinding = viewBindingFactory?.invoke(layoutInflater)
         _viewBinding?.root?.let { setContentView(it) }
 
-        if(this is IToolbarActivity){
-            createToolbar(this)
+        if(this is IToolbarActivity<*>){
+            refreshToolbar()
         }
     }
 
