@@ -1,6 +1,6 @@
 package sk.backbone.parent.ui.screens
 
-import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
@@ -9,7 +9,7 @@ interface IToolbarActivity<ToolbarViewBinding: ViewBinding> {
     abstract fun refreshToolbar()
 
     val toolbarRootId: Int
-    val toolbarRootInflater: (Context, ViewGroup?, Boolean) -> ToolbarViewBinding
+    val toolbarRootInflater: (LayoutInflater, ViewGroup?, Boolean) -> ToolbarViewBinding
     val toolbarRootBinder: (View) -> ToolbarViewBinding
 
     val toolbarViewBinding: ToolbarViewBinding get () {
@@ -20,7 +20,7 @@ interface IToolbarActivity<ToolbarViewBinding: ViewBinding> {
                 val toolbarRoot = activityRootView.findViewById<ViewGroup>(toolbarRootId)
 
                 if(toolbarRoot == null){
-                    val viewBinding = toolbarRootInflater(this, activityRootView, false)
+                    val viewBinding = toolbarRootInflater(LayoutInflater.from(this), activityRootView, false)
                     activityRootView.addView(viewBinding.root, 0)
                     viewBinding
                 } else {
