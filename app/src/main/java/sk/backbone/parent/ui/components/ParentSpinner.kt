@@ -67,4 +67,9 @@ abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val
     inline fun <reified T>getSelectedItem(): T? {
         return this.provider?.get(spinner.selectedItemPosition) as T?
     }
+
+    override fun setEnabled(enabled: Boolean) {
+        spinner.isEnabled = enabled
+        super.setEnabled(enabled)
+    }
 }
