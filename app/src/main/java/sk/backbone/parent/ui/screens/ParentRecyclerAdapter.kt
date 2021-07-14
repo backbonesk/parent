@@ -22,6 +22,11 @@ abstract class ParentRecyclerAdapter<TType, TViewHolder>(protected val context: 
         notifyDataSetChanged()
     }
 
+    fun moveItem(from: Int, to: Int){
+        dataSet.add(to, dataSet.removeAt(from))
+        notifyItemMoved(from, to)
+    }
+
     abstract class ParentRecyclerViewHolder<TDataType>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         abstract fun bindData(viewData: TDataType)
     }
