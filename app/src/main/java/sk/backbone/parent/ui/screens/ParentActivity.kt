@@ -19,7 +19,7 @@ abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBinding
         return ViewModelProvider(this)[T::class.java]
     }
 
-    override val scopes = Scopes()
+    override var scopes = Scopes()
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!

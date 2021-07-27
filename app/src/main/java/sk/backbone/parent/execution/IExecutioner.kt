@@ -5,7 +5,7 @@ import android.view.ViewGroup
 
 interface IExecutioner {
     fun getContext(): Context?
-    val scopes: Scopes
+    var scopes: Scopes
 
     fun getRootView(): ViewGroup?
     
@@ -20,5 +20,9 @@ interface IExecutioner {
 
     fun withExecutorParamsExecute(executorFactoryMethod: (ExecutorParams) -> ParentExecutor<*>) {
         withExecutorParams { executorFactoryMethod(it).execute() }
+    }
+
+    fun withExecutorParamsExecuteMultiple(executorsFactoryMethod: (ExecutorParams) -> Array<ParentExecutor<*>>) {
+        withExecutorParams { params -> executorsFactoryMethod(params).forEach { executor -> executor.execute() } }
     }
 }
