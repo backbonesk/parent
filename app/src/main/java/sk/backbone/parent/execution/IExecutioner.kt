@@ -14,6 +14,7 @@ interface IExecutioner {
             is ParentActivity<*> -> this
             is ParentService<*> -> this
             is ParentFcmService<*> -> this
+            is Context -> this
             else -> null
         }
     }
