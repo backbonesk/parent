@@ -35,7 +35,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var lastError: Throwable? = null
     var wasCanceled: Boolean = false
 
-    protected val rootView: ViewGroup = executorParams.rootView
+    protected val rootView: ViewGroup? = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
     protected val context: Context = executorParams.context
 

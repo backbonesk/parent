@@ -29,25 +29,6 @@ abstract class ISpinnerItemsProvider<T> {
         return (value as T?)?.let { stringValues.indexOf(getString(it)) } ?: -1
     }
 
-    class Test {
-        var uno = 1
-
-        private fun Wiii(){
-
-            val objecterino = object {
-                var uno: Int = 0
-            }.apply {
-                uno = 1
-            }
-
-            if(this.uno == objecterino.uno){
-                //Vykona sa toto?
-            } else {
-                //Vykona sa toto?
-            }
-        }
-    }
-
     private fun GiveMeUnoOrInput(unoOrInput: Int? = 1): Int? {
         return unoOrInput
     }

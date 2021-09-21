@@ -14,13 +14,6 @@ import sk.backbone.parent.execution.Scopes
 
 abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater, ViewGroup?, Boolean) -> TViewBinding)?): Fragment(), IExecutioner {
     override var scopes = Scopes()
-        get() {
-            if(!field.default.isActive || !field.io.isActive || !field.ui.isActive){
-                field = Scopes()
-            }
-
-            return field
-        }
 
     inline fun <reified T: ViewModel>getViewModel() : T {
         return ViewModelProvider(this)[T::class.java]
@@ -33,6 +26,12 @@ abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _viewBinding = viewBindingFactory?.invoke(inflater, container, false)
+
+        if(!scopes.default.isActive || !scopes.io.isActive || !scopes.ui.isActive){
+            scopes = Scopes()
+        }
+
+
         return viewBinding.root
     }
 

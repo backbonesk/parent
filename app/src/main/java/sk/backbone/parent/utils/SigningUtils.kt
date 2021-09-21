@@ -16,7 +16,7 @@ fun getSha256Digest(value: String): String {
         hash = "$hash$part"
     }
 
-    return hash.toLowerCase(Locale.getDefault())
+    return hash.lowercase(Locale.getDefault())
 }
 
 fun generateHmac256Signature(digest: String, secret: String): String {
@@ -29,7 +29,7 @@ fun generateHmac256Signature(digest: String, secret: String): String {
     var signature = ""
 
     for(byte in signatureBytes){
-        val part = String.format("%02X", byte).toLowerCase()
+        val part = String.format("%02X", byte).lowercase()
         signature = "$signature$part"
     }
 

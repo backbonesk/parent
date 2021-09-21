@@ -56,6 +56,4 @@ abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBinding
     override fun getRootView(): ViewGroup? {
         return (this.findViewById<View>(android.R.id.content) as ViewGroup?)?.getChildAt(0) as ViewGroup?
     }
-
-    override fun getContext(): Context? = this
 }

@@ -2,18 +2,32 @@ package sk.backbone.parent.execution
 
 import android.content.Context
 import android.view.ViewGroup
+import sk.backbone.parent.application.ParentFcmService
+import sk.backbone.parent.application.ParentService
+import sk.backbone.parent.ui.screens.ParentActivity
+import sk.backbone.parent.ui.screens.ParentFragment
 
 interface IExecutioner {
-    fun getContext(): Context?
+    private val _context: Context? get(){
+        return when (this) {
+            is ParentFragment<*> -> context
+            is ParentActivity<*> -> this
+            is ParentService<*> -> this
+            is ParentFcmService<*> -> this
+            else -> null
+        }
+    }
+
     var scopes: Scopes
 
     fun getRootView(): ViewGroup?
     
     fun withExecutorParams(execute: (ExecutorParams) -> Unit){
-        val context = getContext()
+        val context = _context
+
         val rootView = getRootView()
 
-        if(context != null && rootView != null){
+        if(context != null){
             execute(ExecutorParams(rootView, scopes, context))
         }
     }

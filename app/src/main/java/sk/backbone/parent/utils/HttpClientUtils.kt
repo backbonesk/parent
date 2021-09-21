@@ -8,7 +8,7 @@ fun NetworkResponse.getContentTypeCharset(default: String = "utf-8"): String {
     return headers?.get("Content-Type")?.
     split(";")?.
     firstOrNull{ it -> it.contains("charset")}?.
-    split("=")?.getOrNull(1)?.toLowerCase() ?: default
+    split("=")?.getOrNull(1)?.lowercase() ?: default
 }
 
 fun List<Pair<String, String?>>?.asEncodedQueryParameters(): String? {
