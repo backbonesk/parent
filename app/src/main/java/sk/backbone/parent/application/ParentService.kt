@@ -9,6 +9,7 @@ import sk.backbone.parent.models.IModelsProvider
 abstract class ParentService<ModelsProvider: IModelsProvider> : Service(), IModelsProvider, IExecutioner {
     abstract val modelsProvider: ModelsProvider
     override val context: Context get() = this
+    override var scopes: Scopes = Scopes()
 
     override fun onDestroy() {
         scopes.cancel()
