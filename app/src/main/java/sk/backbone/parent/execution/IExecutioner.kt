@@ -21,7 +21,7 @@ interface IExecutioner {
 
     var scopes: Scopes
 
-    fun getRootView(): ViewGroup?
+    fun getRootView(): ViewGroup? = null
     
     fun withExecutorParams(execute: (ExecutorParams) -> Unit){
         val context = _context
