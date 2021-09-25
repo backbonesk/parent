@@ -4,6 +4,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 const val iso8061Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8061DateOnlyFormat = "yyyy-MM-dd"
@@ -149,7 +150,7 @@ fun parseLocallyFormattedDateFromDateOnlyString(date: String?): Date? {
 }
 
 fun getDifferenceIn24HFormat(first: Date, second: Date): String {
-    val millisBetweenTotal = (first.time - second.time)
+    val millisBetweenTotal = (first.time - second.time).absoluteValue
     val secondsBetweenTotal = millisBetweenTotal / 1000
     val millis = (secondsBetweenTotal % 1000).toString().padStart(2, '0')
     val seconds = (secondsBetweenTotal % 60).toString().padStart(2, '0')
