@@ -19,7 +19,7 @@ abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBinding
         return ViewModelProvider(this)[T::class.java]
     }
 
-    abstract var identifier: String?
+    open var identifier: String? = this::class.java.toString()
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!
