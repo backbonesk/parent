@@ -7,7 +7,7 @@ import kotlin.math.abs
 
 const val iso8061Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8061DateOnlyFormat = "yyyy-MM-dd"
-const val iso8061FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmXXX"
+const val iso8061FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 
 fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -146,6 +146,17 @@ fun extractLocallyFormattedDateOnly(date: Date?): String? {
 
 fun parseLocallyFormattedDateFromDateOnlyString(date: String?): Date? {
     return date?.let { return localShortDateFormatter.parse(date) }
+}
+
+fun getDifferenceIn24HFormat(first: Date, second: Date): String {
+    val millisBetweenTotal = (first.time - second.time)
+    val secondsBetweenTotal = millisBetweenTotal / 1000
+    val millis = (secondsBetweenTotal % 1000).toString().padStart(2, '0')
+    val seconds = (secondsBetweenTotal % 60).toString().padStart(2, '0')
+    val minutes = ((secondsBetweenTotal / 60).toInt() % 60).toString().padStart(2, '0')
+    val hours = ((secondsBetweenTotal / 3600).toInt()).toString().padStart(2, '0')
+
+    return "${hours}:${minutes}:${seconds}:${millis}"
 }
 
 private val localShortDateFormatter: SimpleDateFormat
