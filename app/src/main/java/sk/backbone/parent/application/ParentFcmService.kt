@@ -10,7 +10,7 @@ import sk.backbone.parent.models.IModelsProvider
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 abstract class ParentFcmService<ModelsProvider: IModelsProvider> : FirebaseMessagingService(), IModelsProvider, IExecutioner {
     abstract val modelsProvider: ModelsProvider
-
+    override var scopes: Scopes = Scopes()
     override val context: Context get() = this
 
     override fun onDestroy() {
