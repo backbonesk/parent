@@ -1,5 +1,6 @@
 package sk.backbone.parent.repositories.server
 
+import android.app.Application
 import android.content.Context
 import com.android.volley.Request
 import com.android.volley.toolbox.BaseHttpStack
@@ -14,7 +15,7 @@ import javax.inject.Inject
 import kotlin.coroutines.Continuation
 
 abstract class ParentServerRepository<TokensWrapperType>(){
-    @Inject lateinit var context: Context
+    @Inject lateinit var context: Application
     @Inject lateinit var tokensProvider: ITokensProvider<TokensWrapperType>
 
     val client by lazy { HttpClient(context, getBaseHttpStack()) }
