@@ -1,6 +1,5 @@
 package sk.backbone.parent.ui.screens
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +9,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import sk.backbone.parent.execution.IExecutioner
-import sk.backbone.parent.execution.Scopes
+import sk.backbone.parent.execution.scopes.ActivityScopes
+import sk.backbone.parent.execution.scopes.Scopes
+import javax.inject.Inject
 
-abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater) -> TViewBinding)?) : AppCompatActivity(), IExecutioner {
+abstract class ParentActivity<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater) -> TViewBinding)?) : AppCompatActivity(), IExecutioner<ActivityScopes> {
     open fun getActivityTransitions() : ActivityTransitions = ActivityTransitions.NONE
 
     inline fun <reified T: ViewModel>getViewModel() : T {
         return ViewModelProvider(this)[T::class.java]
     }
 
-    override var scopes = Scopes()
+    @Inject override lateinit var scopes: ActivityScopes
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!

@@ -1,10 +1,10 @@
-package sk.backbone.parent.execution
+package sk.backbone.parent.execution.scopes
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-class Scopes {
+abstract class Scopes {
     private var uiJob = SupervisorJob()
     val ui: CoroutineScope get() = CoroutineScope(Dispatchers.Main + uiJob)
 
@@ -20,3 +20,4 @@ class Scopes {
         ioJob.cancel()
     }
 }
+

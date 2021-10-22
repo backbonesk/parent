@@ -8,8 +8,12 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.children
+import sk.backbone.parent.execution.scopes.ActivityScopes
+import javax.inject.Inject
 
-abstract class StateSavingLinearLayout : LinearLayout {
+abstract class ParentLinearLayout : LinearLayout {
+    @Inject lateinit var scopes: ActivityScopes
+
     constructor(context: Context) : super(context){
     }
 

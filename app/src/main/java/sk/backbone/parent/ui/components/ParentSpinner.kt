@@ -11,7 +11,7 @@ import android.widget.Spinner
 import sk.backbone.parent.ui.validations.text_validation.TextInputValidation
 import sk.backbone.parent.utils.hideKeyboard
 
-abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding, context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : StateSavingLinearLayout(context, attrs, defStyleAttr) {
+abstract class ParentSpinner<TViewBinding> @JvmOverloads constructor(private val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding, context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ParentLinearLayout(context, attrs, defStyleAttr) {
     var onItemSelected: ((ParentSpinner<*>, Int) -> Unit)? = null
     var provider: ISpinnerItemsProvider<*>? = null
         set(value) {

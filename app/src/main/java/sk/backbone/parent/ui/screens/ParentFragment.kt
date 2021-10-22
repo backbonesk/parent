@@ -10,10 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.isActive
 import sk.backbone.parent.execution.IExecutioner
-import sk.backbone.parent.execution.Scopes
+import sk.backbone.parent.execution.scopes.FragmentScopes
+import sk.backbone.parent.execution.scopes.Scopes
 
-abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater, ViewGroup?, Boolean) -> TViewBinding)?): Fragment(), IExecutioner {
-    override var scopes = Scopes()
+abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater, ViewGroup?, Boolean) -> TViewBinding)?): Fragment(), IExecutioner<FragmentScopes> {
+    override var scopes = FragmentScopes()
 
     inline fun <reified T: ViewModel>getViewModel() : T {
         return ViewModelProvider(this)[T::class.java]
@@ -28,7 +29,7 @@ abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBinding
         _viewBinding = viewBindingFactory?.invoke(inflater, container, false)
 
         if(!scopes.default.isActive || !scopes.io.isActive || !scopes.ui.isActive){
-            scopes = Scopes()
+            scopes = FragmentScopes()
         }
 
 

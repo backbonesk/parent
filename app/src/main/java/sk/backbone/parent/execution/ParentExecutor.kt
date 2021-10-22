@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.*
+import sk.backbone.parent.execution.scopes.Scopes
 import sk.backbone.parent.repositories.server.client.exceptions.*
 
 abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
