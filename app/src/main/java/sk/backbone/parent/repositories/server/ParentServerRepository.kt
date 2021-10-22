@@ -1,32 +1,18 @@
 package sk.backbone.parent.repositories.server
 
-import android.app.Application
-import android.content.Context
 import com.android.volley.Request
-import com.android.volley.toolbox.BaseHttpStack
 import org.json.JSONArray
 import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.HttpClient
 import sk.backbone.parent.repositories.server.client.IHttpResponseWrapper
-import sk.backbone.parent.repositories.server.client.ITokensProvider
 import sk.backbone.parent.repositories.server.client.requests.JsonObjectHttpRequest
 import sk.backbone.parent.utils.jsonToObject
-import javax.inject.Inject
 import kotlin.coroutines.Continuation
 
-abstract class ParentServerRepository<TokensWrapperType>(){
-    @Inject lateinit var context: Application
-    @Inject lateinit var tokensProvider: ITokensProvider<TokensWrapperType>
-
-    val client by lazy { HttpClient(context, getBaseHttpStack()) }
-
-    open fun getBaseHttpStack(): BaseHttpStack? {
-        return null
-    }
+abstract class ParentServerRepository {
+    abstract var client: HttpClient
 
     abstract val additionalHeadersProvider: (JsonObjectHttpRequest<*>) -> Map<String, String>
-
-    fun getTokens() = tokensProvider.getLocalTokens()
 
     suspend inline fun <reified Type>executeRequest(crossinline requestFactoryMethod: (Continuation<Type?>) -> Request<*>): Type? {
         return client.executeRequest {
