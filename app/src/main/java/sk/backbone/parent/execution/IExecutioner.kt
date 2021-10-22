@@ -12,8 +12,8 @@ interface IExecutioner {
         return when (this) {
             is ParentFragment<*> -> context
             is ParentActivity<*> -> this
-            is ParentService<*> -> this
-            is ParentFcmService<*> -> this
+            is ParentService -> this
+            is ParentFcmService -> this
             is Context -> this
             else -> null
         }

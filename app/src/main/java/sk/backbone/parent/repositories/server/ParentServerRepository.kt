@@ -10,10 +10,14 @@ import sk.backbone.parent.repositories.server.client.IHttpResponseWrapper
 import sk.backbone.parent.repositories.server.client.ITokensProvider
 import sk.backbone.parent.repositories.server.client.requests.JsonObjectHttpRequest
 import sk.backbone.parent.utils.jsonToObject
+import javax.inject.Inject
 import kotlin.coroutines.Continuation
 
-abstract class ParentServerRepository<TokensWrapperType>(val context: Context, val tokensProvider: ITokensProvider<TokensWrapperType>){
-    val client get() = HttpClient(context, getBaseHttpStack())
+abstract class ParentServerRepository<TokensWrapperType>(){
+    @Inject lateinit var context: Context
+    @Inject lateinit var tokensProvider: ITokensProvider<TokensWrapperType>
+
+    val client by lazy { HttpClient(context, getBaseHttpStack()) }
 
     open fun getBaseHttpStack(): BaseHttpStack? {
         return null

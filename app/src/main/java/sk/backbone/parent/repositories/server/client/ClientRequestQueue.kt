@@ -14,13 +14,4 @@ class ClientRequestQueue(private val context: Context, baseHttpStack: BaseHttpSt
     fun addToRequestQueue(request: Request<*>) {
         requestQueue.add(request)
     }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: ClientRequestQueue? = null
-
-        fun getInstance(context: Context, baseHttpStack: BaseHttpStack? = null) = synchronized(this) {
-            INSTANCE ?: ClientRequestQueue(context, baseHttpStack).also { INSTANCE = it }
-        }
-    }
 }
