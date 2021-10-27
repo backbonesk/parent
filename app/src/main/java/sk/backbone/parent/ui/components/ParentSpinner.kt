@@ -14,25 +14,11 @@ import sk.backbone.parent.utils.hideKeyboard
 abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
     private val viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding
 
-    constructor(
-        viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding,
-        context: Context): super(context){
+    constructor(viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding, context: Context): this(viewBindingFactory, context, null, 0)
+    constructor(viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding, context: Context, attrs: AttributeSet?): this(viewBindingFactory, context, attrs, 0)
+    constructor(viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding, context: Context, attrs: AttributeSet?, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
         this.viewBindingFactory = viewBindingFactory
-    }
-
-    constructor(
-        viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding,
-        context: Context,
-        attrs: AttributeSet?): super(context, attrs){
-        this.viewBindingFactory = viewBindingFactory
-    }
-
-    constructor(
-        viewBindingFactory: (LayoutInflater, ViewGroup?, Boolean) -> TViewBinding,
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int): super(context, attrs, defStyleAttr){
-        this.viewBindingFactory = viewBindingFactory
+        init()
     }
 
     var onItemSelected: ((ParentSpinner<*>, Int) -> Unit)? = null
@@ -53,10 +39,6 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
     protected open val spinnerItemResource: Int = android.R.layout.simple_spinner_item
     protected open val spinnerDropdownResource: Int = android.R.layout.simple_spinner_dropdown_item
     abstract val spinner: Spinner
-
-    init {
-        init()
-    }
 
     private fun init() {
         _viewBinding = viewBindingFactory(LayoutInflater.from(context), this, true)
