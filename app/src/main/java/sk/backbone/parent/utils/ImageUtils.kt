@@ -71,10 +71,10 @@ fun Context.getLastStoredImage(): Bitmap? {
         null
     }
 }
-fun Bitmap.getBase64(): String? {
+fun Bitmap.getBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG, quality : Int = 100): String? {
     return this.run {
         val stream = ByteArrayOutputStream()
-        compress(Bitmap.CompressFormat.PNG, 100, stream)
+        compress(compressFormat, quality, stream)
         val bytes = stream.toByteArray()
         Base64.encodeToString(bytes, Base64.DEFAULT)
     }
