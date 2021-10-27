@@ -7,9 +7,11 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -67,5 +69,13 @@ fun Context.getLastStoredImage(): Bitmap? {
     } catch (e: java.lang.Exception) {
         e.printStackTrace()
         null
+    }
+}
+fun Bitmap.getBase64(): String? {
+    return this.run {
+        val stream = ByteArrayOutputStream()
+        compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val bytes = stream.toByteArray()
+        Base64.encodeToString(bytes, Base64.DEFAULT)
     }
 }
