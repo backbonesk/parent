@@ -48,11 +48,11 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var isLoopingInfinitely = false
     private var isRunning = false
 
+    val isExecution get() = isRunning && shouldContinue()
+
     protected val rootView: ViewGroup? = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
     protected val context: Context = executorParams.context
-
-    private val isExecuting = shouldContinue() && isRunning
 
     private fun shouldContinue(): Boolean {
         return ((!wasSuccessful && ( (retryEnabled && retryInfinitely) ||
