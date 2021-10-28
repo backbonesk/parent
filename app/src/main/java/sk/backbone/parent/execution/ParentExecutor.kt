@@ -20,6 +20,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var notifyUiOnError = true
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
+    var defaultOperationOnSuccess: ((T?) -> Unit)? = null
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
     var uiOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
     var uiOperationOnFailure: ((Throwable) -> Unit)? = null
@@ -70,6 +71,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                 try {
                     val ioOperationResult = withContext(scopes.io.coroutineContext){
                         ioOperation?.invoke()
+                    }
+
+                    withContext(scopes.default.coroutineContext){
+                        uiOperationOnSuccess?.invoke(ioOperationResult)
                     }
 
                     withContext(scopes.ui.coroutineContext){
