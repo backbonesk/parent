@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import sk.backbone.parent.execution.scopes.Scopes
 
 data class ExecutorParams(
-    val rootView: ViewGroup?,
+    val context: Context,
     val scopes: Scopes,
-    val context: Context
-)
+    val rootView: ViewGroup? = null
+    )

@@ -30,7 +30,7 @@ interface IExecutioner<TScopes: Scopes> {
         val rootView = getRootView()
 
         if(context != null){
-            execute(ExecutorParams(rootView, scopes, context))
+            execute(ExecutorParams(context, scopes, rootView))
         }
     }
 

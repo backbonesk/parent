@@ -20,12 +20,20 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var notifyUiOnError = true
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
+
     var defaultOperationOnSuccess: ((T?) -> Unit)? = null
+    var defaultOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
+    var defaultOperationOnFailure: ((Throwable) -> Unit)? = null
+    var defaultOperationOnFinished: (() -> Unit)? = null
+
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
     var uiOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
     var uiOperationOnFailure: ((Throwable) -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
+
     var retryIntervalMillisecond: Long = 5000
+    var repeatInterval: Long = 0
+    var startDelay: Long = 0
     var maxRetries: Int = 5
 
     protected var uiNotificationOnError: (() -> Unit)? = null
@@ -36,13 +44,17 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var isFinished = false
     var lastError: Throwable? = null
     var wasCanceled: Boolean = false
+    var isLoopingInfinitely = false
 
     protected val rootView: ViewGroup? = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
     protected val context: Context = executorParams.context
 
     fun isExecuting(): Boolean {
-        return (!wasSuccessful && ((retryEnabled && retryInfinitely) || (retryEnabled && (currentRepeatCount < maxRetries)) || firstRun)) && !isFinished
+        return ((!wasSuccessful && ( (retryEnabled && retryInfinitely) ||
+                                    (retryEnabled && (currentRepeatCount < maxRetries)) ||
+                                     firstRun))
+                && !isFinished) || (isLoopingInfinitely && !wasCanceled)
     }
 
     final fun execute() {
@@ -64,6 +76,8 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         cancel()
 
         recentJob = scopes.default.launch {
+            delay(startDelay)
+
             while (isExecuting()) {
                 firstRun = false
                 currentRepeatCount++
@@ -74,7 +88,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     }
 
                     withContext(scopes.default.coroutineContext){
-                        uiOperationOnSuccess?.invoke(ioOperationResult)
+                        defaultOperationOnSuccess?.invoke(ioOperationResult)
                     }
 
                     withContext(scopes.ui.coroutineContext){
@@ -85,6 +99,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
 
                     retryEnabled = false
                     wasSuccessful = true
+
+                    if(retryInfinitely){
+                        delay(repeatInterval)
+                    }
 
                     return@launch
                 }
@@ -108,6 +126,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         }
                     }
 
+                    withContext(scopes.default.coroutineContext){
+                        defaultOperationOnUnsuccessfulAttempt?.invoke(throwable)
+                    }
+
                     withContext(scopes.ui.coroutineContext){
                         if(currentRepeatCount == 1 && notifyUiOnError){
                             uiNotificationOnError?.invoke()
@@ -121,10 +143,16 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                 }
             }
             if(!wasSuccessful && !wasCanceled){
+
                 withContext(scopes.ui.coroutineContext){
                     loadingDialog?.dismiss()
                     lastError?.let { uiOperationOnFailure?.invoke(it) }
                     uiOperationOnFinished?.invoke()
+                }
+
+                withContext(scopes.default.coroutineContext){
+                    lastError?.let { defaultOperationOnFailure?.invoke(it) }
+                    defaultOperationOnFinished?.invoke()
                 }
             }
 
