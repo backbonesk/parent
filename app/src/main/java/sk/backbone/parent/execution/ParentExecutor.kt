@@ -48,7 +48,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var isLoopingInfinitely = false
     private var isRunning = false
 
-    val isExecution get() = isRunning && shouldContinue()
+    val isExecuting get() = isRunning && shouldContinue()
 
     protected val rootView: ViewGroup? = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
