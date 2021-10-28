@@ -102,9 +102,9 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
 
                     if(isLoopingInfinitely){
                         delay(repeatInterval)
+                    } else {
+                        break
                     }
-
-                    return@launch
                 }
                 catch (canceled: ParentCancellationException){
                     Log.e("ExecutionFailed", this.javaClass.name, canceled)
@@ -142,6 +142,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     }
                 }
             }
+
             if(!wasSuccessful && !wasCanceled){
 
                 withContext(scopes.ui.coroutineContext){
