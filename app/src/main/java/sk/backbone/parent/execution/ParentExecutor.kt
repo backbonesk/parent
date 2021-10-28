@@ -21,10 +21,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var showProgressDialog: Boolean = false
     var ioOperation: (suspend () -> T)? = null
 
-    var defaultOperationOnSuccess: ((T?) -> Unit)? = null
-    var defaultOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
-    var defaultOperationOnFailure: ((Throwable) -> Unit)? = null
-    var defaultOperationOnFinished: (() -> Unit)? = null
+    var defaultOperationOnSuccess: (suspend (T?) -> Unit)? = null
+    var defaultOperationOnUnsuccessfulAttempt: (suspend (Throwable) -> Unit)? = null
+    var defaultOperationOnFailure: (suspend (Throwable) -> Unit)? = null
+    var defaultOperationOnFinished: (suspend () -> Unit)? = null
 
     var uiOperationOnSuccess: ((T?) -> Unit)? = null
     var uiOperationOnUnsuccessfulAttempt: ((Throwable) -> Unit)? = null
