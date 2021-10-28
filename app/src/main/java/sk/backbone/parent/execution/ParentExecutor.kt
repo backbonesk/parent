@@ -14,7 +14,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     abstract val dialogProvider: IExecutorDialogProvider
     abstract val exceptionDescriptionProvider: IExceptionDescriptionProvider
 
-    open var retryEnabled = true
+    open var retryEnabled = false
     open var retryInfinitely = false
 
     var notifyUiOnError = true
@@ -31,10 +31,10 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var uiOperationOnFailure: ((Throwable) -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
 
-    var retryIntervalMillisecond: Long = 5000
+    var retryIntervalMillisecond: Long = 0
     var repeatInterval: Long = 0
     var startDelay: Long = 0
-    var maxRetries: Int = 5
+    var maxRetries: Int = 3
 
     protected var uiNotificationOnError: (() -> Unit)? = null
     private var recentJob: Job? = null
