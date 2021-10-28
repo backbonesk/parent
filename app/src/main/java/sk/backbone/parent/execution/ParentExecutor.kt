@@ -100,7 +100,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     retryEnabled = false
                     wasSuccessful = true
 
-                    if(retryInfinitely){
+                    if(isLoopingInfinitely){
                         delay(repeatInterval)
                     }
 
