@@ -137,7 +137,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                         uiOperationOnUnsuccessfulAttempt?.invoke(throwable)
                     }
 
-                    if(retryEnabled) {
+                    if(retryEnabled || isLoopingInfinitely) {
                         delay(retryIntervalMillisecond)
                     }
                 }
