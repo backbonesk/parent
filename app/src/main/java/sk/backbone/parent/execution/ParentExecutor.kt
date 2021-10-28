@@ -38,6 +38,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
 
     protected var uiNotificationOnError: (() -> Unit)? = null
     private var recentJob: Job? = null
+
     var wasSuccessful = false
     var currentRepeatCount = 0
     var firstRun = true
@@ -45,16 +46,19 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var lastError: Throwable? = null
     var wasCanceled: Boolean = false
     var isLoopingInfinitely = false
+    private var isRunning = false
 
     protected val rootView: ViewGroup? = executorParams.rootView
     protected val scopes: Scopes = executorParams.scopes
     protected val context: Context = executorParams.context
 
-    fun isExecuting(): Boolean {
+    private val isExecuting = shouldContinue() && isRunning
+
+    private fun shouldContinue(): Boolean {
         return ((!wasSuccessful && ( (retryEnabled && retryInfinitely) ||
                                     (retryEnabled && (currentRepeatCount < maxRetries)) ||
                                      firstRun))
-                && !isFinished) || (isLoopingInfinitely && !wasCanceled)
+                && !isFinished) || (isLoopingInfinitely && !wasCanceled && !isFinished)
     }
 
     final fun execute() {
@@ -66,6 +70,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         isFinished = false
         lastError = null
         wasCanceled = false
+        isRunning = true
 
         var loadingDialog: AlertDialog? = null
 
@@ -78,7 +83,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
         recentJob = scopes.default.launch {
             delay(startDelay)
 
-            while (isExecuting()) {
+            while (shouldContinue()) {
                 firstRun = false
                 currentRepeatCount++
 
@@ -157,6 +162,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                 }
             }
 
+            isRunning = false
             isFinished = true
         }
     }
