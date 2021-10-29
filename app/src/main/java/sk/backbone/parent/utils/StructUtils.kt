@@ -16,6 +16,12 @@ fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     return result
 }
 
+fun List<*>.move(from: Int, to: Int): List<List<*>> {
+    return mutableListOf(this).apply {
+        add(to, removeAt(from))
+    }
+}
+
 fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     var realFrom = from
     var realTo = to
