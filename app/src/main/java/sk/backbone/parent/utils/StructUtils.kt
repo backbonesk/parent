@@ -16,8 +16,8 @@ fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     return result
 }
 
-fun List<*>.move(from: Int, to: Int): List<List<*>> {
-    return mutableListOf(this).apply {
+fun <T> List<T>.move(from: Int, to: Int): List<T> {
+    return this.toMutableList().apply {
         add(to, removeAt(from))
     }
 }
