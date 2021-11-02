@@ -27,8 +27,18 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
             field = value
             val currentItems = field?.stringValues ?: arrayListOf()
 
+            spinner.onItemSelectedListener = null
+
             spinner.adapter = ArrayAdapter(context, spinnerItemResource, currentItems).apply {
                 setDropDownViewResource(spinnerDropdownResource)
+            }
+
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+                override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    onItemSelected?.invoke(this@ParentSpinner, position)
+                }
             }
         }
 
@@ -46,16 +56,6 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         spinner.isFocusable = true
         spinner.isClickable = true
         spinner.isFocusableInTouchMode = true
-
-        spinner.adapter = this.context?.let { ArrayAdapter(it, spinnerItemResource, arrayOf("")) }
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-
-            override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                onItemSelected?.invoke(this@ParentSpinner, position)
-            }
-        }
 
         spinner.setOnFocusChangeListener { view, focused ->
             if(focused){
