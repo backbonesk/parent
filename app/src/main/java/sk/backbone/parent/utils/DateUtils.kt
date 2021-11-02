@@ -6,9 +6,9 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
-const val iso8061Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-const val iso8061DateOnlyFormat = "yyyy-MM-dd"
-const val iso8061FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
+const val iso8601Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+const val iso8601DateOnlyFormat = "yyyy-MM-dd"
+const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 
 fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -91,25 +91,25 @@ fun isSameDay(date1: Date, date2: Date): Boolean {
 }
 
 fun toSlovakDate(value: String): Date? {
-    return SimpleDateFormat(iso8061Format, Locale("sk")).apply {
+    return SimpleDateFormat(iso8601Format, Locale("sk")).apply {
         timeZone = TimeZone.getTimeZone("Europe/Bratislava")
     }.parse(value)
 }
 
 fun fromUtcString(value: String?): Date? {
-    return value?.let { SimpleDateFormat(iso8061Format, Locale.getDefault()).apply {
+    return value?.let { SimpleDateFormat(iso8601Format, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }.parse(it) }
 }
 
 fun fromUtcStringDateOnly(value: String?): Date? {
-    return value?.let { SimpleDateFormat(iso8061DateOnlyFormat, Locale.getDefault()).apply {
+    return value?.let { SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }.parse(it) }
 }
 
 fun toUtcString(value: Date?): String? {
-    val dateFormat = SimpleDateFormat(iso8061Format, Locale.getDefault()).apply {
+    val dateFormat = SimpleDateFormat(iso8601Format, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
@@ -117,7 +117,7 @@ fun toUtcString(value: Date?): String? {
 }
 
 fun toUtcStringWithoutSeconds(value: Date?): String? {
-    val dateFormat = SimpleDateFormat(iso8061FormatWithoutSeconds, Locale.getDefault()).apply {
+    val dateFormat = SimpleDateFormat(iso8601FormatWithoutSeconds, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
@@ -126,19 +126,19 @@ fun toUtcStringWithoutSeconds(value: Date?): String? {
 
 fun formatIsoDateOnlyToLocalDate(inputDate: String?): String? {
     return inputDate?.let {
-        val date = SimpleDateFormat(iso8061DateOnlyFormat, Locale.getDefault()).parse(inputDate)
+        val date = SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).parse(inputDate)
 
         return extractLocallyFormattedDateOnly(date)
     }
 }
 
-fun Date.getIso8061DateOnlyString(): String {
-    return SimpleDateFormat(iso8061DateOnlyFormat, Locale.getDefault()).format(this)
+fun Date.getIso8601DateOnlyString(): String {
+    return SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).format(this)
 }
 
 fun formatDefaultLocaleDateToIsoDateOnly(input: String?): String? {
     val date = input?.let { localShortDateFormatter.parse(input) }
-    return date?.let { SimpleDateFormat(iso8061DateOnlyFormat, Locale.getDefault()).format(date) }
+    return date?.let { SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).format(date) }
 }
 
 fun extractLocallyFormattedDateOnly(date: Date?): String? {

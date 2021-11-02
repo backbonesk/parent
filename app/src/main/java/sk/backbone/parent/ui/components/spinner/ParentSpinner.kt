@@ -1,4 +1,4 @@
-package sk.backbone.parent.ui.components
+package sk.backbone.parent.ui.components.spinner
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import sk.backbone.parent.ui.components.ParentLinearLayout
 import sk.backbone.parent.ui.validations.text_validation.TextInputValidation
 import sk.backbone.parent.utils.hideKeyboard
 
@@ -23,7 +24,7 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
 
     var onItemSelected: ((ParentSpinner<*>, Int) -> Unit)? = null
 
-    var provider: ISpinnerItemsProvider<*>? = null
+    var provider: SpinnerItemsProvider<*>? = null
         private set
 
     private var _viewBinding: TViewBinding? = null
@@ -57,7 +58,7 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         return this.provider?.get(spinner.selectedItemPosition) as T?
     }
 
-    fun setProvider(provider: ISpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
+    fun setProvider(provider: SpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
         this.provider = provider
 
         val currentItems = provider?.stringValues ?: arrayListOf()

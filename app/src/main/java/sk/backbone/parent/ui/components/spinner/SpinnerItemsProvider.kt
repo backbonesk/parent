@@ -1,10 +1,9 @@
-package sk.backbone.parent.ui.components
+package sk.backbone.parent.ui.components.spinner
 
 import android.view.ViewGroup
 import androidx.core.view.forEach
-import java.lang.Exception
 
-abstract class ISpinnerItemsProvider<T> {
+abstract class SpinnerItemsProvider<T> {
     abstract val elements: List<T>
 
     val stringValues: List<String> by lazy{
