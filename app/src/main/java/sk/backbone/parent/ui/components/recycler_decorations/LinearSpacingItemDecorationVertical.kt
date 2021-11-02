@@ -1,4 +1,4 @@
-package sk.backbone.parent.ui.components
+package sk.backbone.parent.ui.components.recycler_decorations
 
 import android.graphics.Rect
 import android.view.View
