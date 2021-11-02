@@ -22,25 +22,9 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
     }
 
     var onItemSelected: ((ParentSpinner<*>, Int) -> Unit)? = null
+
     var provider: ISpinnerItemsProvider<*>? = null
-        set(value) {
-            field = value
-            val currentItems = field?.stringValues ?: arrayListOf()
-
-            spinner.onItemSelectedListener = null
-
-            spinner.adapter = ArrayAdapter(context, spinnerItemResource, currentItems).apply {
-                setDropDownViewResource(spinnerDropdownResource)
-            }
-
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onNothingSelected(p0: AdapterView<*>?) {}
-
-                override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    onItemSelected?.invoke(this@ParentSpinner, position)
-                }
-            }
-        }
+        private set
 
     private var _viewBinding: TViewBinding? = null
     val viewBinding: TViewBinding get() = _viewBinding!!
@@ -65,12 +49,41 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         }
     }
 
-    inline fun <reified T>setSelection(value: T?){
-        this.provider?.getIndexOf(value)?.let { spinner.setSelection(it, true) }
+    inline fun <reified T>setSelection(value: T?, animate: Boolean = true){
+        this.provider?.getIndexOf(value)?.let { spinner.setSelection(it, animate) }
     }
 
     inline fun <reified T>getSelectedItem(): T? {
         return this.provider?.get(spinner.selectedItemPosition) as T?
+    }
+
+    private fun setProvider(provider: ISpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
+        val currentItems = provider?.stringValues ?: arrayListOf()
+
+        val adapter = ArrayAdapter(context, spinnerItemResource, currentItems).apply {
+            setDropDownViewResource(spinnerDropdownResource)
+        }
+
+        spinner.onItemSelectedListener = null
+        spinner.adapter = adapter
+
+        if(triggerSpinnerListener){
+            setSpinnerListener()
+        } else {
+            post {
+                setSpinnerListener()
+            }
+        }
+    }
+
+    private fun setSpinnerListener() {
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+            override fun onItemSelected(p0: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                onItemSelected?.invoke(this@ParentSpinner, position)
+            }
+        }
     }
 
     override fun setEnabled(enabled: Boolean) {
