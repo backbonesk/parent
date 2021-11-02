@@ -57,7 +57,7 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         return this.provider?.get(spinner.selectedItemPosition) as T?
     }
 
-    private fun setProvider(provider: ISpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
+    fun setProvider(provider: ISpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
         val currentItems = provider?.stringValues ?: arrayListOf()
 
         val adapter = ArrayAdapter(context, spinnerItemResource, currentItems).apply {
