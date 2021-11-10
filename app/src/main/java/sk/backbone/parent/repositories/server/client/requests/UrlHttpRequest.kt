@@ -89,8 +89,12 @@ open class UrlHttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (String?) -> T?): Response.Listener<String?>{
             return Response.Listener {
-                val response = parseSuccessResponse(it)
-                continuation.resume(response)
+                try {
+                    val response = parseSuccessResponse(it)
+                    continuation.resume(response)
+                } catch (throwable: Throwable){
+                    continuation.resumeWithException(throwable)
+                }
             }
         }
 

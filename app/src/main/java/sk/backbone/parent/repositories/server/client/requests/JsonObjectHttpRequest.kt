@@ -86,8 +86,12 @@ open class JsonObjectHttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
             return Response.Listener {
-                val response = parseSuccessResponse(it)
-                continuation.resume(response)
+                try {
+                    val response = parseSuccessResponse(it)
+                    continuation.resume(response)
+                } catch (throwable: Throwable){
+                    continuation.resumeWithException(throwable)
+                }
             }
         }
 

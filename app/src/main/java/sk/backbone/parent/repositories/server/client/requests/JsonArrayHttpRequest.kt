@@ -86,8 +86,12 @@ open class JsonArrayHttpRequest<Type>(
 
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONArray?) -> T?): Response.Listener<JSONArray> {
             return Response.Listener {
-                val response = parseSuccessResponse(it)
-                continuation.resume(response)
+                try {
+                    val response = parseSuccessResponse(it)
+                    continuation.resume(response)
+                } catch (throwable: Throwable){
+                    continuation.resumeWithException(throwable)
+                }
             }
         }
 
