@@ -38,15 +38,14 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
     private fun init() {
         _viewBinding = viewBindingFactory(LayoutInflater.from(context), this, true)
 
-        isFocusable = true
-        isClickable = true
-        isFocusableInTouchMode = true
+        spinner.isFocusable = true
+        spinner.isClickable = true
+        spinner.isFocusableInTouchMode = true
 
-        setOnFocusChangeListener { view, focused ->
+        spinner.setOnFocusChangeListener { view, focused ->
             if(focused){
                 view.hideKeyboard()
                 spinner.clearFocus()
-                clearFocus()
                 spinner.performClick()
             }
         }
