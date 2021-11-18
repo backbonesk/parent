@@ -17,18 +17,17 @@ import java.util.*
 
 private const val IMAGE_FILE_NAME = "parent_image_%d.png"
 
-fun Context.getParentImageFile(timestamp: Long): File? {
+fun Context.getParentImageFile(identifier: Long): File? {
     return try {
-        File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format(IMAGE_FILE_NAME, timestamp))
+        File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format(IMAGE_FILE_NAME, identifier))
     } catch (exception: Exception){
         exception.printStackTrace()
         null
     }
 }
 
-fun Context.createParentCameraIntentForStoringImage(): Pair<Long, Intent?> {
-    val currentTime = Date().time
-    return currentTime to getParentImageFile(currentTime)?.let { pictureFile ->
+fun Context.createParentCameraIntentForStoringImage(identifier: Long = Date().time): Pair<Long, Intent?> {
+    return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
 
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
@@ -38,15 +37,14 @@ fun Context.createParentCameraIntentForStoringImage(): Pair<Long, Intent?> {
     }
 }
 
-fun Context.storeNewParentImage(bitmap: Bitmap): Long?{
-    val currentTime = Date().time
+fun Context.storeNewParentImage(identifier: Long = Date().time, bitmap: Bitmap): Long?{
     return try {
-        getParentImageFile(currentTime)?.let {
+        getParentImageFile(identifier)?.let {
             it.delete()
             val stream = FileOutputStream(it, false)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            currentTime
+            identifier
         }
     } catch (e: Exception) {
         e.printStackTrace()
