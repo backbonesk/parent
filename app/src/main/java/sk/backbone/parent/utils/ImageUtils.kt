@@ -15,18 +15,42 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
-private const val IMAGE_FILE_NAME = "parent_image_%d.png"
+private const val IMAGE_FILE_NAME = "parent_image_%s.png"
 
-fun Context.getParentImageFile(identifier: Long): File? {
+fun Context.removeParentImageFile(identifier: Any?){
+    try {
+        getParentImageFile(identifier)?.let {
+            if(it.exists()){
+                it.delete()
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun Context.clearParentImageFiles(){
+    try {
+        val folder = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        if(folder?.exists() == true){
+            folder.deleteRecursively()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun Context.getParentImageFile(identifier: Any?): File? {
     return try {
-        File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format(IMAGE_FILE_NAME, identifier))
+        File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format(IMAGE_FILE_NAME, identifier.toString()))
     } catch (exception: Exception){
         exception.printStackTrace()
         null
     }
 }
 
-fun Context.createParentCameraIntentForStoringImage(identifier: Long = Date().time): Pair<Long, Intent?> {
+fun Context.createParentCameraIntentForStoringImage(identifier: Any? = Date().time): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
 
@@ -37,7 +61,7 @@ fun Context.createParentCameraIntentForStoringImage(identifier: Long = Date().ti
     }
 }
 
-fun Context.storeNewParentImage(identifier: Long = Date().time, bitmap: Bitmap): Long?{
+fun Context.storeNewParentImage(identifier: Any? = Date().time, bitmap: Bitmap): Any?{
     return try {
         getParentImageFile(identifier)?.let {
             it.delete()
@@ -52,7 +76,7 @@ fun Context.storeNewParentImage(identifier: Long = Date().time, bitmap: Bitmap):
     }
 }
 
-fun Context.getParentImage(identifier: Long): Bitmap? {
+fun Context.getParentImage(identifier: Any?): Bitmap? {
     return try {
         val inputStream = FileInputStream(getParentImageFile(identifier))
         val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
