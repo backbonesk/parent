@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.provider.Settings
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -269,4 +270,11 @@ fun createClickableImageView(context: Context, drawable: Drawable?, action: ((Vi
 
 fun createClickableImageView(context: Context, drawableResId: Int, action: ((View) -> (Unit))?): ImageView {
     return createClickableImageView(context, ContextCompat.getDrawable(context, drawableResId), action)
+}
+
+fun Context.openAppSystemSettings() {
+    startActivity(Intent().apply {
+        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        data = Uri.fromParts("package", packageName, null)
+    })
 }
