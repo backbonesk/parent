@@ -40,11 +40,18 @@ fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     return result
 }
 
-fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): String {
+fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100, header: String? = null): String {
     val byteArrayOutputStream = ByteArrayOutputStream()
     compress(compressFormat, quality, byteArrayOutputStream)
     val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+    var base64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+    if (header != null){
+        base64 = "$header,$base64"
+    }
+
+    return base64
 }
 
 fun String?.toHexadecimalString(): String? {
