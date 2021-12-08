@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="separator_height">1dp</dimen>
+
+    <dimen name="spacing_tiny_4_dp">4dp</dimen>
+    <dimen name="spacing_small_10_dp">10dp</dimen>
+    <dimen name="spacing_screen_20_dp">20dp</dimen>
+    <dimen name="spacing_large_30_dp">30dp</dimen>
+
+    <dimen name="radius_input_background">5dp</dimen>
+    <dimen name="radius_gray_text">15dp</dimen>
+    <dimen name="radius_button">25dp</dimen>
+    <dimen name="radius_bottom_navigation">40dp</dimen>
+
+    <dimen name="text_size_12_sp">12sp</dimen>
+    <dimen name="text_size_13_sp">13sp</dimen>
+    <dimen name="text_size_14_sp">14sp</dimen>
+    <dimen name="text_size_15_sp">15sp</dimen>
+    <dimen name="text_size_16_sp">16sp</dimen>
+    <dimen name="text_size_17_sp">17sp</dimen>
+    <dimen name="text_size_18_sp">18sp</dimen>
+    <dimen name="text_size_19_sp">19sp</dimen>
+    <dimen name="text_size_24_sp">24sp</dimen>
+    <dimen name="text_size_28_sp">28sp</dimen>
+    <dimen name="text_size_30_sp">30sp</dimen>
+    <dimen name="text_size_34_sp">34sp</dimen>
+</resources>
