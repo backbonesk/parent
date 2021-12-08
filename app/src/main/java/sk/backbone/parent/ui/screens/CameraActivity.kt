@@ -1,8 +1,10 @@
 package sk.backbone.parent.ui.screens
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -11,25 +13,28 @@ import android.view.Surface
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.mlkit.vision.barcode.Barcode
 import dagger.hilt.android.AndroidEntryPoint
 import sk.backbone.parent.databinding.ActivityCameraBinding
 import sk.backbone.parent.utils.setSafeOnClickListener
+
+// Todo: Front/Back camera switching
 
 @AndroidEntryPoint
 class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBinding::inflate) {
     private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
     private var imageCapture : ImageCapture? = null
     private var preview : Preview? = null
+    private var cameraSelector : CameraSelector? = null
+    private var camera: Camera? = null
 
     private val rotation: Int get() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -41,6 +46,18 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
     private val imageUri: Uri? by lazy {
         intent.getParcelableExtra(IMAGE_URI_EXTRAS) as Uri?
+    }
+
+    private val lensFacing: Int by lazy {
+        intent.getIntExtra(IMAGE_URI_EXTRAS, CameraSelector.LENS_FACING_BACK)
+    }
+
+    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            startCamera()
+        } else {
+            finish()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,16 +77,9 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             requestedOrientation = it
         }
 
-        viewBinding.cameraPreview
-
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            setupCamera(cameraProvider)
-        }, ContextCompat.getMainExecutor(this))
-
         setRotationAnimation()
+
+        startCamera()
     }
 
     private fun setupCamera(cameraProvider : ProcessCameraProvider) {
@@ -77,8 +87,8 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             .setTargetRotation(rotation)
             .build()
 
-        val cameraSelector : CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+        cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(lensFacing)
             .build()
 
         preview?.setSurfaceProvider(viewBinding.cameraPreview.surfaceProvider)
@@ -88,7 +98,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             .build()
 
 
-        var camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, preview)
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector!!, imageCapture, preview)
 
         viewBinding.shutter.setSafeOnClickListener {
 
@@ -120,6 +130,21 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         super.onConfigurationChanged(newConfig)
 
         fixRotations()
+    }
+
+    private fun startCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if(camera == null){
+                cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+                cameraProviderFuture.addListener({
+                    val cameraProvider = cameraProviderFuture.get()
+                    setupCamera(cameraProvider)
+                }, ContextCompat.getMainExecutor(this))
+            }
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     private fun setRotationAnimation() {
@@ -165,17 +190,19 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         private const val IMAGE_URI_EXTRAS = "IMAGE_URI_EXTRAS"
         private const val ORIENTATION_EXTRAS = "ORIENTATION_EXTRAS"
         private const val LAYOUT_OVERLAY_EXTRAS = "LAYOUT_OVERLAY_EXTRAS"
+        private const val LENS_FACING_EXTRAS = "LENS_FACING_EXTRAS"
 
-        fun createIntent(context: Context, imageUri: Uri, orientation: Int? = null, layoutOverlay: Int? = null): Intent {
+        fun createIntent(context: Context, imageUri: Uri, orientation: Int? = null, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Intent {
             return Intent(context, CameraActivity::class.java).apply {
                 putExtra(IMAGE_URI_EXTRAS, imageUri)
                 putExtra(ORIENTATION_EXTRAS, orientation)
                 putExtra(LAYOUT_OVERLAY_EXTRAS, layoutOverlay)
+                putExtra(LENS_FACING_EXTRAS, lensFacing)
             }
         }
 
-        fun startActivity(context: Context, imageUri: Uri, orientation: Int? = null, layoutOverlay: Int? = null) {
-            context.startActivity(createIntent(context, imageUri, orientation, layoutOverlay))
+        fun startActivity(context: Context, imageUri: Uri, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, orientation: Int? = null, layoutOverlay: Int? = null) {
+            context.startActivity(createIntent(context, imageUri, orientation, lensFacing, layoutOverlay))
         }
     }
 }
