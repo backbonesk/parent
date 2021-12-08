@@ -15,6 +15,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT
@@ -94,6 +95,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
         imageCapture = ImageCapture.Builder()
             .setTargetRotation(rotation)
+            .setCaptureMode(CAPTURE_MODE_MAXIMIZE_QUALITY)
             .build()
 
 

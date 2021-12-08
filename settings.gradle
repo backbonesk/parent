@@ -7,5 +7,5 @@ dependencyResolutionManagement {
     }
 }
 
-include ':app'
+include ':parent'
 rootProject.name = "parent"
