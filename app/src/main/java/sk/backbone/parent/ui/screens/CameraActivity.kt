@@ -179,7 +179,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
                     width = WRAP_CONTENT
                     height = 0
                     verticalBias = 0.5f
-                    horizontalBias = 0.05f
+                    horizontalBias = 0.95f
                 }
             }
         }
