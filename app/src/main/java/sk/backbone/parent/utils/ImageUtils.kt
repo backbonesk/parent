@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.camera.core.CameraSelector
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
@@ -51,13 +52,13 @@ fun Context.getParentImageFile(identifier: Any?): File? {
     }
 }
 
-fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int? = null, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
+fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int? = null, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
 
         val photoUri: Uri = FileProvider.getUriForFile(this, applicationContext.packageName.toString() + ".provider", pictureFile)
 
-        CameraActivity.createIntent(this, photoUri, orientation, layoutOverlay)
+        CameraActivity.createIntent(this, photoUri, orientation, lensFacing, layoutOverlay)
     }
 }
 

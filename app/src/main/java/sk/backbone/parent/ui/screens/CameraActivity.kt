@@ -21,7 +21,6 @@ import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTE
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.mlkit.vision.barcode.Barcode
 import dagger.hilt.android.AndroidEntryPoint
 import sk.backbone.parent.databinding.ActivityCameraBinding
 import sk.backbone.parent.utils.setSafeOnClickListener
