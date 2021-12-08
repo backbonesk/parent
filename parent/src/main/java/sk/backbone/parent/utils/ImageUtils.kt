@@ -2,6 +2,7 @@ package sk.backbone.parent.utils
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -52,7 +53,7 @@ fun Context.getParentImageFile(identifier: Any?): File? {
     }
 }
 
-fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int? = null, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
+fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
 

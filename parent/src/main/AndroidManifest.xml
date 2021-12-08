@@ -10,6 +10,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".ui.screens.CameraActivity" android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"/>
+        <activity android:name=".ui.screens.CameraActivity" android:screenOrientation="nosensor" android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"/>
     </application>
 </manifest>

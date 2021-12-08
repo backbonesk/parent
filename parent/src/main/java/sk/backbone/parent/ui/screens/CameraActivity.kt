@@ -4,15 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.view.Surface
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.util.Log
+import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
@@ -21,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
+import com.bumptech.glide.load.ImageHeaderParser.UNKNOWN_ORIENTATION
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import sk.backbone.parent.databinding.ActivityCameraBinding
@@ -30,19 +29,22 @@ import sk.backbone.parent.utils.setSafeOnClickListener
 
 @AndroidEntryPoint
 class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBinding::inflate) {
+    private val supportedOrientationModes = listOf(
+        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
+        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
+        ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR,
+    )
+
     private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
     private var imageCapture : ImageCapture? = null
     private var preview : Preview? = null
     private var cameraSelector : CameraSelector? = null
     private var camera: Camera? = null
 
-    private val rotation: Int get() {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            display?.rotation
-        } else {
-            windowManager.defaultDisplay.rotation
-        } ?: 0
-    }
+    private var currentRotation: Int = Surface.ROTATION_0
 
     private val imageUri: Uri? by lazy {
         intent.getParcelableExtra(IMAGE_URI_EXTRAS) as Uri?
@@ -50,6 +52,10 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
     private val lensFacing: Int by lazy {
         intent.getIntExtra(IMAGE_URI_EXTRAS, CameraSelector.LENS_FACING_BACK)
+    }
+
+    private val desiredOrientation: Int by lazy {
+        intent.getIntExtra(ORIENTATION_EXTRAS, ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
     }
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -60,8 +66,67 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         }
     }
 
+    private val orientationEventListener by lazy {
+        object : OrientationEventListener(this) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == UNKNOWN_ORIENTATION) {
+                    return
+                }
+
+                Log.i("Orientation", orientation.toString())
+
+                val activityOrientation: Int
+
+                when (desiredOrientation) {
+                    ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR -> {
+                        currentRotation = when (orientation) {
+                            in 45 until 135 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
+                            in 135 until 225 -> Surface.ROTATION_180.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT }
+                            in 225 until 315 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                            else -> Surface.ROTATION_0.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
+                        }
+                    }
+                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE -> {
+                        currentRotation = when (orientation) {
+                            in 20 until 160 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
+                            in 200 until 340 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                            else -> currentRotation.also { activityOrientation = requestedOrientation }
+                        }
+                    }
+                    else -> {
+                        activityOrientation = desiredOrientation
+                        currentRotation = when(desiredOrientation) {
+                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
+                                Surface.ROTATION_0
+                            }
+                            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
+                                Surface.ROTATION_90
+                            }
+                            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> {
+                                Surface.ROTATION_180
+                            }
+                            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
+                                Surface.ROTATION_270
+                            }
+                            else -> Surface.ROTATION_0
+                        }
+                    }
+                }
+
+                if(requestedOrientation != activityOrientation){
+                    requestedOrientation = activityOrientation
+                    fixRotations()
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(!supportedOrientationModes.contains(desiredOrientation)){
+            throw IllegalArgumentException("Orientation not supported.")
+        }
 
         if(imageUri == null){
             setResult(Activity.RESULT_CANCELED)
@@ -73,18 +138,28 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             View.inflate(this, it, viewBinding.overlayHolder)
         }
 
-        (intent.getSerializableExtra(ORIENTATION_EXTRAS) as Int?)?.let {
-            requestedOrientation = it
-        }
-
         setRotationAnimation()
 
         startCamera()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(desiredOrientation == ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR || desiredOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE){
+            orientationEventListener.enable()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        orientationEventListener.disable()
+    }
+
     private fun setupCamera(cameraProvider : ProcessCameraProvider) {
         preview = Preview.Builder()
-            .setTargetRotation(rotation)
+            .setTargetRotation(currentRotation)
             .build()
 
         cameraSelector = CameraSelector.Builder()
@@ -94,7 +169,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         preview?.setSurfaceProvider(viewBinding.cameraPreview.surfaceProvider)
 
         imageCapture = ImageCapture.Builder()
-            .setTargetRotation(rotation)
+            .setTargetRotation(currentRotation)
             .setCaptureMode(CAPTURE_MODE_MAXIMIZE_QUALITY)
             .build()
 
@@ -121,18 +196,6 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        fixRotations()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-        fixRotations()
-    }
-
     private fun startCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             if(camera == null){
@@ -157,18 +220,23 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
     }
 
     private fun fixRotations(){
-        imageCapture?.targetRotation = rotation
-        preview?.targetRotation = rotation
+        imageCapture?.targetRotation = currentRotation
+        preview?.targetRotation = currentRotation
 
-        viewBinding.shutter.rotation = rotation * 90f
+        viewBinding.shutter.rotation = currentRotation * 90f
 
         viewBinding.shutter.updateLayoutParams<LayoutParams> {
-
-            when(rotation){
+            when(currentRotation){
                 Surface.ROTATION_0 -> {
                     width = 0
                     height = WRAP_CONTENT
                     verticalBias = 0.95f
+                    horizontalBias = 0.5f
+                }
+                Surface.ROTATION_180 -> {
+                    width = 0
+                    height = WRAP_CONTENT
+                    verticalBias = 0.05f
                     horizontalBias = 0.5f
                 }
                 Surface.ROTATION_90 -> {
@@ -181,7 +249,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
                     width = WRAP_CONTENT
                     height = 0
                     verticalBias = 0.5f
-                    horizontalBias = 0.95f
+                    horizontalBias = 0.05f
                 }
             }
         }
@@ -193,7 +261,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         private const val LAYOUT_OVERLAY_EXTRAS = "LAYOUT_OVERLAY_EXTRAS"
         private const val LENS_FACING_EXTRAS = "LENS_FACING_EXTRAS"
 
-        fun createIntent(context: Context, imageUri: Uri, orientation: Int? = null, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Intent {
+        fun createIntent(context: Context, imageUri: Uri, orientation: Int  = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Intent {
             return Intent(context, CameraActivity::class.java).apply {
                 putExtra(IMAGE_URI_EXTRAS, imageUri)
                 putExtra(ORIENTATION_EXTRAS, orientation)
@@ -202,7 +270,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             }
         }
 
-        fun startActivity(context: Context, imageUri: Uri, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, orientation: Int? = null, layoutOverlay: Int? = null) {
+        fun startActivity(context: Context, imageUri: Uri, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, layoutOverlay: Int? = null) {
             context.startActivity(createIntent(context, imageUri, orientation, lensFacing, layoutOverlay))
         }
     }
