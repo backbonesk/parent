@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
+import sk.backbone.parent.ui.screens.CameraActivity
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -50,6 +51,17 @@ fun Context.getParentImageFile(identifier: Any?): File? {
     }
 }
 
+fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int? = null, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
+    return identifier to getParentImageFile(identifier)?.let { pictureFile ->
+        pictureFile.delete()
+
+        val photoUri: Uri = FileProvider.getUriForFile(this, applicationContext.packageName.toString() + ".provider", pictureFile)
+
+        CameraActivity.createIntent(this, photoUri, orientation, layoutOverlay)
+    }
+}
+
+@Deprecated("Use new Parent's CameraX api.", ReplaceWith("Context.createParentCameraXIntentForStoringImage"))
 fun Context.createParentCameraIntentForStoringImage(identifier: Any? = Date().time): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
