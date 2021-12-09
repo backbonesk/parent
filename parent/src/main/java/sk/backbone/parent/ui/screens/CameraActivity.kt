@@ -1,6 +1,7 @@
 package sk.backbone.parent.ui.screens
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -23,6 +24,7 @@ import com.bumptech.glide.load.ImageHeaderParser.UNKNOWN_ORIENTATION
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import sk.backbone.parent.databinding.ActivityCameraBinding
+import sk.backbone.parent.utils.afterMeasured
 import sk.backbone.parent.utils.setSafeOnClickListener
 
 // Todo: Front/Back camera switching
@@ -51,7 +53,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
     }
 
     private val lensFacing: Int by lazy {
-        intent.getIntExtra(IMAGE_URI_EXTRAS, CameraSelector.LENS_FACING_BACK)
+        intent.getIntExtra(LENS_FACING_EXTRAS, CameraSelector.LENS_FACING_BACK)
     }
 
     private val desiredOrientation: Int by lazy {
@@ -67,56 +69,9 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
     }
 
     private val orientationEventListener by lazy {
-        object : OrientationEventListener(this) {
+        object : OrientationEventListener(this, ) {
             override fun onOrientationChanged(orientation: Int) {
-                if (orientation == UNKNOWN_ORIENTATION) {
-                    return
-                }
-
-                Log.i("Orientation", orientation.toString())
-
-                val activityOrientation: Int
-
-                when (desiredOrientation) {
-                    ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR -> {
-                        currentRotation = when (orientation) {
-                            in 45 until 135 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
-                            in 135 until 225 -> Surface.ROTATION_180.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT }
-                            in 225 until 315 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
-                            else -> Surface.ROTATION_0.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
-                        }
-                    }
-                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE -> {
-                        currentRotation = when (orientation) {
-                            in 20 until 160 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
-                            in 200 until 340 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
-                            else -> currentRotation.also { activityOrientation = requestedOrientation }
-                        }
-                    }
-                    else -> {
-                        activityOrientation = desiredOrientation
-                        currentRotation = when(desiredOrientation) {
-                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
-                                Surface.ROTATION_0
-                            }
-                            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
-                                Surface.ROTATION_90
-                            }
-                            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> {
-                                Surface.ROTATION_180
-                            }
-                            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
-                                Surface.ROTATION_270
-                            }
-                            else -> Surface.ROTATION_0
-                        }
-                    }
-                }
-
-                if(requestedOrientation != activityOrientation){
-                    requestedOrientation = activityOrientation
-                    fixRotations()
-                }
+                updateOrientations(orientation)
             }
         }
     }
@@ -148,6 +103,8 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
         if(desiredOrientation == ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR || desiredOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE){
             orientationEventListener.enable()
+        } else {
+            updateOrientations(null)
         }
     }
 
@@ -157,6 +114,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         orientationEventListener.disable()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupCamera(cameraProvider : ProcessCameraProvider) {
         preview = Preview.Builder()
             .setTargetRotation(currentRotation)
@@ -194,6 +152,37 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
                 )
             }
         }
+
+        viewBinding.cameraPreview.afterMeasured {
+            viewBinding.cameraPreview.setOnTouchListener { _, event ->
+                return@setOnTouchListener when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
+                            viewBinding.cameraPreview.width.toFloat(), viewBinding.cameraPreview.height.toFloat()
+                        )
+                        val autoFocusPoint = factory.createPoint(event.x, event.y)
+                        try {
+                            camera?.cameraControl?.startFocusAndMetering(
+                                FocusMeteringAction.Builder(
+                                    autoFocusPoint,
+                                    FocusMeteringAction.FLAG_AF
+                                ).apply {
+                                    //focus only when the user tap the preview
+                                    disableAutoCancel()
+                                }.build()
+                            )
+                        } catch (e: CameraInfoUnavailableException) {
+                            Log.d("ERROR", "cannot access camera", e)
+                        }
+                        true
+                    }
+                    else -> false // Unhandled event.
+                }
+            }
+        }
     }
 
     private fun startCamera() {
@@ -208,6 +197,55 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
             }
         } else {
             permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun updateOrientations(orientation: Int?) {
+        if (orientation == UNKNOWN_ORIENTATION) {
+            return
+        }
+
+        val activityOrientation: Int
+
+        when (desiredOrientation) {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR -> {
+                currentRotation = when (orientation) {
+                    in 45 until 135 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
+                    in 135 until 225 -> Surface.ROTATION_180.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT }
+                    in 225 until 315 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                    else -> Surface.ROTATION_0.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
+                }
+            }
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE -> {
+                currentRotation = when (orientation) {
+                    in 20 until 160 -> Surface.ROTATION_270.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE }
+                    in 200 until 340 -> Surface.ROTATION_90.also { activityOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                    else -> currentRotation.also { activityOrientation = requestedOrientation }
+                }
+            }
+            else -> {
+                activityOrientation = desiredOrientation
+                currentRotation = when(desiredOrientation) {
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
+                        Surface.ROTATION_0
+                    }
+                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
+                        Surface.ROTATION_90
+                    }
+                    ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> {
+                        Surface.ROTATION_180
+                    }
+                    ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
+                        Surface.ROTATION_270
+                    }
+                    else -> Surface.ROTATION_0
+                }
+            }
+        }
+
+        if(requestedOrientation != activityOrientation){
+            requestedOrientation = activityOrientation
+            fixRotations()
         }
     }
 
