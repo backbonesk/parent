@@ -1,7 +1,7 @@
 package sk.backbone.parent.ui.screens.code_scanning
 
 import android.os.Bundle
-import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.common.Barcode
 import sk.backbone.parent.databinding.ActivityCodeScanningBinding
 import sk.backbone.parent.ui.screens.ParentActivity
 
