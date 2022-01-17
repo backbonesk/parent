@@ -5,9 +5,13 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sk.backbone.parent.execution.scopes.Scopes
-import sk.backbone.parent.repositories.server.client.exceptions.*
+import sk.backbone.parent.repositories.server.client.exceptions.CommunicationException
+import sk.backbone.parent.repositories.server.client.exceptions.IExceptionDescriptionProvider
 
 abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     abstract val logToFirebase: Boolean
@@ -127,7 +131,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     if(!handleExceptionMiddleware(throwable)){
                         retryEnabled = retryEnabled && throwable is CommunicationException
                         uiNotificationOnError = {
-                            dialogProvider.showErrorDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
+                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
                         }
                     }
 
