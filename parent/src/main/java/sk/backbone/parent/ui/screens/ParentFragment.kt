@@ -11,7 +11,6 @@ import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.isActive
 import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.scopes.FragmentScopes
-import sk.backbone.parent.execution.scopes.Scopes
 
 abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater, ViewGroup?, Boolean) -> TViewBinding)?): Fragment(), IExecutioner<FragmentScopes> {
     override var scopes = FragmentScopes()
@@ -32,7 +31,6 @@ abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBinding
             scopes = FragmentScopes()
         }
 
-
         return viewBinding.root
     }
 
@@ -46,4 +44,8 @@ abstract class ParentFragment<TViewBinding: ViewBinding>(private val viewBinding
     override fun getRootView(): ViewGroup {
         return this.requireView() as ViewGroup
     }
+
+    open fun onFragmentShown(){}
+
+    open fun onFragmentHidden(){}
 }

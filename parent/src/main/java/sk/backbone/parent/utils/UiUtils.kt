@@ -23,7 +23,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions
 import sk.backbone.parent.ui.components.SafeClickListener
-import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.screens.ParentFragment
 import sk.backbone.parent.ui.validations.IValidableInput
 import java.math.BigDecimal
@@ -215,6 +214,8 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
     val fragmentTransaction = this.beginTransaction()
     var shouldShow = false
 
+    val hiddenFragments = mutableListOf<ParentFragment<*>>()
+
     for (addedFragment in this.fragments) {
         if (addedFragment.tag == fragment.tag) {
             if (addedFragment == fragment) {
@@ -224,6 +225,10 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
             }
         } else {
             fragmentTransaction.hide(addedFragment)
+
+            if(addedFragment is ParentFragment<*>){
+                hiddenFragments.add(addedFragment)
+            }
         }
     }
 
@@ -234,7 +239,8 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
     }
 
     fragmentTransaction.runOnCommit{
-        fragment.onResume()
+        hiddenFragments.forEach { it.onFragmentHidden() }
+        fragment.onFragmentShown()
         onFragmentShown?.invoke()
     }
 
