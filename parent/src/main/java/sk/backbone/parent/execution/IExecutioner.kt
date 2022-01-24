@@ -7,6 +7,7 @@ import sk.backbone.parent.application.ParentService
 import sk.backbone.parent.execution.scopes.Scopes
 import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.screens.ParentFragment
+import sk.backbone.parent.ui.screens.ParentRecyclerAdapter
 
 interface IExecutioner<TScopes: Scopes> {
     private val _context: Context? get(){
@@ -16,6 +17,7 @@ interface IExecutioner<TScopes: Scopes> {
             is ParentService -> this
             is ParentFcmService -> this
             is Context -> this
+            is ParentRecyclerAdapter<*, *> -> this.context
             else -> null
         }
     }
