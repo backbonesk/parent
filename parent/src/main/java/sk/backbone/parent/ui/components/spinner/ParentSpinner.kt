@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Spinner
 import sk.backbone.parent.ui.components.ParentLinearLayout
 import sk.backbone.parent.ui.validations.text_validation.TextInputValidation
@@ -21,6 +20,8 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         this.viewBindingFactory = viewBindingFactory
         init()
     }
+
+    open val defaultOption: String? get() = null
 
     var onItemSelected: ((ParentSpinner<*>, Int) -> Unit)? = null
 
@@ -51,20 +52,34 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
     }
 
     inline fun <reified T>getSelectedItem(): T? {
-        return this.provider?.get(spinner.selectedItemPosition) as T?
+        return spinner.selectedItemPosition.let {
+            when(it){
+                -1 -> {
+                    null
+                }
+                else -> {
+                    this.provider?.get(spinner.selectedItemPosition) as T?
+                }
+            }
+        }
     }
 
-    fun setProvider(provider: SpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false){
+    fun setProvider(provider: SpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false, default: String? = null, selectDefault: Boolean = true){
         this.provider = provider
 
-        val currentItems = provider?.stringValues ?: arrayListOf()
+        val currentItems = provider?.stringValues ?: listOf()
+        val defaultOption = provider?.defaultOption ?: defaultOption ?: default
 
-        val adapter = ArrayAdapter(context, spinnerItemResource, currentItems).apply {
+        val adapter = PrentSpinnerAdapter(context, spinnerItemResource, currentItems, defaultOption).apply {
             setDropDownViewResource(spinnerDropdownResource)
         }
 
         spinner.onItemSelectedListener = null
         spinner.adapter = adapter
+
+        if(selectDefault && defaultOption != null){
+            spinner.setSelection(adapter.count, false)
+        }
 
         if(triggerSpinnerListener){
             setSpinnerListener()

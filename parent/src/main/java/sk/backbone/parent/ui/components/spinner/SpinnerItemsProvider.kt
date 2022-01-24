@@ -6,6 +6,8 @@ import androidx.core.view.forEach
 abstract class SpinnerItemsProvider<T> {
     abstract val elements: List<T>
 
+    open val defaultOption: String? get() = null
+
     val stringValues: List<String> by lazy{
         elements.map { getString(it) }
     }
