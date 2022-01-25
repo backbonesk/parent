@@ -1,5 +1,10 @@
 <manifest package="sk.backbone.parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.front" />
+
     <application>
         <provider
             android:name=".application.ParentFileProvider"
