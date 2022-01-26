@@ -54,6 +54,8 @@ fun Context.getParentImageFile(identifier: Any?): File? {
     }
 }
 
+fun createSelectImageFromGalleryIntent(): Intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply { type = "image/*" }
+
 fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()

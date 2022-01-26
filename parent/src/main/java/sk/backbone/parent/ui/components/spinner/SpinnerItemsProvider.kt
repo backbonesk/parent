@@ -22,8 +22,8 @@ abstract class SpinnerItemsProvider<T> {
         return elements.find { getString(it) == string }!!
     }
 
-    operator fun get(position: Int): T {
-        return elements[position]
+    operator fun get(position: Int): T? {
+        return elements.getOrNull(position)
     }
 
     fun getIndexOf(value: Any?): Int {
