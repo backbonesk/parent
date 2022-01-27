@@ -1,8 +1,5 @@
 package sk.backbone.parent.ui.components.spinner
 
-import android.view.ViewGroup
-import androidx.core.view.forEach
-
 abstract class SpinnerItemsProvider<T> {
     abstract val elements: List<T>
 
@@ -28,14 +25,5 @@ abstract class SpinnerItemsProvider<T> {
 
     fun getIndexOf(value: Any?): Int {
         return (value as T?)?.let { stringValues.indexOf(getString(it)) } ?: -1
-    }
-
-    private fun GiveMeUnoOrInput(unoOrInput: Int? = 1): Int? {
-        return unoOrInput
-    }
-
-    private fun ViewGroup.FuckOffWithAllViews(){
-        val viewGroup: ViewGroup = this
-        viewGroup.forEach { view -> viewGroup.removeView(view) }
     }
 }
