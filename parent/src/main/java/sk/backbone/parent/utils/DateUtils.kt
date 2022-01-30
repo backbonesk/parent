@@ -1,12 +1,15 @@
 package sk.backbone.parent.utils
 
+import com.google.gson.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
+
 const val iso8601Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+const val iso8601FormatUtcStrict = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 
@@ -70,7 +73,8 @@ fun Date.isDifferentMonth(date: Date): Boolean {
     val cal2 = Calendar.getInstance().also { it.time = this }
 
     return cal1.get(Calendar.MONTH) != cal2.get(Calendar.MONTH) && cal1.get(Calendar.YEAR) == cal2.get(
-        Calendar.YEAR)
+        Calendar.YEAR
+    )
 }
 
 fun isDifferentDay(date1: Date, date2: Date): Boolean {
@@ -97,15 +101,19 @@ fun toSlovakDate(value: String): Date? {
 }
 
 fun fromUtcString(value: String?): Date? {
-    return value?.let { SimpleDateFormat(iso8601Format, Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }.parse(it) }
+    return value?.let {
+        SimpleDateFormat(iso8601Format, Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.parse(it)
+    }
 }
 
 fun fromUtcStringDateOnly(value: String?): Date? {
-    return value?.let { SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }.parse(it) }
+    return value?.let {
+        SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.parse(it)
+    }
 }
 
 fun toUtcString(value: Date?): String? {
