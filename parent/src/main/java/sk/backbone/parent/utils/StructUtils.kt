@@ -1,8 +1,12 @@
 package sk.backbone.parent.utils
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Base64
 import java.io.ByteArrayOutputStream
+
+
+
 
 fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     val notNullKeys = this.filterKeys { key -> this[key] != null}
@@ -38,6 +42,18 @@ fun <T>List<T>?.safeSubList(from: Int, to: Int): List<T> {
     }
 
     return result
+}
+
+fun Bitmap.getBytes(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100): ByteArray {
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    compress(compressFormat, quality, byteArrayOutputStream)
+    return byteArrayOutputStream.toByteArray()
+}
+
+fun String.fromBase64ToBitmap(): Bitmap {
+    val base64Image = this.split(",").toTypedArray()[1]
+    val decodedString = Base64.decode(base64Image, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
 }
 
 fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG, quality: Int = 100, header: String? = null, base64Flags: Int = Base64.NO_WRAP): String {
