@@ -1,6 +1,5 @@
 package sk.backbone.parent.repositories.server.client.requests
 
-import android.util.Log
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.NetworkResponse
 import com.android.volley.ParseError
@@ -31,7 +30,6 @@ open class JsonObjectHttpRequest<Type>(
     final override val body: Any?,
     parseSuccessResponse: (JSONObject?) -> Type?,
     final override val bodyExclusionStrategy: ExclusionStrategy? = null,
-    override val additionalHeadersProvider: ((IParentRequest<*, *>) -> Map<String, String>?)
 ) : JsonRequest<JSONObject>(
     requestMethod,
     getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters),
@@ -41,9 +39,6 @@ open class JsonObjectHttpRequest<Type>(
 ),  IParentRequest<Type, JSONObject>{
 
     init {
-        Log.i(LOGS_TAG, "Request Method: $method")
-        Log.i(LOGS_TAG, "Request Url: $url")
-        Log.i(LOGS_TAG, "Request body:\n${body.toJsonString(bodyExclusionStrategy)}")
         retryPolicy = DefaultRetryPolicy(
             60000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -51,21 +46,9 @@ open class JsonObjectHttpRequest<Type>(
         )
     }
 
-    override fun getHeaders(): MutableMap<String, String> {
-        return mutableMapOf<String, String>().apply {
-            putAll(super.getHeaders())
-            additionalHeadersProvider(this@JsonObjectHttpRequest)?.let { putAll(it) }
-        }.also {
-            Log.i(LOGS_TAG, it.toString())
-        }
-    }
-
     override fun parseNetworkResponse(response: NetworkResponse): Response<JSONObject>? {
         return try {
             val jsonString = String(response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers, response.getContentTypeCharset(PROTOCOL_CHARSET))))
-
-            Log.e(LOGS_TAG, "Status:${response.statusCode}")
-            Log.e(LOGS_TAG, "Response body:${jsonString}")
 
             if (jsonString.isEmpty()) {
                 return Response.success(null, HttpHeaderParser.parseCacheHeaders(response))
@@ -82,8 +65,6 @@ open class JsonObjectHttpRequest<Type>(
     }
 
     companion object {
-        private const val LOGS_TAG = "JsonHttpRequest"
-
         private fun <T>onSuccess(continuation: Continuation<T?>, parseSuccessResponse: (JSONObject?) -> T?): Response.Listener<JSONObject?>{
             return Response.Listener {
                 try {
@@ -97,9 +78,6 @@ open class JsonObjectHttpRequest<Type>(
 
         private fun onError(continuation: Continuation<*>): Response.ErrorListener{
             return Response.ErrorListener {
-                Log.e(LOGS_TAG, "Status:${it.networkResponse?.statusCode}")
-                Log.e(LOGS_TAG, "Response body:${ParentHttpException.getResponseBody(it).toString()}")
-                Log.e(LOGS_TAG, "Exception was thrown", it)
                 val exception = ParentHttpException.parseException(it)
                 continuation.resumeWithException(exception)
             }

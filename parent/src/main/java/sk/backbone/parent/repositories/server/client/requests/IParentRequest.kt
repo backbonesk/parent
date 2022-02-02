@@ -18,7 +18,6 @@ interface IParentRequest<ReturnType, RequestBodyType> {
     val body: Any? get() = null
     val formData: Map<String, String?>? get() = null
     val bodyExclusionStrategy: ExclusionStrategy? get() = null
-    val additionalHeadersProvider: ((JsonArrayHttpRequest<*>) -> Map<String, String>?)
     val uri: Uri get() = getUrl(schema, serverAddress, apiVersion, endpoint, queryParameters).toUri()
 
     val requestQueryParametersEncoded: String? get() {

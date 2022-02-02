@@ -5,14 +5,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import sk.backbone.parent.repositories.server.client.HttpClient
 import sk.backbone.parent.repositories.server.client.IHttpResponseWrapper
-import sk.backbone.parent.repositories.server.client.requests.JsonObjectHttpRequest
 import sk.backbone.parent.utils.jsonToObject
 import kotlin.coroutines.Continuation
 
 abstract class ParentServerRepository {
     abstract var client: HttpClient
-
-    abstract val additionalHeadersProvider: (JsonObjectHttpRequest<*>) -> Map<String, String>
 
     suspend inline fun <reified Type>executeRequest(crossinline requestFactoryMethod: (Continuation<Type?>) -> Request<*>): Type? {
         return client.executeRequest {
