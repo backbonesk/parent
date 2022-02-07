@@ -1,6 +1,5 @@
 package sk.backbone.parent.utils
 
-import com.google.gson.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,6 +87,10 @@ fun Date.getDaysBetween(dest: Date): Int {
     val diff = abs(this.time - dest.time)
     val dayCount = diff.toDouble() / (24 * 60 * 60 * 1000)
     return dayCount.toInt()
+}
+
+fun Date.isBetween(startDate: Date, endDate: Date): Boolean {
+    return this.time >= startDate.time && this.time <= endDate.time
 }
 
 fun isSameDay(date1: Date, date2: Date): Boolean {
