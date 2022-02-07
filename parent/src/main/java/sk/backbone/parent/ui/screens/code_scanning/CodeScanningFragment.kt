@@ -37,7 +37,11 @@ open class CodeScanningFragment: ParentFragment<FragmentCodeScanningBinding>(Fra
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build().apply {
                         setAnalyzer(ContextCompat.getMainExecutor(this@startCamera), CodeAnalyzer(formats) { analyzer, code ->
-                            scannedCodeHandler?.onCodeScanned(analyzer, code)
+                            try {
+                                scannedCodeHandler?.onCodeScanned(analyzer, code)
+                            } catch (throwable: Throwable){
+                                scannedCodeHandler?.onErrorDuringScanning(throwable)
+                            }
                         })
                     }
 

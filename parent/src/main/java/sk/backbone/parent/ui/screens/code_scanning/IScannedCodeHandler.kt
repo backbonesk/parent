@@ -4,4 +4,5 @@ import com.google.mlkit.vision.barcode.common.Barcode
 
 interface IScannedCodeHandler {
     fun onCodeScanned(analyzer: CodeAnalyzer, barcode: Barcode)
+    fun onErrorDuringScanning(throwable: Throwable) { }
 }
