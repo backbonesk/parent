@@ -19,8 +19,8 @@ val backgroundLocationPermission @RequiresApi(Build.VERSION_CODES.Q)
 get() = Manifest.permission.ACCESS_BACKGROUND_LOCATION
 
 val defaultLocationPermissions get() = arrayOf(
-    Manifest.permission.ACCESS_COARSE_LOCATION,
     Manifest.permission.ACCESS_FINE_LOCATION,
+    Manifest.permission.ACCESS_COARSE_LOCATION,
 )
 
 
