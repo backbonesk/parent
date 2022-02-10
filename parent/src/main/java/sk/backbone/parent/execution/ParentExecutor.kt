@@ -116,7 +116,6 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     }
                 }
                 catch (canceled: ParentCancellationException){
-                    Log.e("ExecutionFailed", this.javaClass.name, canceled)
                     wasCanceled = true
                 }
                 catch (throwable: Throwable) {
