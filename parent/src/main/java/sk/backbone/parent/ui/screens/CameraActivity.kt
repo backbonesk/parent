@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +26,7 @@ import sk.backbone.parent.databinding.ActivityCameraBinding
 import sk.backbone.parent.utils.afterMeasured
 import sk.backbone.parent.utils.setSafeOnClickListener
 
-// Todo: Front/Back camera switching
+// Future Todo: Front/Back camera switching
 
 @AndroidEntryPoint
 class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBinding::inflate) {
