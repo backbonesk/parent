@@ -84,10 +84,10 @@ fun Context.getImageFromGallery(uri: Uri): Bitmap? {
     return try {
         val inputStream = contentResolver.openInputStream(uri)
         val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
-
-        val exifInterface = inputStream?.let { ExifInterface(it) }
-
         inputStream?.close()
+
+        val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
+        val exifInterface = fileDescriptor?.let { ExifInterface(fileDescriptor) }
 
         return when (exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
             ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap!!, 90)
