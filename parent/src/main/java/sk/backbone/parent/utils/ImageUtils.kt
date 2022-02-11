@@ -1,11 +1,13 @@
 package sk.backbone.parent.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
@@ -18,6 +20,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
+
 
 private const val IMAGE_FILE_NAME = "parent_image_%s.png"
 
@@ -56,14 +59,81 @@ fun Context.getParentImageFile(identifier: Any?): File? {
 
 fun createSelectImageFromGalleryIntent(): Intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply { type = "image/*" }
 
-fun Context.createParentCameraXIntentForStoringImage(identifier: Any? = Date().time, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
+fun Context.createParentCameraXIntentForStoringImageIntoGallery(context:Context, identifier: Any = Date().time, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
+    val photoUri: Uri? = getMediaStorageUri(context, identifier)
+    val intent = photoUri?.let { CameraActivity.createIntent(this, it, orientation, lensFacing, layoutOverlay) }
+
+    return identifier to intent
+}
+
+fun Context.createParentCameraXIntentForStoringImage(identifier: Any = Date().time, orientation: Int = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR, @CameraSelector.LensFacing lensFacing: Int = CameraSelector.LENS_FACING_BACK, layoutOverlay: Int? = null): Pair<Any?, Intent?> {
     return identifier to getParentImageFile(identifier)?.let { pictureFile ->
         pictureFile.delete()
 
-        val photoUri: Uri = FileProvider.getUriForFile(this, ParentFileProvider.getFileProviderAuthority(this), pictureFile)
+        val photoUri: Uri? = FileProvider.getUriForFile(this, ParentFileProvider.getFileProviderAuthority(this), pictureFile)
 
-        CameraActivity.createIntent(this, photoUri, orientation, lensFacing, layoutOverlay)
+        photoUri?.let { CameraActivity.createIntent(this, it, orientation, lensFacing, layoutOverlay) }
     }
+}
+
+fun Context.getImageFromGallery(uri: Uri): Bitmap? {
+    return try {
+        val inputStream = contentResolver.openInputStream(uri)
+        val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
+
+        val exifInterface = inputStream?.let { ExifInterface(it) }
+
+        inputStream?.close()
+
+        return when (exifInterface?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap!!, 90)
+            ExifInterface.ORIENTATION_ROTATE_180 -> TransformationUtils.rotateImage(bitmap!!, 180)
+            ExifInterface.ORIENTATION_ROTATE_270 -> TransformationUtils.rotateImage(bitmap!!, 270)
+            ExifInterface.ORIENTATION_NORMAL -> bitmap
+            else -> bitmap
+        }
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun getMediaStorageUri(context: Context, identifier: Any = System.currentTimeMillis()): Uri? {
+    //Generating a file name
+    var fileUri: Uri? = null
+    val filename = "${context.packageName}_${identifier}.jpg"
+
+    //Output stream
+
+    //For devices running android >= Q
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        //getting the contentResolver
+        context.contentResolver?.also { resolver ->
+
+            //Content resolver will process the contentvalues
+            val contentValues = ContentValues().apply {
+
+                //putting file information in content values
+                put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            }
+
+            //Inserting the contentValues to contentResolver and getting the Uri
+            val imageUri: Uri? = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            //Opening an outputstream with the Uri that we got
+            fileUri = imageUri
+        }
+    } else {
+        //These for devices running on android < Q
+        //So I don't think an explanation is needed here
+        val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val image = File(imagesDir, filename)
+        fileUri = Uri.fromFile(image)
+    }
+
+    return fileUri
 }
 
 @Deprecated("Use new Parent's CameraX api.", ReplaceWith("Context.createParentCameraXIntentForStoringImage"))

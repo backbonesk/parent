@@ -144,7 +144,7 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
                         }
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                            setResult(Activity.RESULT_OK)
+                            setResult(Activity.RESULT_OK, Intent().setData(imageUri))
                             finish()
                         }
                     }

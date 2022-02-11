@@ -3,6 +3,7 @@ package sk.backbone.parent.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -28,7 +29,6 @@ import sk.backbone.parent.ui.validations.IValidableInput
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 fun View.setSafeOnClickListener(action: (View) -> Unit) {
@@ -104,6 +104,19 @@ fun TextView?.setTextAndUpdateVisibility(input: CharSequence?){
     }
 
     this?.text = input
+}
+
+fun ImageView.loadWithGlide(uri: Uri?, options: RequestOptions? = null){
+    Glide.with(this).load(uri).apply {
+        options?.let { apply(it) }
+    }.into(this)
+}
+
+
+fun ImageView.loadWithGlide(bitmap: Bitmap?, options: RequestOptions? = null){
+    Glide.with(this).load(bitmap).apply {
+        options?.let { apply(it) }
+    }.into(this)
 }
 
 fun ImageView.loadResource(url: String?, defaultImage: Int? = null, options: RequestOptions = RequestOptions().apply{ centerCrop() }){
