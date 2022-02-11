@@ -7,7 +7,7 @@
 
     <queries>
         <intent>
-            <action android:name="android.intent.action.GET_CONTENT" />
+            <action android:name="android.intent.action.ACTION_OPEN_DOCUMENT" />
             <data android:mimeType="image/*"/>
         </intent>
     </queries>
