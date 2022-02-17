@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
@@ -22,8 +23,10 @@ import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.load.ImageHeaderParser.UNKNOWN_ORIENTATION
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
+import sk.backbone.parent.R
 import sk.backbone.parent.databinding.ActivityCameraBinding
 import sk.backbone.parent.utils.afterMeasured
+import sk.backbone.parent.utils.openAppSystemSettings
 import sk.backbone.parent.utils.setSafeOnClickListener
 
 // Future Todo: Front/Back camera switching
@@ -63,8 +66,14 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
         if (granted) {
             startCamera()
         } else {
-            finish()
+            openSettingsAndFinish()
         }
+    }
+
+    private fun openSettingsAndFinish() {
+        Toast.makeText(this, R.string.parent_global_insufficient_permissions_camera, Toast.LENGTH_LONG).show()
+        openAppSystemSettings()
+        finish()
     }
 
     private val orientationEventListener by lazy {

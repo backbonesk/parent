@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Size
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -11,8 +12,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.common.Barcode
+import sk.backbone.parent.R
 import sk.backbone.parent.databinding.FragmentCodeScanningBinding
 import sk.backbone.parent.ui.screens.ParentFragment
+import sk.backbone.parent.utils.openAppSystemSettings
 
 open class CodeScanningFragment: ParentFragment<FragmentCodeScanningBinding>(FragmentCodeScanningBinding::inflate) {
     var scannedCodeHandler: IScannedCodeHandler? = null
@@ -59,6 +62,14 @@ open class CodeScanningFragment: ParentFragment<FragmentCodeScanningBinding>(Fra
         if (granted) {
             context?.startCamera(formats)
         } else {
+            openSettingsAndFinish()
+        }
+    }
+
+    private fun openSettingsAndFinish() {
+        activity?.apply {
+            Toast.makeText(this, R.string.parent_global_insufficient_permissions_camera, Toast.LENGTH_LONG).show()
+            activity?.openAppSystemSettings()
             activity?.finish()
         }
     }

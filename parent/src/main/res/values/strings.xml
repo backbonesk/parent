@@ -1,6 +1,8 @@
 <resources>
     <string name="parent_global_please_wait">Please wait</string>
 
+    <string name="parent_global_insufficient_permissions_camera">Application requires CAMERA permission.</string>
+
     <string name="validation_error_field_empty">This field is required</string>
     <string name="validation_less_than_one">Enter value equal or greater 1.00€</string>
     <string name="validation_not_numeric">Entered value must be numeric</string>
