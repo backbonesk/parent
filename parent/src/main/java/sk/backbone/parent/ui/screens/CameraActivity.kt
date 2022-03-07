@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -28,6 +29,7 @@ import sk.backbone.parent.databinding.ActivityCameraBinding
 import sk.backbone.parent.utils.afterMeasured
 import sk.backbone.parent.utils.openAppSystemSettings
 import sk.backbone.parent.utils.setSafeOnClickListener
+import java.io.FileOutputStream
 
 // Future Todo: Front/Back camera switching
 
@@ -144,7 +146,13 @@ class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBindi
 
         viewBinding.shutter.setSafeOnClickListener {
 
-            contentResolver.openOutputStream(imageUri!!)?.let { outputStream ->
+            val output = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentResolver.openOutputStream(imageUri!!)
+            } else {
+                FileOutputStream(imageUri?.path.toString())
+            }
+
+            output?.let { outputStream ->
                 val outputFileOptions = ImageCapture.OutputFileOptions.Builder(outputStream).build()
 
                 imageCapture?.takePicture(outputFileOptions, ContextCompat.getMainExecutor(this),
