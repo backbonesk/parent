@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.camera.core.CameraSelector
@@ -14,9 +15,7 @@ import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils
 import sk.backbone.parent.application.ParentFileProvider
 import sk.backbone.parent.ui.screens.CameraActivity
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.util.*
 
 
@@ -80,8 +79,8 @@ fun Context.createParentCameraXIntentForStoringImage(identifier: Any = Date().ti
 
 fun Context.getImageFromGallery(uri: Uri): Bitmap? {
     return try {
-        val inputStream = contentResolver.openInputStream(uri)
-        val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
+        val inputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { contentResolver.openInputStream(uri)} else { FileInputStream(uri.path.toString()) }
+        val bitmap: Bitmap? =  BitmapFactory.decodeStream(inputStream)
         inputStream?.close()
 
         val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
