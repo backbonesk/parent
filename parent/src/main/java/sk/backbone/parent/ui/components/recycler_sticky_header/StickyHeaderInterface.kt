@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 
 interface StickyHeaderInterface<TData, THeaderHolder: ViewGroup> {
-    val getHeaderMatchingRule: (TData, TData) -> Boolean
+    val shouldCreateHeader: (TData, TData) -> Boolean
 
     fun createHeaderView(position: Int, parent: ViewGroup): View
     fun getItemAtPosition(itemPosition: Int): TData?
@@ -30,7 +30,7 @@ interface StickyHeaderInterface<TData, THeaderHolder: ViewGroup> {
             val current = getItemAtPosition(itemPosition)
             val previous = getItemAtPosition(itemPosition - 1)
 
-            if(current != null && previous != null && getHeaderMatchingRule(current, previous)){
+            if(current != null && previous != null && shouldCreateHeader(current, previous)){
                 isHeader = true
             }
         }
