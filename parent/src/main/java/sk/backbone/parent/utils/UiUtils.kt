@@ -233,6 +233,7 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
 
     val hiddenFragments = mutableListOf<ParentFragment<*>>()
 
+
     for (addedFragment in this.fragments) {
         if (addedFragment.tag == fragment.tag) {
             if (addedFragment == fragment) {
@@ -241,10 +242,12 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
                 fragmentTransaction.remove(addedFragment)
             }
         } else {
-            fragmentTransaction.hide(addedFragment)
+            if((addedFragment?.view?.parent as? ViewGroup?)?.id == fragmentHolder) {
+                fragmentTransaction.hide(addedFragment)
 
-            if(addedFragment is ParentFragment<*>){
-                hiddenFragments.add(addedFragment)
+                if (addedFragment is ParentFragment<*>) {
+                    hiddenFragments.add(addedFragment)
+                }
             }
         }
     }
