@@ -234,8 +234,11 @@ fun <TFragment> FragmentManager.showFragment(@IdRes fragmentHolder: Int, fragmen
     val hiddenFragments = mutableListOf<ParentFragment<*>>()
 
 
+
+
     for (addedFragment in this.fragments) {
-        if (addedFragment.tag == fragment.tag) {
+        if ((addedFragment.tag != null && fragment.tag != null && addedFragment.tag == fragment.tag) ||
+             addedFragment is ParentFragment<*> && addedFragment.identifier == fragment.identifier) {
             if (addedFragment == fragment) {
                 shouldShow = true
             } else {
