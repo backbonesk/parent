@@ -36,11 +36,13 @@ class DecimalDigitsInputFilter(digitsBeforeSeparator: Int = 10, digitsAfterSepar
     }
 
     companion object {
+        val decimalSeparator get() = (DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat).decimalFormatSymbols.decimalSeparator.toString()
+
         fun getDecimalSymbolsForLocale(signed: Boolean = true, decimal: Boolean = true): String {
             val decFormat: DecimalFormat = DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat
             val decimalSymbols: DecimalFormatSymbols = decFormat.decimalFormatSymbols
             val digits = String(decimalSymbols.digits)
-            val decimalSeparator = (DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat).decimalFormatSymbols.decimalSeparator.toString()
+            val decimalSeparator = decimalSeparator
             val minus = decimalSymbols.minusSign.toString()
 
             var symbols = digits
