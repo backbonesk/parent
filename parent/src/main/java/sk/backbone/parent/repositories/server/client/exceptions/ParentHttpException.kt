@@ -1,6 +1,7 @@
 package sk.backbone.parent.repositories.server.client.exceptions
 
 import com.android.volley.NetworkError
+import com.android.volley.TimeoutError
 import com.android.volley.VolleyError
 import sk.backbone.parent.utils.jsonToObject
 import java.nio.charset.Charset
@@ -69,6 +70,7 @@ abstract class ParentHttpException(private val volleyError: VolleyError) : Excep
                 volleyError.networkResponse?.statusCode == 511 -> NetworkAuthenticationRequiredException(volleyError)
                 volleyError.networkResponse?.statusCode == 599 -> NetworkConnectTimeoutErrorException(volleyError)
                 volleyError is NetworkError -> NetworkException(volleyError)
+                volleyError is TimeoutError -> NetworkTimeoutException(volleyError)
                 else -> CommunicationException(volleyError)
             }
         }

@@ -50,6 +50,7 @@ interface IExceptionDescriptionProvider {
     fun parseNetworkAuthenticationRequiredException(context: Context, exception: NetworkAuthenticationRequiredException): String = getDefaultErrorMessage(context, exception)
     fun parseNetworkConnectTimeoutErrorException(context: Context, exception: NetworkConnectTimeoutErrorException): String = getDefaultErrorMessage(context, exception)
     fun parseNetworkException(context: Context, exception: NetworkException): String = getDefaultErrorMessage(context, exception)
+    fun parseNetworkTimeoutException(context: Context, exception: NetworkTimeoutException): String = getDefaultErrorMessage(context, exception)
     fun parseCommunicationException(context: Context, exception: CommunicationException): String = getDefaultErrorMessage(context, exception)
 
     fun getDescription(context: Context, throwable: Throwable): String {
@@ -98,6 +99,7 @@ interface IExceptionDescriptionProvider {
             is NetworkAuthenticationRequiredException -> parseNetworkAuthenticationRequiredException(context, throwable)
             is NetworkConnectTimeoutErrorException -> parseNetworkConnectTimeoutErrorException(context, throwable)
             is NetworkException -> parseNetworkException(context, throwable)
+            is NetworkTimeoutException -> parseNetworkTimeoutException(context, throwable)
             is CommunicationException -> parseCommunicationException(context, throwable)
             else -> getDefaultErrorMessage(context, throwable)
         }
