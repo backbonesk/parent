@@ -14,7 +14,7 @@ class DecimalDigitsInputFilter(digitsBeforeSeparator: Int = 10, digitsAfterSepar
     init {
         val before = "(-?\\d{1,$digitsBeforeSeparator})"
         val after = "(\\d{1,$digitsAfterSeparator})"
-        val separator = "[\\${(DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat).decimalFormatSymbols.decimalSeparator}]"
+        val separator = "[\\.]"
         val numberRegex = StringBuilder()
             .append("(-)")
             .append("|")
@@ -36,13 +36,10 @@ class DecimalDigitsInputFilter(digitsBeforeSeparator: Int = 10, digitsAfterSepar
     }
 
     companion object {
-        val decimalSeparator get() = (DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat).decimalFormatSymbols.decimalSeparator.toString()
-
         fun getDecimalSymbolsForLocale(signed: Boolean = true, decimal: Boolean = true): String {
             val decFormat: DecimalFormat = DecimalFormat.getInstance(Locale.getDefault()) as DecimalFormat
             val decimalSymbols: DecimalFormatSymbols = decFormat.decimalFormatSymbols
             val digits = String(decimalSymbols.digits)
-            val decimalSeparator = decimalSeparator
             val minus = decimalSymbols.minusSign.toString()
 
             var symbols = digits
@@ -52,7 +49,7 @@ class DecimalDigitsInputFilter(digitsBeforeSeparator: Int = 10, digitsAfterSepar
             }
 
             if(decimal){
-                symbols += decimalSeparator
+                symbols += "."
             }
 
             return symbols
