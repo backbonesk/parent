@@ -8,4 +8,3 @@ dependencyResolutionManagement {
 }
 
 include ':parent'
-rootProject.name = "parent"
