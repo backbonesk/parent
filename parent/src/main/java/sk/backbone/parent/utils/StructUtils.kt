@@ -3,10 +3,16 @@ package sk.backbone.parent.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import okhttp3.Request
+import okio.Buffer
 import java.io.ByteArrayOutputStream
 
-
-
+fun Request.getBodyAsString(): String {
+    val requestCopy = this.newBuilder().build()
+    val buffer = Buffer()
+    requestCopy.body?.writeTo(buffer)
+    return buffer.readUtf8()
+}
 
 fun <K, V>Map<K, V?>.notNullValuesOnly(): Map<K, V> {
     val notNullKeys = this.filterKeys { key -> this[key] != null}
