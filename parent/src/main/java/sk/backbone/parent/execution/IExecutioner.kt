@@ -2,8 +2,8 @@ package sk.backbone.parent.execution
 
 import android.content.Context
 import android.view.ViewGroup
-import sk.backbone.parent.application.ParentFcmService
-import sk.backbone.parent.application.ParentService
+import sk.backbone.parent.application.services.ParentFcmService
+import sk.backbone.parent.application.services.ParentService
 import sk.backbone.parent.execution.scopes.Scopes
 import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.screens.ParentFragment

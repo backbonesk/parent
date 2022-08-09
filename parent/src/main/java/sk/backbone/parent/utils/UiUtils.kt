@@ -144,6 +144,10 @@ fun BigDecimal.getAsEuros(): String{
     return String.format("$this $euroSign")
 }
 
+fun String.toAnyCultureBigDecimal(): BigDecimal? {
+    return replace(",", ".").toBigDecimalOrNull()
+}
+
 fun <T>ViewGroup.getViewsByType(tClass: Class<T>): ArrayList<T> {
     val result: ArrayList<T> = ArrayList()
 
