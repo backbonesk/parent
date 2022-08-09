@@ -2,12 +2,19 @@ package sk.backbone.parent.repositories.shared_preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import sk.backbone.parent.utils.jsonToObject
 import sk.backbone.parent.utils.toJsonString
+import javax.inject.Inject
 
-abstract class SharedPreferencesDataProvider(sharedPreferencesKey: String, val context: Context){
+abstract class SharedPreferencesDataProvider {
+    @Inject @ApplicationContext lateinit var context: Context
 
-    protected val sharedPreferences: SharedPreferences = context.getSharedPreferences(sharedPreferencesKey, Context.MODE_PRIVATE)
+    abstract val sharedPreferencesKey: String
+
+    protected val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences(sharedPreferencesKey, Context.MODE_PRIVATE)
+    }
 
     protected fun storeValue(key: String, value: Any?){
         with(sharedPreferences.edit()){
