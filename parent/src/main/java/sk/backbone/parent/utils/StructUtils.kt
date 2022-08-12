@@ -5,7 +5,13 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import okhttp3.Request
 import okio.Buffer
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.UnsupportedEncodingException
+import java.nio.charset.Charset
+import java.util.zip.*
+
 
 fun Request.getBodyAsString(): String {
     val requestCopy = this.newBuilder().build()
@@ -100,7 +106,62 @@ fun ByteArray?.toHexadecimalString(): String? {
         if (this[i].toInt() and 0xff < 0x10) {
             buf.append("0")
         }
-        buf.append(java.lang.Long.toHexString((this[i].toInt() and 0xff).toLong())) /* 转换16进制,下方法同 */
+        buf.append(java.lang.Long.toHexString((this[i].toInt() and 0xff).toLong()))
     }
     return buf.toString()
+}
+
+@Throws(UnsupportedEncodingException::class, DataFormatException::class)
+fun String.inflateFromBase64(bufferSize: Int = 8192, charset: Charset = Charsets.UTF_8): String {
+    val decoded = Base64.decode(this, Base64.DEFAULT)
+
+    var byteArrayOutputStream = ByteArrayOutputStream()
+
+    val decompresser = Inflater()
+    decompresser.setInput(decoded, 0, decoded.size)
+    val result = ByteArray(bufferSize)
+    val resultLength: Int = decompresser.inflate(result)
+    decompresser.end()
+
+    return String(result, 0, resultLength, charset)
+}
+
+@Throws(UnsupportedEncodingException::class, DataFormatException::class)
+fun String.deflateToBase64(bufferSize: Int = 8192, charset: Charset = Charsets.UTF_8): String {
+    val input = toByteArray(charset)
+
+    val output = ByteArray(bufferSize)
+    val compresser = Deflater()
+    compresser.setInput(input)
+    compresser.finish()
+    val compressedDataLength: Int = compresser.deflate(output)
+    compresser.end()
+
+    return Base64.encodeToString(output.copyOfRange(0, compressedDataLength), Base64.DEFAULT)
+}
+
+
+@Throws(IOException::class)
+fun String.compressToBase64(charset: Charset = Charsets.UTF_8): String {
+    val bytes = this.toByteArray(charset)
+    val outputStream = ByteArrayOutputStream()
+    val zipOutputStream = ZipOutputStream(outputStream)
+    zipOutputStream.setLevel(Deflater.BEST_COMPRESSION)
+    zipOutputStream.putNextEntry(ZipEntry("data"))
+    zipOutputStream.write(bytes)
+    zipOutputStream.closeEntry()
+    zipOutputStream.finish()
+    zipOutputStream.close()
+    return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+}
+
+@Throws(IOException::class)
+fun String.decompressFromBase64(charset: Charset = Charsets.UTF_8): String {
+    val bytes = Base64.decode(this, Base64.DEFAULT)
+    val inputStream = ByteArrayInputStream(bytes)
+    val zipInputStream = ZipInputStream(inputStream)
+    val outputBytes = zipInputStream.nextEntry?.let { zipInputStream.readBytes() }
+    zipInputStream.closeEntry()
+    zipInputStream.close()
+    return outputBytes?.toString(charset) ?: ""
 }
