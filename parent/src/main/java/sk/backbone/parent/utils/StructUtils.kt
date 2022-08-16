@@ -64,7 +64,7 @@ fun Bitmap.getBytes(compressFormat: Bitmap.CompressFormat = Bitmap.CompressForma
 
 fun String.fromBase64ToBitmap(): Bitmap {
     val base64Image = this.split(",").toTypedArray()[1]
-    val decodedString = Base64.decode(base64Image, Base64.DEFAULT)
+    val decodedString = Base64.decode(base64Image, Base64.NO_WRAP)
     return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
 }
 
@@ -113,7 +113,7 @@ fun ByteArray?.toHexadecimalString(): String? {
 
 @Throws(UnsupportedEncodingException::class, DataFormatException::class)
 fun String.inflateFromBase64(bufferSize: Int = 8192, charset: Charset = Charsets.UTF_8): String {
-    val decoded = Base64.decode(this, Base64.DEFAULT)
+    val decoded = Base64.decode(this, Base64.NO_WRAP)
 
     var byteArrayOutputStream = ByteArrayOutputStream()
 
@@ -137,7 +137,7 @@ fun String.deflateToBase64(bufferSize: Int = 8192, charset: Charset = Charsets.U
     val compressedDataLength: Int = compresser.deflate(output)
     compresser.end()
 
-    return Base64.encodeToString(output.copyOfRange(0, compressedDataLength), Base64.DEFAULT)
+    return Base64.encodeToString(output.copyOfRange(0, compressedDataLength), Base64.NO_WRAP)
 }
 
 
@@ -152,12 +152,12 @@ fun String.compressToBase64(charset: Charset = Charsets.UTF_8): String {
     zipOutputStream.closeEntry()
     zipOutputStream.finish()
     zipOutputStream.close()
-    return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+    return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
 }
 
 @Throws(IOException::class)
 fun String.decompressFromBase64(charset: Charset = Charsets.UTF_8): String {
-    val bytes = Base64.decode(this, Base64.DEFAULT)
+    val bytes = Base64.decode(this, Base64.NO_WRAP)
     val inputStream = ByteArrayInputStream(bytes)
     val zipInputStream = ZipInputStream(inputStream)
     val outputBytes = zipInputStream.nextEntry?.let { zipInputStream.readBytes() }
