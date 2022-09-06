@@ -9,6 +9,7 @@ import kotlin.math.absoluteValue
 
 const val iso8601Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8601FormatUtcStrict = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+const val iso84FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 
@@ -145,6 +146,16 @@ fun formatIsoDateOnlyToLocalDate(inputDate: String?): String? {
 
 fun Date.getIso8601DateOnlyString(): String {
     return SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).format(this)
+}
+
+fun Date.iso84FormatUtcStrictNoMillis(): String {
+    return SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).format(this)
+}
+
+fun fromIsoDateFormatUtcNoMillis(value: String?): Date? {
+    return value?.let {
+        SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).parse(it)
+    }
 }
 
 fun formatDefaultLocaleDateToIsoDateOnly(input: String?): String? {
