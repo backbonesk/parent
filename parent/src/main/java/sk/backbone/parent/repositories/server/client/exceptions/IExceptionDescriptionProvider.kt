@@ -1,11 +1,13 @@
 package sk.backbone.parent.repositories.server.client.exceptions
 
 import android.content.Context
+import sk.backbone.parent.execution.ParentException
 
 
 interface IExceptionDescriptionProvider {
     fun getDefaultErrorMessage(context: Context, throwable: Throwable): String
 
+    fun parseParentException(context: Context, exception: ParentException): String = exception.message ?: getDefaultErrorMessage(context, exception)
     fun parseBadRequestException(context: Context, exception: BadRequestException): String = getDefaultErrorMessage(context, exception)
     fun parseAuthorizationException(context: Context, exception: AuthorizationException): String = getDefaultErrorMessage(context, exception)
     fun parsePaymentException(context: Context, exception: PaymentException): String = getDefaultErrorMessage(context, exception)
@@ -55,6 +57,7 @@ interface IExceptionDescriptionProvider {
 
     fun getDescription(context: Context, throwable: Throwable): String {
         return when(throwable){
+            is ParentException -> parseParentException(context, throwable)
             is BadRequestException -> parseBadRequestException(context, throwable)
             is AuthorizationException -> parseAuthorizationException(context, throwable)
             is PaymentException -> parsePaymentException(context, throwable)
