@@ -5,12 +5,17 @@ import com.android.volley.TimeoutError
 import com.android.volley.VolleyError
 import sk.backbone.parent.execution.ParentException
 import sk.backbone.parent.utils.jsonToObject
+import sk.backbone.parent.utils.toJsonString
 import java.nio.charset.Charset
 
-abstract class ParentHttpException @JvmOverloads constructor(volleyError: VolleyError? = null) : ParentException(volleyError) {
+abstract class ParentHttpException @JvmOverloads constructor(volleyError: VolleyError? = null) : ParentException(volleyError?.message) {
     val responseBody = getResponseBody(volleyError)
     val statusCode = volleyError?.networkResponse?.statusCode
+    val volleyError = volleyError?.toJsonString()
 
+    init {
+        volleyError?.stackTrace?.let { stackTrace = it }
+    }
     inline fun <reified Type>getErrors(): Type? {
         return responseBody?.jsonToObject()
     }
