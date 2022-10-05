@@ -7,17 +7,17 @@ import sk.backbone.parent.execution.ParentException
 import sk.backbone.parent.utils.jsonToObject
 import java.nio.charset.Charset
 
-abstract class ParentHttpException(volleyError: VolleyError) : ParentException(volleyError) {
+abstract class ParentHttpException @JvmOverloads constructor(volleyError: VolleyError? = null) : ParentException(volleyError) {
     val responseBody = getResponseBody(volleyError)
-    val statusCode = volleyError.networkResponse?.statusCode
+    val statusCode = volleyError?.networkResponse?.statusCode
 
     inline fun <reified Type>getErrors(): Type? {
         return responseBody?.jsonToObject()
     }
 
     companion object {
-        fun getResponseBody(volleyError: VolleyError): String? {
-            return volleyError.networkResponse?.data?.let { return@let String(it, Charset.forName("utf-8")) }
+        fun getResponseBody(volleyError: VolleyError?): String? {
+            return volleyError?.networkResponse?.data?.let { return@let String(it, Charset.forName("utf-8")) }
         }
 
         fun parseException(volleyError: VolleyError): ParentHttpException {

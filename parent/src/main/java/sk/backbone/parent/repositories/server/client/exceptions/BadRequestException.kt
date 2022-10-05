@@ -2,4 +2,4 @@ package sk.backbone.parent.repositories.server.client.exceptions
 
 import com.android.volley.VolleyError
 
-class BadRequestException(volleyError: VolleyError) : ParentHttpException(volleyError)
+class BadRequestException @JvmOverloads constructor(volleyError: VolleyError? = null) : ParentHttpException(volleyError)
