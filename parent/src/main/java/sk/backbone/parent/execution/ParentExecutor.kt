@@ -184,7 +184,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     }
 
     /***
-     * Override this and preprocess exception for caller.
+     * Override this and preprocess exception for caller. You can cast or map exception to different one if you need.
      ***/
     protected open fun mapException(throwable: Throwable): Throwable{
         return throwable
