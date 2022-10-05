@@ -3,17 +3,13 @@ package sk.backbone.parent.repositories.server.client.exceptions
 import com.android.volley.NetworkError
 import com.android.volley.TimeoutError
 import com.android.volley.VolleyError
+import sk.backbone.parent.execution.ParentException
 import sk.backbone.parent.utils.jsonToObject
 import java.nio.charset.Charset
 
-abstract class ParentHttpException(private val volleyError: VolleyError) : Exception(volleyError) {
-    val responseBody by lazy {
-        return@lazy getResponseBody(volleyError)
-    }
-
-    val statusCode by lazy {
-        return@lazy volleyError.networkResponse?.statusCode
-    }
+abstract class ParentHttpException(volleyError: VolleyError) : ParentException(volleyError) {
+    val responseBody = getResponseBody(volleyError)
+    val statusCode = volleyError.networkResponse?.statusCode
 
     inline fun <reified Type>getErrors(): Type? {
         return responseBody?.jsonToObject()
