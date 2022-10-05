@@ -121,28 +121,30 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                 catch (throwable: Throwable) {
                     Log.e("ExecutionFailed", this.javaClass.name, throwable)
 
+                    val exception = mapException(throwable)
+
                     if(logToFirebase){
-                        FirebaseCrashlytics.getInstance().recordException(throwable)
+                        FirebaseCrashlytics.getInstance().recordException(exception)
                     }
 
-                    lastError = throwable
+                    lastError = exception
 
-                    if(!handleExceptionMiddleware(throwable)){
-                        retryEnabled = retryEnabled && throwable is CommunicationException
+                    if(!handleExceptionMiddleware(exception)){
+                        retryEnabled = retryEnabled && exception is CommunicationException
                         uiNotificationOnError = {
-                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
+                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, exception))
                         }
                     }
 
                     withContext(scopes.default.coroutineContext){
-                        defaultOperationOnUnsuccessfulAttempt?.invoke(throwable)
+                        defaultOperationOnUnsuccessfulAttempt?.invoke(exception)
                     }
 
                     withContext(scopes.ui.coroutineContext){
                         if(currentRepeatCount == 1 && notifyUiOnError){
                             uiNotificationOnError?.invoke()
                         }
-                        uiOperationOnUnsuccessfulAttempt?.invoke(throwable)
+                        uiOperationOnUnsuccessfulAttempt?.invoke(exception)
                     }
 
                     if(retryEnabled || isLoopingInfinitely) {
@@ -179,5 +181,12 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
      ***/
     protected open fun handleExceptionMiddleware(throwable: Throwable): Boolean {
         return false
+    }
+
+    /***
+     * Override this and preprocess exception for caller.
+     ***/
+    protected open fun mapException(throwable: Throwable): Throwable{
+        return throwable
     }
 }
