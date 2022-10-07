@@ -134,7 +134,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     if(!handleExceptionMiddleware(exception)){
                         retryEnabled = retryEnabled && exception is CommunicationException
                         uiNotificationOnError = {
-                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, exception), neutralButton = dialogProvider.getDefaultNeutralButton(errorDialogDefaultOperation))
+                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, exception), neutralButton = dialogProvider.getDefaultNeutralButton(context, errorDialogDefaultOperation))
                         }
                     }
 
