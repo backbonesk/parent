@@ -2,6 +2,6 @@ package sk.backbone.parent.repositories.server.client.exceptions
 
 import com.android.volley.VolleyError
 
-class RequestHeaderFieldsTooLargeException(volleyError: VolleyError) : ParentHttpException(volleyError) {
+class RequestHeaderFieldsTooLargeException @JvmOverloads constructor(volleyError: VolleyError? = null) : ParentHttpException(volleyError) {
 
 }

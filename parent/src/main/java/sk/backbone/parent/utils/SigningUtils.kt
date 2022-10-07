@@ -1,14 +1,15 @@
 package sk.backbone.parent.utils
 
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-fun getSha256Digest(value: String): String {
-    val digest = MessageDigest.getInstance("SHA-256")
-    val bytes =  digest.digest(value.toByteArray(StandardCharsets.UTF_8))
+@JvmOverloads
+fun getSha256Digest(value: String, encoding: Charset = StandardCharsets.UTF_8): String {
+    val bytes =  value.toByteArray(encoding).getSha256Digest()
     var hash = ""
 
     for(byte in bytes){
@@ -17,6 +18,11 @@ fun getSha256Digest(value: String): String {
     }
 
     return hash.lowercase(Locale.getDefault())
+}
+
+fun ByteArray.getSha256Digest(): ByteArray {
+    val digest = MessageDigest.getInstance("SHA-256")
+    return digest.digest(this)
 }
 
 fun generateHmac256Signature(digest: String, secret: String): String {
