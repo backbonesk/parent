@@ -35,6 +35,8 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
     var uiOperationOnFailure: ((Throwable) -> Unit)? = null
     var uiOperationOnFinished: (() -> Unit)? = null
 
+    var errorDialogDefaultOperation: (() -> Unit)? = null
+
     var retryIntervalMillisecond: Long = 0
     var repeatInterval: Long = 0
     var startDelay: Long = 0
@@ -130,7 +132,7 @@ abstract class ParentExecutor<T>(executorParams: ExecutorParams) {
                     if(!handleExceptionMiddleware(throwable)){
                         retryEnabled = retryEnabled && throwable is CommunicationException
                         uiNotificationOnError = {
-                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, throwable))
+                            dialogProvider.showDialog(context, exceptionDescriptionProvider.getDescription(context, throwable), neutralButton = dialogProvider.getDefaultNeutralButton(errorDialogDefaultOperation))
                         }
                     }
 
