@@ -6,4 +6,5 @@ import androidx.appcompat.app.AlertDialog
 interface IExecutorDialogProvider {
     fun showDialog(context: Context, message: String, title: String? = null, neutralButton: Pair<String?, ((() -> Unit)?)>? = null, positiveButton: Pair<String, ((() -> Unit)?)>? = null, negativeButton: Pair<String, ((() -> Unit)?)>? = null): AlertDialog?
     fun showLoadingDialog(context: Context): AlertDialog?
+    fun getDefaultNeutralButton(context: Context, action: (() -> Unit)? = null): Pair<String, ((() -> Unit)?)>
 }

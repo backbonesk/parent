@@ -82,6 +82,8 @@ fun Bitmap.toBase64(compressFormat: Bitmap.CompressFormat = Bitmap.CompressForma
     return base64
 }
 
+val ByteArray.hexadecimalString get() = this.joinToString(" ", "[", "]") { String.format("0x%02X", it) }
+
 fun String?.toHexadecimalString(): String? {
     return this?.toByteArray()?.toHexadecimalString()
 }
