@@ -1,5 +1,6 @@
 package sk.backbone.parent.utils
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -313,5 +314,20 @@ inline fun View.afterMeasured(crossinline block: () -> Unit) {
                 block()
             }
         }
+    })
+}
+
+fun View.animateVisibility(state: Int, duration: Long = 300) {
+    val animation = this.animate()
+    animation
+        .alpha(1.0f)
+        .duration = duration
+    animation.setListener(object : Animator.AnimatorListener {
+        override fun onAnimationStart(p0: Animator) {
+            this@animateVisibility.visibility = state
+        }
+        override fun onAnimationCancel(p0: Animator) {}
+        override fun onAnimationRepeat(p0: Animator) {}
+        override fun onAnimationEnd(p0: Animator) {}
     })
 }
