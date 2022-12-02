@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.request.RequestOptions
+import com.google.zxing.BarcodeFormat
 import sk.backbone.parent.ui.components.SafeClickListener
 import sk.backbone.parent.ui.screens.ParentFragment
 import sk.backbone.parent.ui.validations.IValidableInput
@@ -335,4 +336,21 @@ fun View.animateVisibility(state: Int, duration: Long = 300) {
             }
         }
     })
+}
+
+private fun ImageView.setCompressedBase64JsonDataToQrCode(any: Any?){
+    post {
+        val compressed = (any?.toJsonString() ?: "").compressToBase64()
+
+        val width = measuredWidth
+        val height = measuredHeight
+
+        val qrSize = if(width == 0 || height == 0){
+            width + height
+        } else {
+            width.coerceAtMost(height)
+        }
+
+        setImageBitmap(encodeQrIntoBitmap(compressed, BarcodeFormat.QR_CODE, qrSize, qrSize))
+    }
 }
