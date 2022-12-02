@@ -338,7 +338,7 @@ fun View.animateVisibility(state: Int, duration: Long = 300) {
     })
 }
 
-private fun ImageView.setCompressedBase64JsonDataToQrCode(any: Any?){
+fun ImageView.setCompressedBase64JsonDataToQrCode(any: Any?){
     post {
         val compressed = (any?.toJsonString() ?: "").compressToBase64()
 
