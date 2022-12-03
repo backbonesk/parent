@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -369,4 +370,17 @@ private fun ImageView.getSizeForQrCode(): Int {
     }
 
     return qrSize
+}
+
+
+
+fun View.getBitmap(onBitmapReady: (Bitmap) -> Unit) {
+    post {
+        val bitmap = Bitmap.createBitmap(
+            measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        draw(canvas)
+        onBitmapReady(bitmap)
+    }
 }
