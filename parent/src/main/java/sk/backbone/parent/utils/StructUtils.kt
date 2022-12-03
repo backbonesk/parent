@@ -168,19 +168,19 @@ fun String.decompressFromBase64(charset: Charset = Charsets.UTF_8): String {
     return outputBytes?.toString(charset) ?: ""
 }
 
-fun String.base64Gzip(content: String): String {
+fun String.base64Gzip(): String {
     ByteArrayOutputStream().use { outputStream ->
         GZIPOutputStream(outputStream).use { gzipOutputStream ->
             gzipOutputStream.bufferedWriter(Charsets.UTF_8).use {
-                it.write(content)
+                it.write(this)
                 return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
             }
         }
     }
 }
 
-fun String.ungzipBase64(content: String): String{
-    val base64Bytes = Base64.decode(content, Base64.NO_WRAP)
+fun String.ungzipBase64(): String{
+    val base64Bytes = Base64.decode(this, Base64.NO_WRAP)
     base64Bytes.inputStream().use { inputStream ->
         GZIPInputStream(inputStream).use { gzipInputStream ->
             gzipInputStream.bufferedReader(Charsets.UTF_8).use {

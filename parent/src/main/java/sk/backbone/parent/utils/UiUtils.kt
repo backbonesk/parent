@@ -342,15 +342,31 @@ fun ImageView.setCompressedBase64JsonDataToQrCode(any: Any?){
     post {
         val compressed = (any?.toJsonString() ?: "").compressToBase64()
 
-        val width = measuredWidth
-        val height = measuredHeight
-
-        val qrSize = if(width == 0 || height == 0){
-            width + height
-        } else {
-            width.coerceAtMost(height)
-        }
+        val qrSize = getSizeForQrCode()
 
         setImageBitmap(encodeQrIntoBitmap(compressed, BarcodeFormat.QR_CODE, qrSize, qrSize))
     }
+}
+
+fun ImageView.setGzipBase64JsonDataToQrCode(any: Any?){
+    post {
+        val compressed = (any?.toJsonString() ?: "").base64Gzip()
+
+        val qrSize = getSizeForQrCode()
+
+        setImageBitmap(encodeQrIntoBitmap(compressed, BarcodeFormat.QR_CODE, qrSize, qrSize))
+    }
+}
+
+private fun ImageView.getSizeForQrCode(): Int {
+    val width = measuredWidth
+    val height = measuredHeight
+
+    val qrSize = if(width == 0 || height == 0){
+        width + height
+    } else {
+        width.coerceAtMost(height)
+    }
+
+    return qrSize
 }
