@@ -173,8 +173,8 @@ fun String.base64Gzip(): String {
         GZIPOutputStream(outputStream).use { gzipOutputStream ->
             gzipOutputStream.bufferedWriter(Charsets.UTF_8).use {
                 it.write(this)
-                return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
             }
+            return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
         }
     }
 }
