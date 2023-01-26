@@ -47,22 +47,23 @@ dependencies {
     api 'com.google.firebase:firebase-analytics-ktx'
     api 'com.google.firebase:firebase-crashlytics-ktx'
 
-    api 'androidx.core:core-ktx:1.8.0'
+    api 'androidx.core:core-ktx:1.9.0'
     api("androidx.work:work-runtime-ktx:2.7.1")
     api("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
 
-    api 'androidx.activity:activity-ktx:1.5.1'
-    api 'androidx.fragment:fragment-ktx:1.5.2'
+    api 'androidx.activity:activity-ktx:1.6.1'
+    api 'androidx.fragment:fragment-ktx:1.5.5'
 
-    api "androidx.navigation:navigation-fragment-ktx:2.5.1"
-    api "androidx.navigation:navigation-ui-ktx:2.5.1"
+    api "androidx.navigation:navigation-fragment-ktx:2.5.3"
+    api "androidx.navigation:navigation-ui-ktx:2.5.3"
 
-    api 'androidx.appcompat:appcompat:1.5.0'
+    api 'androidx.appcompat:appcompat:1.6.0'
     api 'androidx.recyclerview:recyclerview:1.2.1'
     api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     api 'androidx.constraintlayout:constraintlayout:2.1.4'
     api 'androidx.paging:paging-runtime-ktx:3.1.1'
+    api 'androidx.viewpager2:viewpager2:1.1.0-beta01'
 
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
@@ -71,8 +72,8 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api "android.arch.lifecycle:extensions:1.1.1"
 
-    api 'com.google.android.material:material:1.6.1'
-    api 'com.google.code.gson:gson:2.8.9'
+    api 'com.google.android.material:material:1.8.0'
+    api 'com.google.code.gson:gson:2.9.0'
     api 'com.android.volley:volley:1.2.1'
     api 'com.squareup.okhttp3:okhttp:4.2.2'
     api 'com.squareup.okhttp3:logging-interceptor:4.2.2'
