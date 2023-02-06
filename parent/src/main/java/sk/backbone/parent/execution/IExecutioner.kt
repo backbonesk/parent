@@ -13,7 +13,7 @@ interface IExecutioner<TScopes: Scopes> {
     private val _context: Context? get(){
         return when (this) {
             is ParentFragment<*> -> context
-            is ParentActivity<*> -> this
+            is ParentActivity -> this
             is ParentService -> this
             is ParentFcmService -> this
             is Context -> this

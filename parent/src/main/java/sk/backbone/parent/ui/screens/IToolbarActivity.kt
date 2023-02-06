@@ -13,7 +13,7 @@ interface IToolbarActivity<ToolbarViewBinding: ViewBinding> {
     val toolbarRootBinder: (View) -> ToolbarViewBinding
 
     val toolbarViewBinding: ToolbarViewBinding get () {
-        if(this is ParentActivity<*>){
+        if(this is ParentActivity){
             val activityRootView = this.getRootView()
 
             return if(activityRootView != null){
