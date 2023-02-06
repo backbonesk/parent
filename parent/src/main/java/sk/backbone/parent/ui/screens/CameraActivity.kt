@@ -34,7 +34,7 @@ import java.io.FileOutputStream
 // Future Todo: Front/Back camera switching
 
 @AndroidEntryPoint
-class CameraActivity : ParentActivity<ActivityCameraBinding>(ActivityCameraBinding::inflate) {
+class CameraActivity : ParentViewBindingActivity<ActivityCameraBinding>(ActivityCameraBinding::inflate) {
     private val supportedOrientationModes = listOf(
         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
         ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
