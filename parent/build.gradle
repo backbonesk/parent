@@ -33,6 +33,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'sk.backbone.parent'
 }
 
 dependencies {
@@ -91,11 +92,27 @@ dependencies {
     api "androidx.camera:camera-lifecycle:1.2.0-alpha04"
     api "androidx.camera:camera-view:1.2.0-alpha04"
 
-    api 'com.google.mlkit:barcode-scanning:17.0.2'
+    api 'com.google.mlkit:barcode-scanning:17.0.3'
     api 'com.google.zxing:core:3.5.0'
 
     api "com.google.dagger:hilt-android:2.43.2"
+    api 'androidx.hilt:hilt-navigation-compose:1.0.0'
     kapt "com.google.dagger:hilt-compiler:2.43.2"
+
+    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
+    api platform ("androidx.compose:compose-bom:2022.12.00")
+    api "androidx.compose.material3:material3"
+    api "androidx.compose.ui:ui-tooling-preview"
+    debugApi "androidx.compose.ui:ui-tooling"
+    api "androidx.compose.material:material-icons-core"
+    api "androidx.compose.material:material-icons-extended"
+    api "androidx.compose.material3:material3-window-size-class"
+    api "androidx.activity:activity-compose:1.6.1"
+    api "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    api "androidx.compose.runtime:runtime-livedata"
+    api 'com.google.maps.android:maps-compose:2.9.1'
+    api "androidx.compose.material:material"
+    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
 }
 
 task androidSourcesJar(type: Jar) {

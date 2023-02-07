@@ -26,6 +26,7 @@ class PreCachingLayoutManager : LinearLayoutManager {
         this.extraLayoutSpace = extraLayoutSpace
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getExtraLayoutSpace(state: RecyclerView.State): Int {
         return extraLayoutSpace ?: DEFAULT_EXTRA_LAYOUT_SPACE
     }
