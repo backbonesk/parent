@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -38,8 +37,6 @@ android {
 
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.core:core-ktx:+'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
