@@ -8,12 +8,14 @@ import sk.backbone.parent.execution.scopes.Scopes
 import sk.backbone.parent.ui.screens.ParentActivity
 import sk.backbone.parent.ui.screens.ParentFragment
 import sk.backbone.parent.ui.screens.ParentRecyclerAdapter
+import sk.backbone.parent.ui.screens.ParentViewBindingActivity
 
 interface IExecutioner<TScopes: Scopes> {
     private val _context: Context? get(){
         return when (this) {
             is ParentFragment<*> -> context
             is ParentActivity -> this
+            is ParentViewBindingActivity<*> -> this
             is ParentService -> this
             is ParentFcmService -> this
             is Context -> this
