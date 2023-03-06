@@ -13,7 +13,7 @@ import sk.backbone.parent.execution.scopes.ActivityScopes
 import javax.inject.Inject
 
 @Deprecated("Use ParentActivity which is compose oriented")
-abstract class ParentViewBindingActivity<TViewBinding: ViewBinding>(private val viewBindingFactory: ((LayoutInflater) -> TViewBinding)?) : AppCompatActivity(), IExecutioner<ActivityScopes> {
+abstract class ParentViewBindingActivity<TViewBinding: ViewBinding>w(private val viewBindingFactory: ((LayoutInflater) -> TViewBinding)?) : AppCompatActivity(), IExecutioner<ActivityScopes> {
     @Inject override lateinit var scopes: ActivityScopes
     val viewBinding: TViewBinding get() = _viewBinding!!
 
