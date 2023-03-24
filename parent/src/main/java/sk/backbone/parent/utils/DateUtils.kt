@@ -12,6 +12,7 @@ const val iso8601FormatUtcStrict = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 const val iso84FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
+const val iso8601TimeOnlyFormat = "HH:mm"
 
 fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -146,6 +147,9 @@ fun formatIsoDateOnlyToLocalDate(inputDate: String?): String? {
 
 fun Date.getIso8601DateOnlyString(): String {
     return SimpleDateFormat(iso8601DateOnlyFormat, Locale.getDefault()).format(this)
+}
+fun Date.getIso8601TimeOnlyString(): String {
+    return SimpleDateFormat(iso8601TimeOnlyFormat, Locale.getDefault()).format(this)
 }
 
 fun Date.iso84FormatUtcStrictNoMillis(): String {
