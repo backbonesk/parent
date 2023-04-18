@@ -111,6 +111,8 @@ dependencies {
     api 'com.google.maps.android:maps-compose:2.9.1'
     api "androidx.compose.material:material"
     api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
+
+    api "org.modelmapper:modelmapper:3.1.1"
 }
 
 project.afterEvaluate {
