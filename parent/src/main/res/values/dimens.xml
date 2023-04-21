@@ -5,6 +5,7 @@
     <dimen name="spacing_tiny_4_dp">4dp</dimen>
     <dimen name="spacing_small_10_dp">10dp</dimen>
     <dimen name="spacing_medium_15_dp">15dp</dimen>
+    <dimen name="spacing_medium_15_dp_negative">-15dp</dimen>
     <dimen name="spacing_screen_20_dp">20dp</dimen>
     <dimen name="spacing_large_30_dp">30dp</dimen>
 
