@@ -48,28 +48,28 @@ dependencies {
     api 'com.google.firebase:firebase-analytics-ktx'
     api 'com.google.firebase:firebase-crashlytics-ktx'
 
-    api 'androidx.core:core-ktx:1.9.0'
-    api("androidx.work:work-runtime-ktx:2.8.0")
+    api 'androidx.core:core-ktx:1.10.0'
+    api("androidx.work:work-runtime-ktx:2.8.1")
     api("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
 
-    api 'androidx.activity:activity-ktx:1.6.1'
-    api 'androidx.fragment:fragment-ktx:1.5.5'
+    api 'androidx.activity:activity-ktx:1.7.1'
+    api 'androidx.fragment:fragment-ktx:1.5.7'
 
     api "androidx.navigation:navigation-fragment-ktx:2.5.3"
     api "androidx.navigation:navigation-ui-ktx:2.5.3"
 
     api 'androidx.appcompat:appcompat:1.6.1'
-    api 'androidx.recyclerview:recyclerview:1.2.1'
+    api 'androidx.recyclerview:recyclerview:1.3.0'
     api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     api 'androidx.constraintlayout:constraintlayout:2.1.4'
     api 'androidx.paging:paging-runtime-ktx:3.1.1'
     api 'androidx.viewpager2:viewpager2:1.1.0-beta01'
 
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    api 'androidx.lifecycle:lifecycle-common-java8:2.5.1'
-    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.6.1'
+    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api "android.arch.lifecycle:extensions:1.1.1"
 
@@ -96,7 +96,7 @@ dependencies {
     api "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
 
-    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
+    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     api platform ("androidx.compose:compose-bom:2022.12.00")
     api "androidx.compose.material3:material3"
     api "androidx.compose.ui:ui-tooling-preview"
@@ -104,12 +104,12 @@ dependencies {
     api "androidx.compose.material:material-icons-core"
     api "androidx.compose.material:material-icons-extended"
     api "androidx.compose.material3:material3-window-size-class"
-    api "androidx.activity:activity-compose:1.6.1"
-    api "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    api "androidx.activity:activity-compose:1.7.1"
+    api "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     api "androidx.compose.runtime:runtime-livedata"
     api 'com.google.maps.android:maps-compose:2.9.1'
     api "androidx.compose.material:material"
-    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
+    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
 }
 
 project.afterEvaluate {
