@@ -23,7 +23,7 @@ abstract class SpinnerItemsProvider<T> {
         return elements.getOrNull(position)
     }
 
-    fun getIndexOf(value: Any?): Int {
+    open fun getIndexOf(value: Any?): Int {
         return (value as T?)?.let { stringValues.indexOf(getString(it)) } ?: -1
     }
 }

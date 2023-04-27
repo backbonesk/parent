@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 
 interface IToolbarActivity<ToolbarViewBinding: ViewBinding> {
-    abstract fun refreshToolbar()
+    fun refreshToolbar()
 
     val toolbarRootId: Int
     val toolbarRootInflater: (LayoutInflater, ViewGroup?, Boolean) -> ToolbarViewBinding
     val toolbarRootBinder: (View) -> ToolbarViewBinding
 
     val toolbarViewBinding: ToolbarViewBinding get () {
-        if(this is ParentActivity){
+        if(this is ParentViewBindingActivity<*>){
             val activityRootView = this.getRootView()
 
             return if(activityRootView != null){
