@@ -13,6 +13,7 @@ const val iso84FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 const val iso8601HoursMinutesOnlyFormat = "HH:mm"
+const val iso8601ShortDate = "dd.MM.yy"
 
 fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -150,10 +151,11 @@ fun Date.getIso8601DateOnlyString(): String {
 }
 fun Date.getLocallyHoursMinutesOnlyString(): String {
     val format = android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), iso8601HoursMinutesOnlyFormat)
-    val format1 = android.text.format.DateFormat.getBestDateTimePattern(Locale.KOREA, iso8601HoursMinutesOnlyFormat)
-    val format2 = android.text.format.DateFormat.getBestDateTimePattern(Locale.TAIWAN, iso8601HoursMinutesOnlyFormat)
-    val format3 = android.text.format.DateFormat.getBestDateTimePattern(Locale.CANADA, iso8601HoursMinutesOnlyFormat)
-    val format4 = android.text.format.DateFormat.getBestDateTimePattern(Locale.US, iso8601HoursMinutesOnlyFormat)
+    return SimpleDateFormat(format, Locale.getDefault()).format(this)
+}
+
+fun Date.getShortDateFormat(): String {
+    val format = android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), iso8601ShortDate)
     return SimpleDateFormat(format, Locale.getDefault()).format(this)
 }
 
