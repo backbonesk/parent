@@ -74,7 +74,7 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api "android.arch.lifecycle:extensions:1.1.1"
 
-    api 'com.google.android.material:material:1.8.0'
+    api 'com.google.android.material:material:1.9.0'
     api 'com.google.code.gson:gson:2.9.0'
     api 'com.android.volley:volley:1.2.1'
     api 'com.squareup.okhttp3:okhttp:4.2.2'
@@ -99,19 +99,18 @@ dependencies {
 
     api "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     api platform ("androidx.compose:compose-bom:2022.12.00")
-    api "androidx.compose.material3:material3"
+    api "androidx.compose.material3:material3:1.2.0-alpha02"
     api "androidx.compose.ui:ui-tooling-preview"
     debugApi "androidx.compose.ui:ui-tooling"
     api "androidx.compose.material:material-icons-core"
     api "androidx.compose.material:material-icons-extended"
     api "androidx.compose.material3:material3-window-size-class"
-    api "androidx.activity:activity-compose:1.7.1"
+    api "androidx.activity:activity-compose:1.7.2"
     api "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     api "androidx.compose.runtime:runtime-livedata"
     api 'com.google.maps.android:maps-compose:2.9.1'
     api "androidx.compose.material:material"
     api "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
-    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
 
     api "org.modelmapper:modelmapper:3.1.1"
 }
