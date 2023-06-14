@@ -65,7 +65,7 @@ dependencies {
     api "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     api 'androidx.constraintlayout:constraintlayout:2.1.4'
     api 'androidx.paging:paging-runtime-ktx:3.1.1'
-    api 'androidx.viewpager2:viewpager2:1.1.0-beta01'
+    api 'androidx.viewpager2:viewpager2:1.1.0-beta02'
 
     api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
@@ -77,12 +77,12 @@ dependencies {
     api 'com.google.android.material:material:1.9.0'
     api 'com.google.code.gson:gson:2.9.0'
     api 'com.android.volley:volley:1.2.1'
-    api 'com.squareup.okhttp3:okhttp:4.2.2'
-    api 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    api 'com.squareup.okhttp3:okhttp:4.10.0'
+    api 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
-    api 'com.github.bumptech.glide:glide:4.11.0'
-    api 'com.github.bumptech.glide:annotations:4.11.0'
-    api 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
+    api 'com.github.bumptech.glide:glide:4.15.1'
+    api 'com.github.bumptech.glide:annotations:4.15.1'
+    api 'com.github.bumptech.glide:okhttp3-integration:4.15.1'
 
 
     api "androidx.camera:camera-core:1.2.0-alpha04"
