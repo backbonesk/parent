@@ -9,7 +9,7 @@ import kotlin.math.absoluteValue
 
 const val iso8601Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8601FormatUtcStrict = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-const val iso84FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
+const val iso8601FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 const val iso8601HoursMinutesOnlyFormat = "HH:mm"
@@ -159,13 +159,13 @@ fun Date.getShortDateFormat(): String {
     return SimpleDateFormat(format, Locale.getDefault()).format(this)
 }
 
-fun Date.iso84FormatUtcStrictNoMillis(): String {
-    return SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).format(this)
+fun Date.iso8601FormatUtcStrictNoMillis(): String {
+    return SimpleDateFormat(iso8601FormatUtcStrictNoMillis, Locale.getDefault()).format(this)
 }
 
 fun fromIsoDateFormatUtcNoMillis(value: String?): Date? {
     return value?.let {
-        SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).parse(it)
+        SimpleDateFormat(iso8601FormatUtcStrictNoMillis, Locale.getDefault()).parse(it)
     }
 }
 
@@ -200,5 +200,5 @@ private val localShortDateFormatter: SimpleDateFormat
         return SimpleDateFormat(pattern, Locale.getDefault())
     }
 
-fun Date.getStartOfYesterday(timezone: TimeZone = TimeZone.getDefault()) = getStartOfDay(timezone).apply { time - 1 }.getStartOfDay(timezone)
-fun Date.getEndOfTomorrow(timezone: TimeZone = TimeZone.getDefault()) = getEndOfDay(timezone).apply { time + 1 }.getEndOfDay(timezone)
+fun Date.getStartOfYesterday(timezone: TimeZone = TimeZone.getDefault()) = getStartOfDay(timezone).apply { time -= 1 }.getStartOfDay(timezone)
+fun Date.getEndOfTomorrow(timezone: TimeZone = TimeZone.getDefault()) = getEndOfDay(timezone).apply { time += 1 }.getEndOfDay(timezone)
