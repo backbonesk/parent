@@ -199,3 +199,6 @@ private val localShortDateFormatter: SimpleDateFormat
         val pattern = simpleDateFormat.toLocalizedPattern()
         return SimpleDateFormat(pattern, Locale.getDefault())
     }
+
+fun Date.getStartOfYesterday(timezone: TimeZone = TimeZone.getDefault()) = getStartOfDay(timezone).apply { time - 1 }.getStartOfDay(timezone)
+fun Date.getEndOfTomorrow(timezone: TimeZone = TimeZone.getDefault()) = getEndOfDay(timezone).apply { time + 1 }.getEndOfDay(timezone)
