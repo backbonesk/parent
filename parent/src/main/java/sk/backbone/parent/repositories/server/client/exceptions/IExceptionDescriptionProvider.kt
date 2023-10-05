@@ -1,6 +1,8 @@
 package sk.backbone.parent.repositories.server.client.exceptions
 
 import android.content.Context
+import com.google.gson.Gson
+import okhttp3.ResponseBody
 import sk.backbone.parent.execution.ParentException
 
 
@@ -55,6 +57,9 @@ interface IExceptionDescriptionProvider {
     fun parseNetworkTimeoutException(context: Context, exception: NetworkTimeoutException): String = getDefaultErrorMessage(context, exception)
     fun parseCommunicationException(context: Context, exception: CommunicationException): String = getDefaultErrorMessage(context, exception)
 
+    fun getDescription(context: Context, errorBody: ResponseBody?): String =
+        Gson().fromJson(errorBody?.charStream()?.readText(), Error::class.java)?.errors ?: getDefaultErrorMessage(context, IllegalArgumentException("Error body is empty"))
+
     fun getDescription(context: Context, throwable: Throwable): String {
         return when(throwable){
             is ParentException -> parseParentException(context, throwable)
@@ -107,4 +112,5 @@ interface IExceptionDescriptionProvider {
             else -> getDefaultErrorMessage(context, throwable)
         }
     }
+    private data class Error(val errors: String?)
 }

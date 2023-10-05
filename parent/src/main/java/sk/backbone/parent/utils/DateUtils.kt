@@ -9,10 +9,12 @@ import kotlin.math.absoluteValue
 
 const val iso8601Format = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 const val iso8601FormatUtcStrict = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-const val iso84FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
+const val iso8601FormatUtcStrictNoMillis = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val iso8601DateOnlyFormat = "yyyy-MM-dd"
 const val iso8601FormatWithoutSeconds = "yyyy-MM-dd'T'HH:mmZZZZZ"
 const val iso8601HoursMinutesOnlyFormat = "HH:mm"
+const val iso8601ShortDate = "dd.MM.yy"
+const val iso8601ShortDateWithTime = "dd.MM.yy HH:mm"
 
 fun getDateWithFirstMonthDay(timezone: TimeZone = TimeZone.getDefault()): Date = Calendar.getInstance(timezone).apply {
     this.set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
@@ -150,20 +152,25 @@ fun Date.getIso8601DateOnlyString(): String {
 }
 fun Date.getLocallyHoursMinutesOnlyString(): String {
     val format = android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), iso8601HoursMinutesOnlyFormat)
-    val format1 = android.text.format.DateFormat.getBestDateTimePattern(Locale.KOREA, iso8601HoursMinutesOnlyFormat)
-    val format2 = android.text.format.DateFormat.getBestDateTimePattern(Locale.TAIWAN, iso8601HoursMinutesOnlyFormat)
-    val format3 = android.text.format.DateFormat.getBestDateTimePattern(Locale.CANADA, iso8601HoursMinutesOnlyFormat)
-    val format4 = android.text.format.DateFormat.getBestDateTimePattern(Locale.US, iso8601HoursMinutesOnlyFormat)
     return SimpleDateFormat(format, Locale.getDefault()).format(this)
 }
 
-fun Date.iso84FormatUtcStrictNoMillis(): String {
-    return SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).format(this)
+fun Date.getShortDateFormat(): String {
+    val format = android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), iso8601ShortDate)
+    return SimpleDateFormat(format, Locale.getDefault()).format(this)
+}
+
+fun Date.getShortDateWithTimeFormat(): String {
+    return SimpleDateFormat(iso8601ShortDateWithTime, Locale.getDefault()).format(this)
+}
+
+fun Date.iso8601FormatUtcStrictNoMillis(): String {
+    return SimpleDateFormat(iso8601FormatUtcStrictNoMillis, Locale.getDefault()).format(this)
 }
 
 fun fromIsoDateFormatUtcNoMillis(value: String?): Date? {
     return value?.let {
-        SimpleDateFormat(iso84FormatUtcStrictNoMillis, Locale.getDefault()).parse(it)
+        SimpleDateFormat(iso8601FormatUtcStrictNoMillis, Locale.getDefault()).parse(it)
     }
 }
 
@@ -197,3 +204,6 @@ private val localShortDateFormatter: SimpleDateFormat
         val pattern = simpleDateFormat.toLocalizedPattern()
         return SimpleDateFormat(pattern, Locale.getDefault())
     }
+
+fun Date.getStartOfYesterday(timezone: TimeZone = TimeZone.getDefault()) = getStartOfDay(timezone).apply { time -= 1 }.getStartOfDay(timezone)
+fun Date.getEndOfTomorrow(timezone: TimeZone = TimeZone.getDefault()) = getEndOfDay(timezone).apply { time += 1 }.getEndOfDay(timezone)
