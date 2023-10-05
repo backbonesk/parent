@@ -7,6 +7,7 @@
     <dimen name="spacing_medium_15_dp">15dp</dimen>
     <dimen name="spacing_medium_15_dp_negative">-15dp</dimen>
     <dimen name="spacing_screen_20_dp">20dp</dimen>
+    <dimen name="spacing_dialog_25_dp">25dp</dimen>
     <dimen name="spacing_large_30_dp">30dp</dimen>
 
     <dimen name="radius_input_background">5dp</dimen>
