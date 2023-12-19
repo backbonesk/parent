@@ -3,7 +3,6 @@ package sk.backbone.parent.ui.screens
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +10,7 @@ import sk.backbone.parent.execution.IExecutioner
 import sk.backbone.parent.execution.scopes.ActivityScopes
 import javax.inject.Inject
 
-abstract class ParentActivity : ComponentActivity(), IExecutioner<ActivityScopes> {
+abstract class ParentActivity : AppCompatActivity(), IExecutioner<ActivityScopes> {
     open fun getActivityTransitions() : ActivityTransitions = ActivityTransitions.NONE
 
     inline fun <reified T: ViewModel>getViewModel() : T {
