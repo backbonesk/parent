@@ -1,6 +1,7 @@
 package sk.backbone.parent.ui.screens
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
@@ -26,6 +27,11 @@ abstract class ParentActivity : FragmentActivity(), IExecutioner<ActivityScopes>
         if(this is IToolbarActivity<*>){
             refreshToolbar()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("ParentActivity", "onResume called")
     }
 
     override fun finish() {
