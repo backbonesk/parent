@@ -64,13 +64,13 @@ abstract class ParentSpinner<TViewBinding> : ParentLinearLayout {
         }
     }
 
-    fun setProvider(provider: SpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false, default: String? = null, selectDefault: Boolean = true){
+    fun setProvider(provider: SpinnerItemsProvider<*>?, triggerSpinnerListener: Boolean = false, default: String? = null, selectDefault: Boolean = true, ownAdapter: PrentSpinnerAdapter? = null){
         this.provider = provider
 
         val currentItems = provider?.stringValues ?: listOf()
         val defaultOption = provider?.defaultOption ?: defaultOption ?: default
 
-        val adapter = PrentSpinnerAdapter(context, spinnerItemResource, currentItems, defaultOption).apply {
+        val adapter = ownAdapter ?: PrentSpinnerAdapter(context, spinnerItemResource, currentItems, defaultOption).apply {
             setDropDownViewResource(spinnerDropdownResource)
         }
 
